@@ -1,19 +1,23 @@
 --[[
-    WoWPeru_RaidSuite (anteriormente Sequito)
+    WoWPeru_RaidSuite — Suite Definitiva de Combate y Raids
     Universal Sphere & Raid Management UI for WotLK 3.3.5a
     
-    Addon universal para TODAS las clases.
+    Addon universal para TODAS las clases del Reino Andino.
     - Reconocimiento de clase/raza
     - Generacion de macros personalizadas
     - Sincronizacion de raid (hasta 40 jugadores)
     - Datos estrategicos en tiempo real
     
+    NOTA: La tabla global `Sequito` se mantiene intencionalmente para
+    garantizar compatibilidad con todos los modulos internos y los
+    SavedVariables existentes de los jugadores (SequitoDB, etc.).
+    
     Copyright (c) 2026 DarckRovert (Ingame: Elnazzareno) & WoW Perú Team
 ]]--
 
--- Namespace
+-- Namespace principal del addon
 local addonName, S = ...
-_G.Sequito = S -- Global Access
+_G.Sequito = S -- Tabla global interna (nombre legacy mantenido por compatibilidad)
 
 -- Version
 S.Version = "10.2.0"

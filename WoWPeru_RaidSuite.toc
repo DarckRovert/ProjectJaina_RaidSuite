@@ -1,4 +1,4 @@
-## Interface: 30300
+﻿## Interface: 30300
 ## Title: |cFFD4AF37WoW Perú|r - RaidSuite
 ## Notes: Suite integral y avanzada de combate, optimización de bandas y utilidades tácticas para el Reino Andino.
 ## Author: DarckRovert (Ingame: Elnazzareno) & WoW Perú Team
@@ -29,21 +29,21 @@ Core\Bindings.xml
 
 # 4. Modules - Core System
 Modules\Core\ModuleConfig.lua
-Modules\Core\SequitoData.lua
-Modules\Core\SequitoPlates.lua
+Modules\Core\RaidSuite_Data.lua
+Modules\Core\RaidSuite_Plates.lua
 Modules\Core\Universal.lua
 Modules\Core\EventManager.lua
 Modules\Core\VersionSync.lua
 Modules\Core\Menu.lua
-Modules\Core\SequitoDashboard.lua
-Modules\Core\SequitoRadial.lua
+Modules\Core\RaidSuite_Dashboard.lua
+Modules\Core\RaidSuite_Radial.lua
 Modules\Core\MinimapButton.lua
 Modules\Core\Options.lua
-Modules\Core\SequitoConnect.lua
+Modules\Core\RaidSuite_Connect.lua
 Modules\Core\SmartCoach.lua
-Modules\Core\SequitoSoulEngine.lua
+Modules\Core\RaidSuite_SoulEngine.lua
 Modules\Core\TheOverlord.lua
-Modules\Core\SequitoAudio.lua
+Modules\Core\RaidSuite_Audio.lua
 
 # 5. Modules - Utility
 Modules\Utility\MacroGenerator.lua
@@ -56,11 +56,11 @@ Modules\Utility\PlayerNotes.lua
 Modules\Utility\Runes.lua
 Modules\Utility\EventCalendar.lua
 Modules\Utility\Visuals.lua
-Modules\Utility\SequitoTrade.lua
-Modules\Utility\SequitoHumor.lua
-Modules\Class\SequitoCoven.lua
-Modules\Class\SequitoSoulstones.lua
-Modules\Class\SequitoDoTTracker.lua
+Modules\Utility\RaidSuite_Trade.lua
+Modules\Utility\RaidSuite_Humor.lua
+Modules\Class\RaidSuite_Coven.lua
+Modules\Class\RaidSuite_Soulstones.lua
+Modules\Class\RaidSuite_DoTTracker.lua
 
 # 6. Modules - Raid & Party
 Modules\Raid\RaidSync.lua
@@ -77,11 +77,11 @@ Modules\Raid\HealerTracker.lua
 Modules\Raid\PullGuide.lua
 Modules\Raid\DungeonTimer.lua
 Modules\Raid\LootCouncil.lua
-Modules\Raid\SequitoLootGallery.lua
+Modules\Raid\RaidSuite_LootGallery.lua
 Modules\Raid\AcademyInspector.lua
 Modules\Raid\AcademyRotation.lua
-Modules\Raid\SequitoAchievements.lua
-Modules\Raid\SequitoPerformance.lua
+Modules\Raid\RaidSuite_Achievements.lua
+Modules\Raid\RaidSuite_Performance.lua
 Modules\Raid\PerformanceStats.lua
 Modules\Raid\Logistics.lua
 Modules\Raid\VotingSystem.lua
@@ -94,7 +94,7 @@ Modules\PvP\TrinketTracker.lua
 Modules\PvP\FocusFire.lua
 Modules\PvP\DefensiveAlerts.lua
 Modules\PvP\SpecWatcher.lua
-Modules\PvP\SequitoSpy.lua
+Modules\PvP\RaidSuite_Spy.lua
 
 # 8. Main (Inicializador)
-Sequito.lua
+RaidSuite_Init.lua

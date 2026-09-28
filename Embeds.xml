@@ -1,4 +1,4 @@
-<Ui xmlns="http://www.blizzard.com/wow/ui/"
+﻿<Ui xmlns="http://www.blizzard.com/wow/ui/"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
     <!--
@@ -26,21 +26,21 @@
     <Include file="Core/Bindings.xml"/>
     <!-- 4. Modules - Core System -->
     <Script file="Modules/Core/ModuleConfig.lua"/>
-    <Script file="Modules/Core/SequitoData.lua"/>
-    <Script file="Modules/Core/SequitoPlates.lua"/>
+    <Script file="Modules/Core/RaidSuite_Data.lua"/>
+    <Script file="Modules/Core/RaidSuite_Plates.lua"/>
     <Script file="Modules/Core/Universal.lua"/>
     <Script file="Modules/Core/EventManager.lua"/>
     <Script file="Modules/Core/VersionSync.lua"/>
     <Script file="Modules/Core/Menu.lua"/>
-    <Script file="Modules/Core/SequitoDashboard.lua"/>
-    <Script file="Modules/Core/SequitoRadial.lua"/>
+    <Script file="Modules/Core/RaidSuite_Dashboard.lua"/>
+    <Script file="Modules/Core/RaidSuite_Radial.lua"/>
     <Script file="Modules/Core/MinimapButton.lua"/>
     <Script file="Modules/Core/Options.lua"/>
-    <Script file="Modules/Core/SequitoConnect.lua"/>
+    <Script file="Modules/Core/RaidSuite_Connect.lua"/>
     <Script file="Modules/Core/SmartCoach.lua"/>
-    <Script file="Modules/Core/SequitoSoulEngine.lua"/>
+    <Script file="Modules/Core/RaidSuite_SoulEngine.lua"/>
     <Script file="Modules/Core/TheOverlord.lua"/>
-    <Script file="Modules/Core/SequitoAudio.lua"/>
+    <Script file="Modules/Core/RaidSuite_Audio.lua"/>
     <!-- 5. Modules - Utility -->
     <Script file="Modules/Utility/MacroGenerator.lua"/>
     <Script file="Modules/Utility/MacroSync.lua"/>
@@ -52,11 +52,11 @@
     <Script file="Modules/Utility/Runes.lua"/>
     <Script file="Modules/Utility/EventCalendar.lua"/>
     <Script file="Modules/Utility/Visuals.lua"/>
-    <Script file="Modules/Utility/SequitoTrade.lua"/>
-    <Script file="Modules/Utility/SequitoHumor.lua"/>
-    <Script file="Modules/Class/SequitoCoven.lua"/>
-    <Script file="Modules/Class/SequitoSoulstones.lua"/>
-    <Script file="Modules/Class/SequitoDoTTracker.lua"/>
+    <Script file="Modules/Utility/RaidSuite_Trade.lua"/>
+    <Script file="Modules/Utility/RaidSuite_Humor.lua"/>
+    <Script file="Modules/Class/RaidSuite_Coven.lua"/>
+    <Script file="Modules/Class/RaidSuite_Soulstones.lua"/>
+    <Script file="Modules/Class/RaidSuite_DoTTracker.lua"/>
     <!-- 6. Modules - Raid & Party -->
     <Script file="Modules/Raid/RaidSync.lua"/>
     <Script file="Modules/Raid/ConnectTab.lua"/>
@@ -72,11 +72,11 @@
     <Script file="Modules/Raid/PullGuide.lua"/>
     <Script file="Modules/Raid/DungeonTimer.lua"/>
     <Script file="Modules/Raid/LootCouncil.lua"/>
-    <Script file="Modules/Raid/SequitoLootGallery.lua"/>
+    <Script file="Modules/Raid/RaidSuite_LootGallery.lua"/>
     <Script file="Modules/Raid/AcademyInspector.lua"/>
     <Script file="Modules/Raid/AcademyRotation.lua"/>
-    <Script file="Modules/Raid/SequitoAchievements.lua"/>
-    <Script file="Modules/Raid/SequitoPerformance.lua"/>
+    <Script file="Modules/Raid/RaidSuite_Achievements.lua"/>
+    <Script file="Modules/Raid/RaidSuite_Performance.lua"/>
     <Script file="Modules/Raid/PerformanceStats.lua"/>
     <Script file="Modules/Raid/Logistics.lua"/>
     <Script file="Modules/Raid/VotingSystem.lua"/>
@@ -88,7 +88,7 @@
     <Script file="Modules/PvP/FocusFire.lua"/>
     <Script file="Modules/PvP/DefensiveAlerts.lua"/>
     <Script file="Modules/PvP/SpecWatcher.lua"/>
-    <Script file="Modules/PvP/SequitoSpy.lua"/>
+    <Script file="Modules/PvP/RaidSuite_Spy.lua"/>
     <!-- 8. Main (Inicializador) -->
-    <Script file="Sequito.lua"/>
+    <Script file="RaidSuite_Init.lua"/>
 </Ui>

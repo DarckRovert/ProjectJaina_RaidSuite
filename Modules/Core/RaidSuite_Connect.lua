@@ -1,0 +1,372 @@
+--[[
+    SEQUITO - Connect (v10.0)
+    Puente de datos para herramientas externas (Discord/Web).
+    Genera reportes comprimidos en texto.
+]]
+
+local addonName, S = ...
+S.Connect = {}
+local SC = S.Connect
+
+-- ===========================================================================
+-- UI: CONTENIDO DEL TAB
+-- ===========================================================================
+function SC:Initialize()
+    -- Register Comm
+    if RegisterAddonMessagePrefix then RegisterAddonMessagePrefix("SEQUITO_CFG") end
+    
+    -- Event Frame for Comm
+    self.commFrame = CreateFrame("Frame")
+    self.commFrame:RegisterEvent("CHAT_MSG_ADDON")
+    self.commFrame:SetScript("OnEvent", function(f, event, ...) SC:OnComm(event, ...) end)
+    
+    -- Initialize Buffers
+    self.tempBuffers = {}
+
+    print("|cFFFF00FFSequito|r: [Connect] Módulo de sincronización listo.")
+    self:RegisterCommands()
+    
+    -- Register Tab in Dashboard
+    if S.Dashboard and S.Dashboard.RegisterTab then
+        local content = CreateFrame("Frame", "SequitoConnectTab", UIParent)
+        content:SetSize(100, 100) 
+        
+        -- Title
+        local title = content:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+        title:SetPoint("TOPLEFT", 10, -10)
+        title:SetText("|cff9966ffSequito Connect|r")
+        
+        -- SYNC SECTION (Top)
+        local syncGroup = CreateFrame("Frame", nil, content)
+        syncGroup:SetPoint("TOPLEFT", 10, -40)
+        syncGroup:SetPoint("TOPRIGHT", -10, -40)
+        syncGroup:SetHeight(80)
+        
+        local btnSync = CreateFrame("Button", nil, syncGroup, "UIPanelButtonTemplate")
+        btnSync:SetSize(220, 30)
+        btnSync:SetPoint("TOPLEFT", 0, 0)
+        btnSync:SetText("Transmitir Configuración a Raid")
+        btnSync:SetScript("OnClick", function() 
+            if IsRaidLeader() or IsRaidOfficer() or IsPartyLeader() then
+                SC:BroadcastConfig()
+            else
+                print("|cFFFF0000Sequito:|r Solo el líder puede transmitir configuración.")
+            end
+        end)
+        
+        local syncDesc = syncGroup:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+        syncDesc:SetPoint("LEFT", btnSync, "RIGHT", 10, 0)
+        syncDesc:SetText("Envía tu perfil actual a todos los miembros.\nRequiere ser Líder o Ayudante.")
+        syncDesc:SetJustifyH("LEFT")
+        syncDesc:SetTextColor(0.7, 0.7, 0.7)
+
+        -- EXPORT SECTION (Bottom)
+        local expTitle = content:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+        expTitle:SetPoint("TOPLEFT", syncGroup, "BOTTOMLEFT", 0, -20)
+        expTitle:SetText("Exportación Manual (Discord/Web):")
+        expTitle:SetTextColor(1, 0.8, 0)
+
+        local scrollArea = CreateFrame("ScrollFrame", "SequitoConnectScroll", content, "UIPanelScrollFrameTemplate")
+        scrollArea:SetPoint("TOPLEFT", expTitle, "BOTTOMLEFT", 0, -10)
+        scrollArea:SetPoint("BOTTOMRIGHT", -30, 10)
+        
+        local editBox = CreateFrame("EditBox", nil, scrollArea)
+        editBox:SetMultiLine(true)
+        editBox:SetFontObject(ChatFontNormal)
+        editBox:SetWidth(600)
+        editBox:SetHeight(400)
+        editBox:SetScript("OnEscapePressed", function() editBox:ClearFocus() end)
+        scrollArea:SetScrollChild(editBox)
+        
+        -- OnShow: Update Export Text only
+        content:SetScript("OnShow", function()
+             local data = {
+                type = "PROFILE",
+                author = UnitName("player"),
+                version = S.Version or "10.1.0",
+                timestamp = time(),
+                config = SequitoDB or {}
+            }
+            editBox:SetText(SC:SimpleJSON(data))
+            editBox:SetCursorPosition(0)
+        end)
+        
+        S.Dashboard:RegisterTab("Connect", "Interface\\Icons\\Spell_ChargePositive", content)
+    end
+end
+
+-- ===========================================================================
+-- SYNC LOGIC
+-- ===========================================================================
+function SC:BroadcastConfig()
+    -- Serialize CONFIG ONLY (Safety: Don't send entire DB if it has other stuff)
+    local cfg = SequitoDB or {}
+    local serialized = SC:TableToLua(cfg)
+    local msgID = tostring(time())
+    local chunks = {}
+    local chunkSize = 200 -- Safe limit for SendAddonMessage
+    
+    for i=1, #serialized, chunkSize do
+        table.insert(chunks, string.sub(serialized, i, i+chunkSize-1))
+    end
+    
+    local total = #chunks
+    print("|cFF00FFFFSequito:|r Iniciando transmisión ("..total.." paquetes)...")
+    
+    for i, chunk in ipairs(chunks) do
+        -- Protocol: ID:INDEX:TOTAL:PAYLOAD
+        local packet = string.format("%s:%d:%d:%s", msgID, i, total, chunk)
+        SendAddonMessage("SEQUITO_CFG", packet, "RAID")
+    end
+    print("|cFF00FF00Sequito:|r Transmisión completada.")
+end
+
+function SC:OnComm(event, prefix, msg, channel, sender)
+    if prefix ~= "SEQUITO_CFG" then return end
+    if sender == UnitName("player") then return end
+    
+    -- Parse: ID:INDEX:TOTAL:PAYLOAD
+    local id, idx, tot, payload = strsplit(":", msg, 4)
+    idx = tonumber(idx)
+    tot = tonumber(tot)
+    
+    if not id or not idx or not tot then return end
+    
+    -- Init Buffer
+    if not self.tempBuffers[id] then
+        self.tempBuffers[id] = { parts = {}, count = 0, total = tot, sender = sender }
+        print("|cFF00FFFFSequito:|r Recibiendo configuración de " .. sender .. "...")
+    end
+    
+    local buf = self.tempBuffers[id]
+    buf.parts[idx] = payload
+    buf.count = buf.count + 1
+    
+    -- Check Complete
+    if buf.count >= buf.total then
+        local fullData = table.concat(buf.parts)
+        self:OfferConfig(fullData, buf.sender)
+        self.tempBuffers[id] = nil -- Clear
+    end
+end
+
+function SC:OfferConfig(dataString, sender)
+    -- Show Popup
+    StaticPopupDialogs["SEQUITO_CONFIRM_SYNC"] = {
+        text = "|cFF00FFFFSequito|r\n\n" .. sender .. " ha enviado una configuración de Raid.\n¿Deseas aplicarla? (Recargará la UI)",
+        button1 = "Aceptar",
+        button2 = "Cancelar",
+        OnAccept = function()
+            -- Deserialize safely
+            local func = loadstring("return " .. dataString)
+            if func then
+                local newConfig = func()
+                if newConfig and type(newConfig) == "table" then
+                    SequitoDB = newConfig
+                    ReloadUI()
+                else
+                    print("Error: Configuración inválida.")
+                end
+            else
+                print("Error: Datos corruptos.")
+            end
+        end,
+        timeout = 0,
+        whileDead = true,
+        hideOnEscape = true,
+    }
+    StaticPopup_Show("SEQUITO_CONFIRM_SYNC")
+end
+
+-- ===========================================================================
+-- SERIALIZERS
+-- ===========================================================================
+function SC:TableToLua(val)
+    local t = type(val)
+    if t == "number" or t == "boolean" then 
+        return tostring(val)
+    elseif t == "string" then 
+        return string.format("%q", val)
+    elseif t == "table" then
+        local parts = {"{"}
+        for k,v in pairs(val) do
+            -- Only sync string keys to avoid array index mess in sparse tables
+            if type(k) == "string" then
+                table.insert(parts, "["..string.format("%q", k).."]="..SC:TableToLua(v)..",")
+            elseif type(k) == "number" then
+                table.insert(parts, "["..k.."]="..SC:TableToLua(v)..",")
+            end
+        end
+        table.insert(parts, "}")
+        return table.concat(parts)
+    else
+        return "nil"
+    end
+end
+
+function SC:SimpleJSON(val)
+    -- Kept for Export Manual display
+    local t = type(val)
+    if t == "number" then return tostring(val)
+    elseif t == "string" then return string.format("%q", val)
+    elseif t == "boolean" then return val and "true" or "false"
+    elseif t == "table" then
+        local s = "{"
+        local first = true
+        for k,v in pairs(val) do
+            if not first then s = s .. "," end
+            local key = type(k)=="number" and tostring(k) or k
+            s = s .. string.format("%q:%s", key, SC:SimpleJSON(v))
+            first = false
+        end
+        return s .. "}"
+    else return "null" end
+end
+
+function SC:RegisterCommands()
+    -- Commands handled by global handler in Sequito.lua
+end
+
+-- ===========================================================================
+-- GENERADOR DE REPORTES
+-- ===========================================================================
+function SC:GenerateReport()
+    -- Obtener asistencia desde RaidSync si está disponible, sino, escanear local
+    local roster = {}
+    if S.RaidSync and S.RaidSync.RaidData then
+        for name, data in pairs(S.RaidSync.RaidData) do
+            table.insert(roster, {name = name, class = data.class, role = data.role})
+        end
+    else
+        -- Fallback simple
+        local num = GetNumRaidMembers()
+        for i=1, num do
+            local name, _, _, _, _, class = GetRaidRosterInfo(i)
+            if name then
+                table.insert(roster, {name = name, class = class, role = "UNKNOWN"})
+            end
+        end
+    end
+
+    local data = {
+        type = "REPORT",
+        date = date("%Y-%m-%d %H:%M:%S"),
+        zone = GetRealZoneText(),
+        author = UnitName("player"),
+        version = S.Version or "10.1.0",
+        wipes = S.WipeAnalyzer and S.WipeAnalyzer.Wipes or {},
+        loot = SequitoLootDB or {},
+        attendance = roster,
+    }
+    self:OpenWindow(S.L["EXPORT_REPORT"] or "Reporte de Raid", self:SimpleJSON(data))
+end
+
+function SC:ExportConfig()
+    local data = {
+        type = "PROFILE",
+        author = UnitName("player"),
+        version = S.Version or "10.1.0",
+        timestamp = time(),
+        config = SequitoDB or {} -- The main config table
+    }
+    self:OpenWindow("Perfil de Configuración", self:SimpleJSON(data))
+end
+
+-- ===========================================================================
+-- UI: EXPORT WINDOW
+-- ===========================================================================
+function SC:OpenWindow(title, text)
+    if self.frame then 
+        self.frame:Show()
+        self.frame.title:SetText("Sequito Connect - " .. title)
+        self.frame.editBox:SetText(text)
+        return 
+    end
+
+    local f = CreateFrame("Frame", "SequitoExportFrame", UIParent)
+    f:SetSize(500, 450) -- Taller for buttons
+    f:SetPoint("CENTER")
+    f:SetBackdrop({bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background", edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border", edgeSize = 16, insets = {left = 4, right = 4, top = 4, bottom = 4}})
+    
+    f.title = f:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    f.title:SetPoint("TOP", 0, -15)
+    f.title:SetText("Sequito Connect - " .. title)
+    
+    -- Mode Buttons
+    local btnReport = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
+    btnReport:SetSize(120, 25)
+    btnReport:SetPoint("TOPLEFT", 20, -40)
+    btnReport:SetText("Reporte Raid")
+    btnReport:SetScript("OnClick", function() SC:GenerateReport() end)
+    
+    local btnConfig = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
+    btnConfig:SetSize(120, 25)
+    btnConfig:SetPoint("LEFT", btnReport, "RIGHT", 10, 0)
+    btnConfig:SetText("Exportar Perfil")
+    btnConfig:SetScript("OnClick", function() SC:ExportConfig() end)
+    
+    -- Scroll Area
+    local scroll = CreateFrame("ScrollFrame", "SequitoExportScroll", f, "UIPanelScrollFrameTemplate")
+    scroll:SetPoint("TOPLEFT", 20, -80)
+    scroll:SetPoint("BOTTOMRIGHT", -40, 50)
+    
+    local editBox = CreateFrame("EditBox", nil, scroll)
+    editBox:SetMultiLine(true)
+    editBox:SetFontObject(ChatFontNormal)
+    editBox:SetWidth(440)
+    editBox:SetText(text)
+    editBox:HighlightText()
+    
+    scroll:SetScrollChild(editBox)
+    f.editBox = editBox
+    
+    f.close = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
+    f.close:SetSize(100, 30)
+    f.close:SetPoint("BOTTOM", 0, 15)
+    f.close:SetText("Cerrar")
+    f.close:SetScript("OnClick", function() f:Hide() end)
+    
+    self.frame = f
+end
+
+-- ===========================================================================
+-- UTILS (Simple JSON Serializer because WotLK has no native JSON)
+-- ===========================================================================
+function SC:SimpleJSON(val)
+    local t = type(val)
+    if t == "number" then
+        return tostring(val)
+    elseif t == "string" then
+        return string.format("%q", val)
+    elseif t == "boolean" then
+        return val and "true" or "false"
+    elseif t == "table" then
+        local parts = {}
+        local isArray = (#val > 0)
+        
+        if isArray then
+            for _, v in ipairs(val) do
+                table.insert(parts, self:SimpleJSON(v))
+            end
+            return "[" .. table.concat(parts, ",") .. "]"
+        else
+            for k, v in pairs(val) do
+                table.insert(parts, string.format("%q:%s", k, self:SimpleJSON(v)))
+            end
+            return "{" .. table.concat(parts, ",") .. "}"
+        end
+    else
+        return "null"
+    end
+end
+
+-- Registrar
+if S.ModuleConfig then
+    S.ModuleConfig:RegisterModule("Connect", {
+        name = "Sequito Connect",
+        description = "Exportación de datos a web/discord",
+        category = "general",
+        icon = "Interface\\Icons\\Spell_ChargePositive",
+        options = {}
+    })
+end

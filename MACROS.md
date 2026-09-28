@@ -80,24 +80,24 @@ Aplica el CC principal de tu clase manteniendo el control del combate:
 - **[SeqPet]:** Control total de esbirro con un solo botón: Clic normal ataca, Alt sigue, y lanza habilidades especiales según el demonio invocado (Manáfago: Bloqueo de hechizo a foco/mouseover o Devorar magia en jugador con Shift; Súcubo: Seducción; Abisario: Sacrificio con Shift).
 - **[SeqHeal]:** Piedra de salud en clic primario; en Shift canaliza salud hacia el demonio.
 - **[SeqBanish]:** Desterrar con prioridad Focus > Mouseover > Objetivo.
-- **[SeqFear]:** Miedo rápido a foco o mouseover sin deseleccionar el objetivo primario.
+- **[SeqCC]:** Miedo inteligente con prioridad Mouseover > Focus > Objetivo.
 - **[SeqDispel]:** Devorar magia sobre aliados o en el propio jugador con Alt.
 - **[SeqBurst]:** Metamorfosis con Aura de inmolación, uso sincronizado de abalorios (ranuras 13 y 14), guantes de ingeniería (ranura 10) y Poción de velocidad.
 - **[SeqRot]:**
-  - *Aflicción:* Descarga de las Sombras; Shift para Poseer/Aflicción inestable; Ctrl para Corrupción; Alt para Drenar alma en fase de ejecución (<25%).
-  - *Demonología:* Incinerar/Descarga; Shift para Inmolar; Ctrl para Fuego de alma (proc Diezmar); transformado en demonio activa Aura + Hender sombras.
+  - *Aflicción:* Descarga de las Sombras; Shift para Poseer (o Aflicción inestable); Ctrl para Aflicción inestable / Maldición de agonía; Alt para Drenar alma en fase de ejecución (<25%).
+  - *Demonología:* Incinerar/Descarga; Shift para Inmolar; Ctrl para Fuego de alma (proc Diezmar); Alt para Corrupción; transformado en demonio activa Aura de inmolación automáticamente.
   - *Destrucción:* Incinerar; Shift para Inmolar; Ctrl para Conflagrar; Alt para Descarga de Caos.
 
 ---
 
 ## 🛡️ Paladín (Paladin)
 
-- **[SeqBubble]:** Escudo divino con `/stopcasting` e inmunidad de emergencia; permite cancelación instantánea con tecla Alt (`/cancelaura [mod:alt] Escudo divino`) para no perder aggro de bosses.
+- **[SeqBubble]:** Escudo divino con `/stopcasting` e inmunidad de emergencia; permite cancelación segura con tecla Alt (`/cancelaura [mod:alt] Escudo divino`) con protección `[nomod]` para no autocancelar accidentalmente.
 - **[SeqPull]:** Escudo de vengador para tanques con aviso por chat.
-- **[SeqHeal]:** Choque Sagrado en Shift, Luz Sagrada en Ctrl, Destello de Luz con mouseover y jugador.
+- **[SeqHeal]:** Choque Sagrado en Shift, Luz Sagrada en Ctrl, Destello de Luz con mouseover y jugador (sin spam innecesario en canales).
 - **[SeqRot]:**
   - *Sagrado:* Choque Sagrado / Luz Sagrada / Destello de Luz por mouseover.
-  - *Protección:* Escudo de rectitud; Shift para Martillo de rectitud; Ctrl para Consagración; Alt para Escudo sagrado.
+  - *Protección:* Escudo de rectitud; Shift para Martillo de rectitud; Ctrl para Consagración; Alt para Sentencia de sabiduría.
   - *Reprensión:* Golpe de cruzado; Shift para Tormenta divina; Ctrl para Sentencia de sabiduría; Alt para Exorcismo instantáneo.
 
 ---
@@ -117,7 +117,7 @@ Aplica el CC principal de tu clase manteniendo el control del combate:
 ## 🏹 Cazador (Hunter)
 
 - **[SeqMD]:** Redirección inteligente a `@focus`, a la mascota si existe, o al objetivo amigo.
-- **[SeqRot]:** Disparo firme; Shift para Disparo de quimera / Disparo explosivo / Cólera de las bestias; Ctrl para Picadura de serpiente o Flecha negra; Alt para Disparo mortal.
+- **[SeqRot]:** Disparo firme (con `!Disparo automático`); Shift para Disparo de quimera / Disparo explosivo / Cólera de las bestias; Ctrl para Disparo de puntería / Flecha negra / Matar; Alt para Picadura de serpiente.
 
 ---
 
@@ -158,8 +158,8 @@ Aplica el CC principal de tu clase manteniendo el control del combate:
 - **[SeqInnervate]:** Estimular hacia cursor (`@mouseover`), objetivo aliado o jugador.
 - **[SeqRot]:**
   - *Equilibrio:* Cólera; Shift para Fuego estelar; Ctrl para Fuego lunar; Alt para Enjambre de insectos.
-  - *Feral Oso (`[form:1]`):* Magullar / Destrozar oso / Lacerar.
-  - *Feral Gato (`[form:3]`):* Destrozar gato / Triturar; Shift para Destripar; Ctrl para Mordedura feroz; Alt para Rugido salvaje.
+  - *Feral Oso (`[form:1]`):* Destrozar oso en Shift / Magullar en normal.
+  - *Feral Gato (`[form:3]`):* Destrozar felino; Shift para Destripar; Ctrl para Mordedura feroz.
   - *Restauración:* Recrecimiento; Shift para Rejuvenecimiento; Ctrl para Flor de vida; Alt para Crecimiento salvaje con mouseover.
 
 ---
@@ -168,9 +168,9 @@ Aplica el CC principal de tu clase manteniendo el control del combate:
 
 - **[SeqWall]:** Muro de escudo con grito de batalla para alertar a los sanadores.
 - **[SeqRot]:**
-  - *Armas:* Golpe heroico / Embate; Shift para Golpe mortal; Ctrl para Abrumar / Desgarrar; Alt para Ejecutar.
+  - *Armas:* Golpe mortal como ataque primario + Golpe heroico en cola; Shift para Desgarrar; Ctrl para Abrumar con proc; Alt para Ejecutar.
   - *Furia:* Sed de sangre + Golpe heroico encadenado; Shift para Torbellino; Ctrl para Embate con proc.
-  - *Protección:* Devastar / Hender armadura; Shift para Embate con escudo; Ctrl para Revancha; Alt para Ola de choque.
+  - *Protección:* Devastar / Hender armadura + Golpe heroico encadenado; Shift para Embate con escudo; Ctrl para Revancha; Alt para Ola de choque.
 
 ---
 

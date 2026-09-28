@@ -33,25 +33,23 @@ S.MacroSync.ClassLibrary = {
             rating = 5
         },
         {
-            name = "SeqSoulSwap",
-            desc = "Intercambio de DoTs rápido",
+            name = "SeqWarlockCurse",
+            desc = "Maldición rápida (Agonía / Elementos)",
             body = [[#showtooltip
-/cast [mod:shift,target=focus] Exhalar; [mod:shift] Exhalar
-/cast [nomod] Inhalar]],
+/cast [mod:shift] Maldición de los elementos; Maldición de agonía]],
             spec = 1,
             author = "Sequito",
-            rating = 4
+            rating = 5
         },
         {
             name = "SeqMetaBurst",
             desc = "Burst de Demonología",
-            body = [[#showtooltip Metaformosis
+            body = [[#showtooltip Metamorfosis
 /use 10
 /use 13
 /use 14
-/cast Metaformosis
-/cast Aura de inmolación
-/cast Hendidura de las Sombras]],
+/cast Metamorfosis
+/cast Aura de inmolación]],
             spec = 2, -- Demonology
             author = "Sequito",
             rating = 5
@@ -83,8 +81,8 @@ S.MacroSync.ClassLibrary = {
         {
             name = "SeqDKTaunt",
             desc = "Taunt con anuncio",
-            body = [[#showtooltip Golpe oscuro
-/cast Golpe oscuro
+            body = [[#showtooltip Orden oscura
+/cast Orden oscura
 /s ¡TAUNT en %t! ¡Cuidado healers!]],
             spec = 1, -- Blood
             author = "Sequito",
@@ -93,10 +91,8 @@ S.MacroSync.ClassLibrary = {
         {
             name = "SeqDKAoE",
             desc = "AoE Frost DK",
-            body = [[#showtooltip Aullido de invierno
-/cast Aullido de invierno
-/cast Pestilencia
-/cast Muerte y descomposición]],
+            body = [[#showtooltip Explosión aullante
+/cast [mod:shift] Muerte y descomposición; Explosión aullante]],
             spec = 2, -- Frost
             author = "Sequito",
             rating = 5
@@ -141,12 +137,12 @@ S.MacroSync.ClassLibrary = {
         },
         {
             name = "SeqPalaTank",
-            desc = "Rotación Prot",
+            desc = "Rotación Prot 969",
             body = [[#showtooltip
-/castsequence reset=combat Martillo del honrado, Escudo de vengador, Juicio de Luz, Golpe de cruzado]],
+/castsequence reset=combat Martillo de rectitud, Escudo de rectitud, Sentencia de sabiduría, Consagración]],
             spec = 2, -- Protection
             author = "Sequito",
-            rating = 4
+            rating = 5
         },
         {
             name = "SeqPalaRet",
@@ -229,10 +225,10 @@ S.MacroSync.ClassLibrary = {
         },
         {
             name = "SeqHunterTrap",
-            desc = "Trampa + Disengage",
+            desc = "Trampa + Separación",
             body = [[#showtooltip Trampa congelante
 /cast Trampa congelante
-/cast [mod:shift] Retirada]],
+/cast [mod:shift] Separación]],
             spec = 0,
             author = "Sequito",
             rating = 4
@@ -329,11 +325,11 @@ S.MacroSync.ClassLibrary = {
     ["WARRIOR"] = {
         {
             name = "SeqWarriorCharge",
-            desc = "Charge/Intercept combo",
+            desc = "Charge/Intercept/Intervene combo",
             body = [[#showtooltip
 /cast [stance:1] Cargar
-/cast [stance:2] Interceptar
-/cast [stance:3] Intervenir]],
+/cast [stance:2] Intervenir
+/cast [stance:3] Interceptar]],
             spec = 0,
             author = "Sequito",
             rating = 5
@@ -350,12 +346,12 @@ S.MacroSync.ClassLibrary = {
         },
         {
             name = "SeqWarriorPummel",
-            desc = "Pummel inteligente",
-            body = [[#showtooltip Golpe de escudo
+            desc = "Interrupción de hechizo inteligente",
+            body = [[#showtooltip Zurrar
 /stopcasting
-/cast [target=focus,exists,harm] Golpe de escudo
-/cast [target=mouseover,exists,harm] Golpe de escudo
-/cast Golpe de escudo]],
+/cast [target=focus,exists,harm] Zurrar
+/cast [target=mouseover,exists,harm] Zurrar
+/cast Zurrar]],
             spec = 0,
             author = "Sequito",
             rating = 5

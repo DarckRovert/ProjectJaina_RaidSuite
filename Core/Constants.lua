@@ -88,22 +88,48 @@ if not IsSpellKnown then
         if not targetName then return false end
         
         local bookType = isPet and (BOOKTYPE_PET or "pet") or (BOOKTYPE_SPELL or "spell")
-        local i = 1
-        while true do
-            local spellName = GetSpellName(i, bookType)
-            if not spellName then break end
-            if spellName == targetName then return true end
-            i = i + 1
+        
+        -- Exact upper bound calculation via spellbook tabs
+        local totalSpells = 0
+        if not isPet and GetNumSpellTabs and GetSpellTabInfo then
+            local numTabs = GetNumSpellTabs()
+            if numTabs and numTabs > 0 then
+                local _, _, offset, numSpells = GetSpellTabInfo(numTabs)
+                totalSpells = (offset or 0) + (numSpells or 0)
+            end
+        end
+        
+        if totalSpells > 0 then
+            for i = 1, totalSpells do
+                local spellName = GetSpellName(i, bookType)
+                if spellName == targetName then return true end
+            end
+        else
+            local i = 1
+            while true do
+                local spellName = GetSpellName(i, bookType)
+                if not spellName then break end
+                if spellName == targetName then return true end
+                i = i + 1
+            end
         end
         
         -- Fallback to pet spellbook if checking general spell and player has pets (Warlock/Hunter/DK)
         if not isPet and HasPetSpells and HasPetSpells() then
-            i = 1
-            while true do
-                local spellName = GetSpellName(i, BOOKTYPE_PET or "pet")
-                if not spellName then break end
-                if spellName == targetName then return true end
-                i = i + 1
+            local numPetSpells = select(1, HasPetSpells()) or 0
+            if numPetSpells > 0 then
+                for i = 1, numPetSpells do
+                    local spellName = GetSpellName(i, BOOKTYPE_PET or "pet")
+                    if spellName == targetName then return true end
+                end
+            else
+                local i = 1
+                while true do
+                    local spellName = GetSpellName(i, BOOKTYPE_PET or "pet")
+                    if not spellName then break end
+                    if spellName == targetName then return true end
+                    i = i + 1
+                end
             end
         end
         

@@ -6,6 +6,7 @@
 ---
 
 ## 🆕 Comandos v10.2.0 (Definitive Edition)
+- `/smacros` (`/sequito macros`) - (Macros) Genera y sincroniza macros inteligentes Necrosis de clase y spec en la pestaña de personaje.
 - `/sequito inspect` (`/sinspect`) - (Academy) Inspecciona talentos, GearScore real y encantamientos.
 - `/shumor` - (Humor) Controla y prueba las frases cómicas de incursión y actividades de banda.
 - `/sequito gallery` - (Gamification) Abre la galería de loot legendario.
@@ -79,7 +80,7 @@ Rol: DPS
 ## 🔧 Generación de Macros
 
 ### `/sequito macros`
-**Alias:** `/seq macros`, `/sequito macro`
+**Alias:** `/smacros`, `/seq macros`, `/sequito macro`
 
 **Descripción:** Genera macros personalizadas estilo **Necrosis** para tu clase y especialización actual.
 
@@ -608,6 +609,7 @@ Total muertes: 8 | Interrupts: 5
 | `/sequito build` | Gestor de árboles de talentos y configuraciones de glifos. |
 | `/sequito reset` (o `/seq resetpos`) | Restablece la posición centrada de la esfera principal. |
 | `/sequito lock` | Bloquea o desbloquea la posición de la esfera en pantalla. |
+| `/smacros` (o `/seq macros`) | Genera y sincroniza las macros Necrosis inteligentes de clase/spec. |
 | `/shumor` | Muestra la ayuda y estado del módulo de Frases Cómicas de Incursión. |
 | `/shumor toggle` | Activa o desactiva las frases cómicas en actividades. |
 | `/shumor channel [SAY/PARTY/RAID/YELL]` | Establece el canal de chat para la emisión de frases. |

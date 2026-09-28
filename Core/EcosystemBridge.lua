@@ -17,8 +17,11 @@ local Bridge = S.EcosystemBridge
 
 -- IDs de misiones BattlePass que RaidSuite puede alimentar
 local BP_QUEST = {
-    DUNGEON_DAILY = 1,   -- Mazmorra Diaria
-    RAID_WEEKLY   = 101, -- Azote de Bandas (3 jefes)
+    DUNGEON_DAILY     = 1,   -- Mazmorra Diaria (+250 XP)
+    RAID_WEEKLY       = 101, -- Azote de Bandas (3 jefes, +650 XP)
+    ECO_RAID_CLEAR    = 201, -- Guardián de Banda (1 estancia de raid, +400 XP)
+    ECO_DUNGEON_3     = 202, -- Mazmorrista del Andino (3 mazmorras semanales, +350 XP)
+    ECO_HARDCORE_RAID = 203, -- Superviviente Hardcore (1 raid en modo HC sin morir, +750 XP)
 }
 local REPORT_COOLDOWN = 30
 
@@ -130,8 +133,9 @@ function Bridge:OnCombatDeath(msg)
         if isBossKill then
             bossKillCount = bossKillCount + 1
             self:ReportQuestProgress(BP_QUEST.RAID_WEEKLY, 1, "Boss kill #" .. bossKillCount)
+            self:ReportQuestProgress(BP_QUEST.ECO_RAID_CLEAR, 1, "Raid encounter clear")
             if self:IsHighRiskMode() then
-                self:ReportQuestProgress(BP_QUEST.RAID_WEEKLY, 1, "HC bonus")
+                self:ReportQuestProgress(BP_QUEST.ECO_HARDCORE_RAID, 1, "HC Raid clear")
             end
         end
     elseif instanceType == "party" and not dungeonDone then
@@ -139,6 +143,7 @@ function Bridge:OnCombatDeath(msg)
             dungeonDone = true
             S.DungeonTimer.lastRunCompleted = false
             self:ReportQuestProgress(BP_QUEST.DUNGEON_DAILY, 1, "Dungeon complete")
+            self:ReportQuestProgress(BP_QUEST.ECO_DUNGEON_3, 1, "Weekly Dungeon +1")
         end
     end
 end
@@ -180,8 +185,9 @@ end
 function Bridge:NotifyBossKill(bossName)
     bossKillCount = bossKillCount + 1
     self:ReportQuestProgress(BP_QUEST.RAID_WEEKLY, 1, "Boss: " .. (bossName or "unknown"))
+    self:ReportQuestProgress(BP_QUEST.ECO_RAID_CLEAR, 1, "Raid encounter: " .. (bossName or "unknown"))
     if self:IsHighRiskMode() then
-        self:ReportQuestProgress(BP_QUEST.RAID_WEEKLY, 1, "HC bonus")
+        self:ReportQuestProgress(BP_QUEST.ECO_HARDCORE_RAID, 1, "HC Raid: " .. (bossName or "unknown"))
     end
 end
 
@@ -190,6 +196,7 @@ function Bridge:NotifyDungeonComplete()
     if dungeonDone then return end
     dungeonDone = true
     self:ReportQuestProgress(BP_QUEST.DUNGEON_DAILY, 1, "Dungeon complete")
+    self:ReportQuestProgress(BP_QUEST.ECO_DUNGEON_3, 1, "Weekly Dungeon +1")
 end
 
 S.EcosystemBridge = Bridge

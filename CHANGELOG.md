@@ -1,7 +1,34 @@
 # WoW Perú RaidSuite Changelog
 
-**Versión Actual:** 10.2.0 (Definitive Edition)  
+**Versión Actual:** 11.0.0 (Ecosystem Edition)
 **Autor:** DarckRovert (Ingame: Elnazzareno) & WoW Perú Team
+
+---
+
+## v11.0.0 "Ecosystem Edition"
+**Release Date:** 2026-09-28
+
+### 🌟 Renaming & Branding
+- Proyecto renombrado de **SEQUITO** a **WoWPeru_RaidSuite** (branding oficial).
+- 17 archivos Lua internos renombrados de `Sequito*.lua` a `RaidSuite_*.lua`.
+- Tabla global `_G.Sequito` retenida intencionalmente para compatibilidad con 40+ módulos y `SavedVariables` existentes.
+- Nuevos slash commands: `/raidsuite`, `/wprs` (además de los originales `/sequito`, `/seq`).
+
+### 🌉 EcosystemBridge (Core/EcosystemBridge.lua)
+- **Puente BattlePass:** Detecta kills de jefes y mazmorras completadas, reporta via `BP_QUEST_PROGRESS` al servidor Eluna de `WoWPeru_BattlePass` (Season 2, IDs 201-203).
+- **Puente GameModes:** Lee `WoWPeru_GameModes_CharDB.selectedMode` para adaptar comportamiento:
+  - Modo Hardcore/Ironman: `DefensiveAlerts.aggressionLevel = 2`, `WipeAnalyzer` auto-record activado.
+  - Badge de modo en mensajes del sistema (`|cFFFF3333[HARDCORE]|r`).
+- **API pública:** `Bridge:NotifyBossKill(name)`, `Bridge:NotifyDungeonComplete()` para módulos internos.
+- **Seguridad de red:** Payload < 240 bytes, cooldown anti-spam de 30s por tipo de misión, WHISPER a jugador propio.
+
+### ⚙️ CI/CD GitHub Actions (.github/workflows/validate.yml)
+- **Job 1:** `luacheck` sobre Lua 5.1 en cada push/PR.
+- **Job 2:** `validate_suite.py` — verificación estructural del addon.
+- **Job 3:** Build automático del ZIP de release al crear un tag `vX.Y.Z`, publicado como GitHub Release.
+
+### 🏷️ Release
+- Primer release oficial etiquetado `v1.0.0` en GitHub.
 
 ---
 

@@ -72,9 +72,9 @@ Sincronización continua a través del canal de hermandad (`GUILD`), además de 
 
 | Comando | Alias | Descripción |
 |---------|-------|-------------|
-| `/sequito` | `/s` | Abre el menú interactivo o el Dashboard central |
+| `/raidsuite` | `/wprs`, `/sequito`, `/seq` | Abre el menú interactivo o el Dashboard central |
 | `/sdash` | `/sequito dashboard` | Abre/cierra el Dashboard de 4 pestañas |
-| `/sequito macros` | `/smacros` | Genera y sincroniza macros inteligentes |
+| `/smacros` | `/sequito macros` | Genera y sincroniza macros inteligentes |
 | `/srot` | `/srotation` | Activa/desactiva el HUD flotante de rotación reactiva |
 | `/sinspect` | `/seqinspect` | Inspecciona al objetivo (Talentos, GS real y encantamientos) |
 | `/sloot` | `/sequito lc` | Abre el panel de gestión de Loot Council |
@@ -99,6 +99,8 @@ Para conocer todos los detalles de cada subsistema, consulta las guías dedicada
 * 💻 [Especificación de API (API.md)](API.md) — Arquitectura de eventos y funciones públicas para desarrolladores.
 * 🛡️ [Seguridad (SECURITY.md)](SECURITY.md) — Políticas de reporte de vulnerabilidades y seguridad de datos.
 * 🤝 [Gobernanza del Proyecto (GOVERNANCE.md)](GOVERNANCE.md) — Estructura de toma de decisiones y roles.
+* 🌐 [Registro de Ecosistema (ECOSYSTEM_REGISTRY.md)](ECOSYSTEM_REGISTRY.md) — Mapeo de prefijos, tablas y convivencia con otros sistemas de WoW Perú.
+* 🤖 [Reglas de Agentes IA (AGENTS.md)](AGENTS.md) — Directivas y restricciones de arquitectura para desarrollo asistido.
 
 ---
 

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-Test & Validation Suite for SEQUITO Addon (World of Warcraft 3.3.5a)
+Test & Validation Suite for WoWPeru_RaidSuite Addon (World of Warcraft 3.3.5a)
 Validates:
-1. Physical existence of all files listed in Sequito.toc
+1. Physical existence of all files listed in WoWPeru_RaidSuite.toc
 2. Syntactic integrity of all Lua 5.1 files (block openers/closers balance)
 3. Absence of incompatible Retail/MoP APIs without polyfills (e.g. GROUP_ROSTER_UPDATE, GetSpecialization)
 4. Localization coverage and fallback parity
@@ -15,11 +15,13 @@ import re
 REPO_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
 def test_toc_integrity():
-    print("[1/4] Testing Sequito.toc file references...")
-    toc_path = os.path.join(REPO_DIR, "Sequito.toc")
-    if not os.path.exists(toc_path):
-        print("ERROR: Sequito.toc not found!")
+    toc_files = [f for f in os.listdir(REPO_DIR) if f.endswith(".toc")]
+    if not toc_files:
+        print("ERROR: No .toc file found!")
         return False
+    toc_name = "WoWPeru_RaidSuite.toc" if "WoWPeru_RaidSuite.toc" in toc_files else toc_files[0]
+    print(f"[1/4] Testing {toc_name} file references...")
+    toc_path = os.path.join(REPO_DIR, toc_name)
     
     with open(toc_path, "r", encoding="utf-8", errors="ignore") as f:
         lines = f.readlines()
@@ -37,12 +39,12 @@ def test_toc_integrity():
             missing_files.append(rel_path)
     
     if missing_files:
-        print(f"FAILED: {len(missing_files)} file(s) referenced in Sequito.toc are missing on disk:")
+        print(f"FAILED: {len(missing_files)} file(s) referenced in {toc_name} are missing on disk:")
         for mf in missing_files:
             print(f"  - {mf}")
         return False
     
-    print(f"PASSED: All {referenced_files} files referenced in Sequito.toc exist on disk.")
+    print(f"PASSED: All {referenced_files} files referenced in {toc_name} exist on disk.")
     return True
 
 def check_file_syntax(path):

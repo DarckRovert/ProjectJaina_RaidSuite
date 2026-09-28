@@ -1,7 +1,7 @@
-# Sequito Changelog
+# WoW Perú RaidSuite Changelog
 
 **Versión Actual:** 10.2.0 (Definitive Edition)  
-**Autor:** DarckRovert (Ingame: Thesaviour)
+**Autor:** DarckRovert (Ingame: Elnazzareno) & WoW Perú Team
 
 ---
 

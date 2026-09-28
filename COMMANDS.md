@@ -1,7 +1,7 @@
-# 💬 Lista Completa de Comandos - Sequito
+# 💬 Lista Completa de Comandos - WoW Perú RaidSuite
 
 **Versión:** 10.2.0 (Definitive Edition)  
-**Autor:** DarckRovert (Ingame: Thesaviour)
+**Autor:** DarckRovert (Ingame: Elnazzareno) & WoW Perú Team
 
 ---
 
@@ -387,7 +387,7 @@ Configura tus monturas favoritas para la macro `SeqMount`.
 
 ### `/sequito macro get <nombre> <jugador>`
 **Descripción:** Solicita un macro específico de otro jugador.
-**Ejemplo:** `/sequito macro get SeqBurst Thesaviour`
+**Ejemplo:** `/sequito macro get SeqBurst Elnazzareno`
 
 ---
 
@@ -618,4 +618,4 @@ Total muertes: 8 | Interrupts: 5
 
 ---
 
-**Creado por DarckRovert (Ingame: Thesaviour)**
+**Creado por DarckRovert (Ingame: Elnazzareno) & WoW Perú Team**

@@ -1,8 +1,8 @@
-# 🛡️ Política de Seguridad - Sequito
+# 🛡️ Política de Seguridad - WoW Perú RaidSuite
 
 **Versión:** 10.2.0 (Definitive Edition)  
 **Fecha:** Septiembre de 2026  
-**Responsable:** DarckRovert (Ingame: Thesaviour)
+**Responsable:** DarckRovert (Ingame: Elnazzareno) & WoW Perú Team
 
 ---
 

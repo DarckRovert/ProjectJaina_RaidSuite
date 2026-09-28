@@ -1,15 +1,15 @@
-# 🔮 Sequito - La Suite Definitiva de Hermandad y Bandas (WoW 3.3.5a)
+# 🇵🇪 WoW Perú - RaidSuite (v10.2.0 Definitive Edition)
 
 **Versión:** 10.2.0 (Definitive Edition)  
-**Autor:** DarckRovert (Ingame: Thesaviour)  
-**Clan:** El Sequito del Terror (UltimoWoW)  
+**Autor:** DarckRovert (Ingame: Elnazzareno) & WoW Perú Team  
+**Servidor Destino:** [WoW Perú](https://wow-peru.lat/) - Reino Andino  
 **Cliente Compatible:** World of Warcraft 3.3.5a (Build 12340)
 
 ---
 
-[![CI Validation](https://github.com/DarckRovert/SEQUITO/actions/workflows/validate.yml/badge.svg)](https://github.com/DarckRovert/SEQUITO/actions/workflows/validate.yml)
-[![Version](https://img.shields.io/badge/version-10.2.0-blue.svg)](https://github.com/DarckRovert/SEQUITO/releases)
-[![Client](https://img.shields.io/badge/WoW-3.3.5a%20(12340)-green.svg)](https://ultimowow.com)
+[![WoW Client](https://img.shields.io/badge/WoW%20Client-3.3.5a%20(Build%2012340)-blue.svg)](https://wow-peru.lat/)
+[![Servidor](https://img.shields.io/badge/Servidor-WoW%20Perú-gold.svg)](https://wow-peru.lat/)
+[![Version](https://img.shields.io/badge/version-10.2.0-blue.svg)](https://github.com/DarckRovert/WoWPeru_RaidSuite/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ---
@@ -113,5 +113,5 @@ Para conocer todos los detalles de cada subsistema, consulta las guías dedicada
 
 ---
 
-*Desarrollado por DarckRovert (Ingame: Thesaviour).*  
+*Desarrollado por DarckRovert (Ingame: Elnazzareno) & WoW Perú Team.*  
 *World of Warcraft® es una marca registrada de Blizzard Entertainment, Inc.*

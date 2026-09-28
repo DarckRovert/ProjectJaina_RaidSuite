@@ -1,8 +1,8 @@
-# ❓ Preguntas Frecuentes (FAQ) - Ecosistema Sequito
+# ❓ Preguntas Frecuentes (FAQ) - WoW Perú RaidSuite
 
 **Versión:** 10.2.0 (Definitive Edition)  
-**Autor:** DarckRovert (Ingame: Thesaviour)  
-**Hermandad:** El Sequito del Terror (UltimoWoW)  
+**Autor:** DarckRovert (Ingame: Elnazzareno) & WoW Perú Team  
+**Servidor Destino:** [WoW Perú](https://wow-peru.lat/) - Reino Andino  
 **Cliente:** World of Warcraft 3.3.5a (Build 12340)
 
 ---
@@ -41,18 +41,18 @@ Sequito no es un simple medidor de DPS ni un botón aislado. Es una **suite modu
 - Genera macros legales nativas de WoW que **tú debes pulsar manualmente con tu teclado o ratón**.
 - Muestra sugerencias visuales de prioridades y alertas de buffs/procs que tú decides cuándo activar.
 
-### ¿Quién creó el addon y a qué hermandad pertenece?
-El proyecto fue creado y desarrollado por **DarckRovert (en el juego: Thesaviour)**, líder y miembro de la hermandad **El Sequito del Terror** en el servidor **UltimoWoW**.
+### ¿Quién creó el addon y a qué servidor pertenece?
+El proyecto fue creado y desarrollado por **DarckRovert (en el juego: Elnazzareno)** y el equipo técnico de **WoW Perú** para el servidor oficial [WoW Perú](https://wow-peru.lat/) (Reino Andino).
 
 ---
 
 ## 2. Instalación y Configuración Inicial
 
 ### ¿Dónde debo colocar la carpeta del addon?
-La carpeta debe llamarse exactamente SEQUITO y residir en la ruta de addons de tu cliente:
-`
-Interface\AddOns\SEQUITO\
-`
+La carpeta debe llamarse exactamente `WoWPeru_RaidSuite` y residir en la ruta de addons de tu cliente:
+```
+Interface\AddOns\WoWPeru_RaidSuite\
+```
 Asegúrate de que el archivo SEQUITO.toc esté directamente dentro de Interface\AddOns\SEQUITO\ y no dentro de subcarpetas anidadas como SEQUITO\SEQUITO\.
 
 ### ¿El addon funciona de inmediato al entrar o requiere configuración compleja?
@@ -253,10 +253,10 @@ Si tienes tu panel de macros lleno con 18 macros previas:
 
 ### ¿Dónde puedo reportar un error o proponer una idea?
 Si encuentras un comportamiento anómalo o deseas sugerir una funcionalidad:
-- Contacta a **DarckRovert** (Ingame: **Thesaviour**) en UltimoWoW.
+- Contacta a **DarckRovert** (Ingame: **Elnazzareno**) en WoW Perú.
 - Abre un issue o pull request en el repositorio oficial de GitHub:  
-  [https://github.com/DarckRovert/SEQUITO](https://github.com/DarckRovert/SEQUITO)
+  [https://github.com/DarckRovert/WoWPeru_RaidSuite](https://github.com/DarckRovert/WoWPeru_RaidSuite)
 
 ---
 
-*¡Por el Sequito del Terror!*
+*¡Por WoW Perú - Reino Andino!*

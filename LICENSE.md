@@ -1,14 +1,14 @@
-# 📜 Licencia - Sequito
+# 📜 Licencia - WoW Perú RaidSuite
 
 **Versión:** 10.2.0 (Definitive Edition)  
-**Autor:** DarckRovert (Ingame: Thesaviour)  
+**Autor:** DarckRovert (Ingame: Elnazzareno) & WoW Perú Team  
 **Año:** 2026
 
 ---
 
 ## MIT License
 
-Copyright (c) 2026 DarckRovert (Ingame: Thesaviour)
+Copyright (c) 2026 DarckRovert (Ingame: Elnazzareno) & WoW Perú Team
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -254,6 +254,6 @@ Tu apoyo ayuda a mantener este proyecto libre y de código abierto para toda la 
 
 ---
 
-**Sequito - Addon Universal de Combate**  
-**Copyright (c) 2026 DarckRovert (Ingame: Thesaviour)**  
+**WoW Perú RaidSuite - Suite Integral de Combate y Bandas**  
+**Copyright (c) 2026 DarckRovert (Ingame: Elnazzareno) & WoW Perú Team**  
 **Licenciado bajo MIT License**

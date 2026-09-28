@@ -1,7 +1,7 @@
-# 🤝 Código de Conducta de la Comunidad - Sequito
+# 🤝 Código de Conducta de la Comunidad - WoW Perú RaidSuite
 
 **Versión:** 10.2.0 (Definitive Edition)  
-**Líder del Proyecto:** DarckRovert (Ingame: Thesaviour)
+**Líder del Proyecto:** DarckRovert (Ingame: Elnazzareno) & WoW Perú Team
 
 ---
 
@@ -50,7 +50,7 @@ Este Código de Conducta se aplica a todos los espacios del proyecto (repositori
 Los casos de comportamiento abusivo, acosador o inaceptable pueden ser reportados al equipo de liderazgo del proyecto contactando a:
 
 - **Correo Electrónico:** [darckrovert@gmail.com](mailto:darckrovert@gmail.com)
-- **Contacto Ingame:** `Thesaviour` (Servidor UltimoWoW)
+- **Contacto Ingame:** `Elnazzareno` (Servidor WoW Perú)
 
 Todas las quejas serán revisadas e investigadas de manera oportuna y confidencial, garantizando la protección de quien realiza el reporte.
 

@@ -1,7 +1,7 @@
-# 📦 Guía de Instalación - Sequito
+# 📦 Guía de Instalación - WoW Perú RaidSuite
 
 **Versión:** 10.2.0 (Definitive Edition)  
-**Autor:** DarckRovert (Ingame: Thesaviour)
+**Autor:** DarckRovert (Ingame: Elnazzareno) & WoW Perú Team
 
 ---
 
@@ -17,30 +17,30 @@
 
 ### Paso 1: Descargar el Addon
 
-1. Descarga la versión oficial de Sequito v10.2.0 (Definitive Edition)
+1. Descarga la versión oficial de WoW Perú RaidSuite v10.2.0 (Definitive Edition)
 2. Asegúrate de tener el archivo comprimido del addon
 
 ### Paso 2: Extraer Archivos
 
 1. Extrae el archivo comprimido
-2. Deberías tener una carpeta llamada `SEQUITO`
+2. Deberías tener una carpeta llamada `WoWPeru_RaidSuite`
 
 ### Paso 3: Copiar a la Carpeta de AddOns
 
 **Ruta típica en Windows:**
 ```
-World of Warcraft\Interface\AddOns\SEQUITO\
+World of Warcraft\Interface\AddOns\WoWPeru_RaidSuite\
 ```
 
-**Para UltimoWoW:**
+**Para WoW Perú:**
 ```
-[Directorio de UltimoWoW]\Interface\AddOns\SEQUITO\
+[Directorio de WoW Perú]\Interface\AddOns\WoWPeru_RaidSuite\
 ```
 
 ### Paso 4: Verificar Estructura
 
-Dentro de `SEQUITO/`, deberías ver:
-- `SEQUITO.toc`
+Dentro de `WoWPeru_RaidSuite/`, deberías ver:
+- `WoWPeru_RaidSuite.toc`
 - `SEQUITO.lua`
 - `Core/` (Arquitectura base, eventos y componentes del cónclave)
 - `Modules/` (Contiene `Core`, `Raid`, `PvP`, `Utility`)
@@ -50,9 +50,9 @@ Dentro de `SEQUITO/`, deberías ver:
 Asegúrate de que la estructura sea:
 ```
 AddOns/
-└── SEQUITO/
-    ├── SEQUITO.toc
-    ├── SEQUITO.lua
+└── WoWPeru_RaidSuite/
+    ├── WoWPeru_RaidSuite.toc
+    ├── Sequito.lua
     ├── Embeds.xml
     ├── Core/
     ├── Data/
@@ -64,7 +64,7 @@ AddOns/
 
 1. Inicia World of Warcraft
 2. En la pantalla de selección de personaje, haz clic en **"AddOns"** (esquina inferior izquierda)
-3. Busca **"Sequito"** en la lista
+3. Busca **"WoW Perú - RaidSuite"** en la lista
 4. Asegúrate de que esté **marcado** (checkbox activado)
 5. Haz clic en **"Okay"**
 6. Entra al juego con tu personaje
@@ -143,8 +143,8 @@ Muestra información en tiempo real de tu raid.
 **Problema:** Sequito no aparece en el menú de AddOns.
 
 **Solución:**
-1. Verifica que la carpeta se llame exactamente `Sequito`
-2. Verifica que `Sequito.toc` esté en la raíz de la carpeta
+1. Verifica que la carpeta se llame exactamente `WoWPeru_RaidSuite`
+2. Verifica que `WoWPeru_RaidSuite.toc` esté en la raíz de la carpeta
 3. Asegúrate de estar en la carpeta correcta de AddOns
 4. Reinicia completamente WoW
 
@@ -257,4 +257,4 @@ Si sigues teniendo problemas:
 
 ---
 
-**Creado por DarckRovert (Ingame: Thesaviour)**
+**Creado por DarckRovert (Ingame: Elnazzareno) & WoW Perú Team**

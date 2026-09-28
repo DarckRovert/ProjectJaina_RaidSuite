@@ -1,8 +1,8 @@
 --[[
     SEQUITO - SequitoHumor (Frases Cómicas y Diálogos de Incursión)
     Versión: 10.2.0 (Definitive Edition)
-    Autor: DarckRovert (Ingame: Thesaviour)
-    Hermandad: El Sequito del Terror (UltimoWoW)
+    Autor: DarckRovert (Ingame: Elnazzareno) & WoW Perú Team
+    Servidor: WoW Perú - Reino Andino (wow-peru.lat)
     
     Proporciona frases cómicas, ocurrentes y temáticas de hermandad
     cuando el jugador realiza actividades clave en mazmorras y bandas
@@ -401,7 +401,7 @@ function H:HandleSlash(msg)
         local cat = string.upper(arg or "")
         if cat == "" then cat = "SUMMON" end
         if H.Quotes[cat] then
-            H:TriggerQuote(cat, UnitName("target") or "Thesaviour")
+            H:TriggerQuote(cat, UnitName("target") or "Elnazzareno")
             if S.Print then
                 S:Print("|cFF00FF00[SequitoHumor]|r Probando frase de categoría: " .. cat)
             end

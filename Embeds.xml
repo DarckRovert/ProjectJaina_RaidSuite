@@ -2,8 +2,8 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
     <!--
-        SEQUITO - Definitive Edition
-        Automated Embeds XML Synced with Sequito.toc
+        WoWPeru_RaidSuite - Definitive Edition
+        Automated Embeds XML Synced with WoWPeru_RaidSuite.toc
     -->
     <!-- 1. Localizacion -->
     <Script file="Locales/enUS.lua"/>

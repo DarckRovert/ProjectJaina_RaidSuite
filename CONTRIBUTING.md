@@ -1,7 +1,7 @@
-# 🤝 Guía de Contribución - Sequito
+# 🤝 Guía de Contribución - WoW Perú RaidSuite
 
 **Versión:** 10.2.0 (Definitive Edition)  
-**Autor:** DarckRovert (Ingame: Thesaviour)
+**Autor:** DarckRovert (Ingame: Elnazzareno) & WoW Perú Team
 
 ---
 
@@ -169,13 +169,13 @@ Incluye:
 #### 2. Clonar el Proyecto
 ```bash
 cd "Interface/AddOns"
-git clone [URL_DEL_REPO] Sequito
+git clone [URL_DEL_REPO] WoWPeru_RaidSuite
 ```
 
 #### 3. Estructura del Proyecto
 ```
-Sequito/
-├── Sequito.toc          # Tabla de contenidos
+WoWPeru_RaidSuite/
+├── WoWPeru_RaidSuite.toc  # Tabla de contenidos
 ├── Sequito.lua          # Core principal
 ├── Embeds.xml           # Orden de carga
 ├── Core/                # Módulos core
@@ -548,4 +548,4 @@ Ver [LICENSE.md](LICENSE.md) para detalles.
 
 ---
 
-**Creado por DarckRovert (Ingame: Thesaviour)**
+**Creado por DarckRovert (Ingame: Elnazzareno) & WoW Perú Team**

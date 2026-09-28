@@ -1,7 +1,7 @@
-# Sequito RaidAssist - Guía Completa
+# WoW Perú RaidSuite - RaidAssist - Guía Completa
 
 **Versión:** 10.2.0 (Definitive Edition)  
-**Autor:** DarckRovert (Ingame: Thesaviour)  
+**Autor:** DarckRovert (Ingame: Elnazzareno) & WoW Perú Team  
 **Cliente WoW:** 3.3.5a (Build 12340)
 
 ---
@@ -271,5 +271,5 @@ El sistema funciona automáticamente cuando:
 ---
 
 **Versión:** 10.2.0 (Definitive Edition)  
-**Autor:** DarckRovert & Thesaviour  
-**Guild:** UltimoWoW
+**Autor:** DarckRovert (Ingame: Elnazzareno) & WoW Perú Team  
+**Servidor:** WoW Perú (wow-peru.lat)

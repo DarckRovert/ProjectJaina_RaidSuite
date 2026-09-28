@@ -1,7 +1,7 @@
-# 📜 Guía de Macros - Sequito (Necrosis Edition)
+# 📜 Guía de Macros - WoW Perú RaidSuite
 
 **Versión:** 10.2.0 (Definitive Edition)  
-**Autor:** DarckRovert (Ingame: Thesaviour)  
+**Autor:** DarckRovert (Ingame: Elnazzareno) & WoW Perú Team  
 **Cliente WoW:** 3.3.5a (Build 12340)
 
 ---

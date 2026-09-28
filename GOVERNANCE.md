@@ -1,8 +1,9 @@
-# 🏛️ Modelo de Gobernanza del Proyecto - Sequito
+# 🏛️ Modelo de Gobernanza del Proyecto - WoW Perú RaidSuite
 
 **Versión del Documento:** 1.0.0  
-**Fecha de Entrada en Vigor:** 22 de Septiembre de 2026  
-**Líder del Proyecto / Autor:** DarckRovert (Ingame: Thesaviour)  
+**Fecha de Entrada en Vigor:** 27 de Septiembre de 2026  
+**Líder del Proyecto / Autor:** DarckRovert (Ingame: Elnazzareno) & WoW Perú Team  
+**Servidor Destino:** [WoW Perú](https://wow-peru.lat/) - Reino Andino  
 **Entorno de Ejecución:** World of Warcraft 3.3.5a (Build 12340)
 
 ---
@@ -25,7 +26,7 @@ El proyecto Sequito se rige bajo un modelo de **Liderazgo Técnico Centralizado 
 ```
        ┌─────────────────────────────────────────┐
        │   Líder del Proyecto (Project Lead)     │
-       │     DarckRovert (Thesaviour)             │
+       │     DarckRovert (Elnazzareno)            │
        └────────────────────┬────────────────────┘
                             │
        ┌────────────────────▼────────────────────┐
@@ -40,7 +41,7 @@ El proyecto Sequito se rige bajo un modelo de **Liderazgo Técnico Centralizado 
 ```
 
 ### 2.1. Project Lead (Líder del Proyecto)
-- **Titular:** DarckRovert (Ingame: `Thesaviour`).
+- **Titular:** DarckRovert (Ingame: `Elnazzareno`).
 - **Atribuciones:**
   - Control de la visión a largo plazo y roadmap del addon.
   - Aprobación final y fusión (merge) de Pull Requests en la rama `main`.
@@ -49,7 +50,7 @@ El proyecto Sequito se rige bajo un modelo de **Liderazgo Técnico Centralizado 
 
 ### 2.2. Core Maintainers (Mantenedores del Core)
 - **Responsabilidades:**
-  - Mantenimiento del ciclo de vida del addon (`Sequito.lua`, `Sequito.toc`).
+  - Mantenimiento del ciclo de vida del addon (`Sequito.lua`, `WoWPeru_RaidSuite.toc`).
   - Supervisión de los motores centrales: `CLEUDispatcher`, `AlertHub`, `ProfileManager`, `Theme` y `GUI`.
   - Verificación de ausencia de APIs incompatibles (e.g., funciones de MoP/Retail en cliente 3.3.5a).
   - Revisión y optimización de consumo de memoria y CPU en raids.

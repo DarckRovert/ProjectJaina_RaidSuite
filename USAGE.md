@@ -1,8 +1,8 @@
-# 📚 Manual de Usuario del Ecosistema Sequito
+# 📚 Manual de Usuario - WoW Perú RaidSuite
 
 **Versión:** 10.2.0 (Definitive Edition)  
-**Autor:** DarckRovert (Ingame: Thesaviour)  
-**Clan:** El Sequito del Terror (UltimoWoW)  
+**Autor:** DarckRovert (Ingame: Elnazzareno) & WoW Perú Team  
+**Servidor Destino:** [WoW Perú](https://wow-peru.lat/) - Reino Andino  
 **Cliente Compatible:** World of Warcraft 3.3.5a (Build 12340)
 
 ---
@@ -224,5 +224,4 @@ El addon te avisará en el chat para que borres alguna macro vieja que ya no use
 
 ---
 
-*Desarrollado con dedicación para la comunidad de World of Warcraft 3.3.5a.*  
-*¡Por el Sequito del Terror!*
+*Desarrollado con dedicación para la comunidad de WoW Perú (Reino Andino).*

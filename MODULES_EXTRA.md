@@ -1,7 +1,7 @@
-# 📦 Módulos Extra - Sequito
+# 📦 Módulos Extra - WoW Perú RaidSuite
 
 **Versión:** 10.2.0 (Definitive Edition)  
-**Autor:** DarckRovert (Ingame: Thesaviour)  
+**Autor:** DarckRovert (Ingame: Elnazzareno) & WoW Perú Team  
 **Documentación de módulos adicionales y opcionales**
 
 ---

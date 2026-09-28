@@ -1,6 +1,6 @@
 --[[
-    SEQUITO - El Sequito del Terror
-    Universal Sphere UI for WotLK 3.3.5a
+    WoWPeru_RaidSuite (anteriormente Sequito)
+    Universal Sphere & Raid Management UI for WotLK 3.3.5a
     
     Addon universal para TODAS las clases.
     - Reconocimiento de clase/raza
@@ -8,7 +8,7 @@
     - Sincronizacion de raid (hasta 40 jugadores)
     - Datos estrategicos en tiempo real
     
-    Copyright (c) 2026 DarckRovert (Ingame: Thesaviour)
+    Copyright (c) 2026 DarckRovert (Ingame: Elnazzareno) & WoW Perú Team
 ]]--
 
 -- Namespace
@@ -264,6 +264,8 @@ end
 -- ===========================================================================
 SLASH_SEQUITO1 = "/sequito"
 SLASH_SEQUITO2 = "/seq"
+SLASH_SEQUITO3 = "/raidsuite"
+SLASH_SEQUITO4 = "/wprs"
 
 SlashCmdList["SEQUITO"] = function(msg)
     local cmd, arg = strsplit(" ", msg, 2)

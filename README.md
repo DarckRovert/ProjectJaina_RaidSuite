@@ -93,7 +93,7 @@ Para conocer todos los detalles de cada subsistema, consulta las guías dedicada
 * 📚 [Guía de Uso del Ecosistema (USAGE.md)](USAGE.md) — Manual integral paso a paso para el usuario final.
 * 📜 [Guía de Macros Inteligentes (MACROS.md)](MACROS.md) — Desglose de macros para las 10 clases y 30 especializaciones.
 * ⌨️ [Referencia Completa de Comandos (COMMANDS.md)](COMMANDS.md) — Lista de todos los comandos y alias disponibles.
-* 📦 [Guía de Instalación (INSTALL.md)](INSTALL.md) — Instrucciones paso a paso para instalar en UltimoWoW 3.3.5a.
+* 📦 [Guía de Instalación (INSTALL.md)](INSTALL.md) — Instrucciones paso a paso para instalar en WoW Perú 3.3.5a.
 * ❓ [Preguntas Frecuentes (FAQ.md)](FAQ.md) — Respuestas a dudas habituales sobre rendimiento, macros y raid.
 * ⚙️ [Documentación de Módulos (MODULES.md)](MODULES.md) — Detalle técnico de los 77 componentes del addon.
 * 💻 [Especificación de API (API.md)](API.md) — Arquitectura de eventos y funciones públicas para desarrolladores.

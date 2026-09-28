@@ -53,7 +53,7 @@ La carpeta debe llamarse exactamente `WoWPeru_RaidSuite` y residir en la ruta de
 ```
 Interface\AddOns\WoWPeru_RaidSuite\
 ```
-Asegúrate de que el archivo SEQUITO.toc esté directamente dentro de Interface\AddOns\SEQUITO\ y no dentro de subcarpetas anidadas como SEQUITO\SEQUITO\.
+Asegúrate de que el archivo WoWPeru_RaidSuite.toc esté directamente dentro de Interface\AddOns\WoWPeru_RaidSuite\ y no dentro de subcarpetas anidadas como WoWPeru_RaidSuite\WoWPeru_RaidSuite\.
 
 ### ¿El addon funciona de inmediato al entrar o requiere configuración compleja?
 Funciona **de inmediato**. Al iniciar sesión, Sequito:
@@ -231,7 +231,7 @@ Cuando la banda es derrotada, Sequito registra una autopsia precisa del enfrenta
 - Complementa la labor de DBM aportando analítica de hermandad y macros que DBM no provee.
 
 ### ¿En qué servidores y clientes de WoW funciona Sequito?
-Está optimizado principalmente para **UltimoWoW**, y es 100% compatible con cualquier servidor privado basado en el cliente **World of Warcraft 3.3.5a (Build 12340)**, incluyendo Warmane, Dalaran-WoW, ChromieCraft, etc.
+Está optimizado principalmente para **WoW Perú (Reino Andino)**, y es 100% compatible con cualquier servidor privado basado en el cliente **World of Warcraft 3.3.5a (Build 12340)**, incluyendo Warmane, Dalaran-WoW, ChromieCraft, etc.
 
 ---
 

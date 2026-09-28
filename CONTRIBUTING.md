@@ -98,7 +98,7 @@ Incluye la siguiente información:
 ```
 - Versión de Sequito: 2.2.0
 - Versión de WoW: 3.3.5a
-- Servidor: UltimoWoW / Warmane / etc.
+- Servidor: WoW Perú / Warmane / etc.
 - Otros addons instalados: DBM, Recount, etc.
 ```
 

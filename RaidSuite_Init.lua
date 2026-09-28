@@ -215,7 +215,9 @@ function S:OnEnable()
         "Spy", "Runes", "SpecWatcher",
         -- Smart Coach UI & Automation
         "RaidPanel", "RaidAssistUI", "SequitoPlates", "CombatTracker",
-        "AutoSync", "ContextEngine", "SmartDefaults"
+        "AutoSync", "ContextEngine", "SmartDefaults",
+        -- Ecosistema WoW Peru (debe iniciar tras ContextEngine)
+        "EcosystemBridge"
     }
 
     local _, playerClass = UnitClass("player")
@@ -260,6 +262,10 @@ function S:OnEnterWorld()
     -- Re-check UI
     if S.GUI and not S.Sphere then
         S.GUI:Initialize()
+    end
+    -- Aplicar adaptaciones del ecosistema segun modo de juego del personaje
+    if S.EcosystemBridge and S.EcosystemBridge.ApplyGameModeAdaptations then
+        S.EcosystemBridge:ApplyGameModeAdaptations()
     end
 end
 

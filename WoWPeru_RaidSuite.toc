@@ -1,4 +1,4 @@
-﻿## Interface: 30300
+## Interface: 30300
 ## Title: |cFFD4AF37WoW Perú|r - RaidSuite
 ## Notes: Suite integral y avanzada de combate, optimización de bandas y utilidades tácticas para el Reino Andino.
 ## Author: DarckRovert (Ingame: Elnazzareno) & WoW Perú Team
@@ -24,6 +24,7 @@ Core\AutoSync.lua
 Core\ContextEngine.lua
 Core\SmartDefaults.lua
 Core\ProfileManager.lua
+Core\EcosystemBridge.lua
 Core\GUI.lua
 Core\Bindings.xml
 

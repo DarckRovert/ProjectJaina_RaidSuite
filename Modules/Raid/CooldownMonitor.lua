@@ -14,6 +14,10 @@ local TrackedCooldowns = {
     -- Resurrecciones de combate
     DRUID = {
         {spellId = 48477, name = "Rebirth", duration = 600, icon = "Interface\\Icons\\Spell_Nature_Reincarnation", type = "bres"},
+        {spellId = 29166, name = "Innervate", duration = 180, icon = "Interface\\Icons\\Spell_Nature_Lightning", type = "mana"},
+        {spellId = 48447, name = "Tranquility", duration = 480, icon = "Interface\\Icons\\Spell_Nature_Tranquility", type = "raid_cd"},
+        {spellId = 22812, name = "Barkskin", duration = 60, icon = "Interface\\Icons\\Spell_Nature_StoneClawTotem", type = "tank_cd"},
+        {spellId = 61336, name = "Survival Instincts", duration = 180, icon = "Interface\\Icons\\Ability_Druid_SurvivalInstincts", type = "tank_cd"},
     },
     WARLOCK = {
         {spellId = 47883, name = "Soulstone Resurrection", duration = 900, icon = "Interface\\Icons\\Spell_Shadow_SoulGem", type = "bres"},
@@ -47,10 +51,6 @@ local TrackedCooldowns = {
         {spellId = 64382, name = "Shattering Throw", duration = 300, icon = "Interface\\Icons\\Ability_Warrior_ShatteringThrow", type = "utility"},
         {spellId = 871, name = "Shield Wall", duration = 300, icon = "Interface\\Icons\\Ability_Warrior_ShieldWall", type = "tank_cd"},
         {spellId = 12975, name = "Last Stand", duration = 180, icon = "Interface\\Icons\\Spell_Holy_AshesToAshes", type = "tank_cd"},
-    },
-    DRUID_TANK = {
-        {spellId = 22812, name = "Barkskin", duration = 60, icon = "Interface\\Icons\\Spell_Nature_StoneClawTotem", type = "tank_cd"},
-        {spellId = 61336, name = "Survival Instincts", duration = 180, icon = "Interface\\Icons\\Ability_Druid_SurvivalInstincts", type = "tank_cd"},
     },
     MAGE = {
         {spellId = 45438, name = "Ice Block", duration = 300, icon = "Interface\\Icons\\Spell_Frost_Frost", type = "immunity"},
@@ -160,7 +160,12 @@ function CM:CreateFrame()
     f:SetMovable(true)
     f:RegisterForDrag("LeftButton")
     f:SetScript("OnDragStart", f.StartMoving)
-    f:SetScript("OnDragStop", f.StopMovingOrSizing)
+    f:SetScript("OnDragStop", function(selfFrame)
+        selfFrame:StopMovingOrSizing()
+        if S.SmartDefaults then
+            S.SmartDefaults:SavePosition("CooldownMonitor", selfFrame)
+        end
+    end)
     f:SetClampedToScreen(true)
     f:Hide()
     
@@ -215,6 +220,10 @@ function CM:CreateFrame()
     f.content = content
     
     self.Frame = f
+    self.frame = f
+    if S.SmartDefaults then
+        S.SmartDefaults:RestorePosition("CooldownMonitor")
+    end
     self:UpdateFilterButtons()
 end
 
@@ -343,18 +352,21 @@ function CM:RegisterEvents()
     end)
 end
 
-function CM:OnSpellCast(unit, _, _, _, spellId)
+function CM:OnSpellCast(unit, spellName, spellRank, lineID)
+    if not unit or not spellName then return end
     if unit ~= "player" and not UnitInRaid(unit) and not UnitInParty(unit) then return end
     
     local playerName = UnitName(unit)
     local class = select(2, UnitClass(unit))
+    if not class then return end
     
     -- Buscar si es un CD trackeado
     local cooldowns = TrackedCooldowns[class]
     if not cooldowns then return end
     
     for _, cd in ipairs(cooldowns) do
-        if cd.spellId == spellId then
+        local locName = GetSpellInfo(cd.spellId)
+        if (locName and locName == spellName) or (cd.name == spellName) then
             self:StartCooldown(playerName, class, cd)
             break
         end
@@ -526,11 +538,42 @@ function CM:AddPlayerCooldowns(playerName)
     
     local cooldowns = TrackedCooldowns[class]
     if not cooldowns then return end
+
+    -- Obtener facción de la unidad para filtrar Heroism/Bloodlust
+    local unitFaction = nil
+    if numRaid > 0 then
+        for i = 1, numRaid do
+            local name = GetRaidRosterInfo(i)
+            if name == playerName then
+                unitFaction = UnitFactionGroup("raid" .. i)
+                break
+            end
+        end
+    elseif numParty > 0 then
+        if UnitName("player") == playerName then
+            unitFaction = UnitFactionGroup("player")
+        else
+            for i = 1, numParty do
+                if UnitName("party" .. i) == playerName then
+                    unitFaction = UnitFactionGroup("party" .. i)
+                    break
+                end
+            end
+        end
+    else
+        unitFaction = UnitFactionGroup("player")
+    end
+    unitFaction = unitFaction or UnitFactionGroup("player")
     
     for _, cd in ipairs(cooldowns) do
-        -- Verificar si debemos trackear este tipo de cooldown
+        -- Filtrar por facción si aplica (evitar duplicar Heroism y Bloodlust)
         local shouldTrack = true
-        if cd.type == "bres" and not self:GetOption("trackBRes") then shouldTrack = false end
+        if cd.faction and unitFaction and cd.faction ~= unitFaction then
+            shouldTrack = false
+        end
+
+        -- Verificar si debemos trackear este tipo de cooldown
+        if shouldTrack and cd.type == "bres" and not self:GetOption("trackBRes") then shouldTrack = false end
         if shouldTrack and cd.type == "lust" and not self:GetOption("trackLust") then shouldTrack = false end
         if shouldTrack and cd.type == "raid_cd" and not self:GetOption("trackRaidCD") then shouldTrack = false end
         if shouldTrack and cd.type == "external" and not self:GetOption("trackExternal") then shouldTrack = false end
@@ -687,6 +730,7 @@ function CM:Toggle()
     self.IsVisible = not self.IsVisible
     if self.IsVisible then
         self:ScanRaid()
+        self:UpdateTimers()
         self.Frame:Show()
     else
         self.Frame:Hide()
@@ -699,6 +743,7 @@ function CM:Show()
     end
     self.IsVisible = true
     self:ScanRaid()
+    self:UpdateTimers()
     self.Frame:Show()
 end
 

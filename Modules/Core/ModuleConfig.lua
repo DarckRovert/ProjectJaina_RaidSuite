@@ -711,12 +711,15 @@ function MC:RegisterAllModules()
     self:RegisterModule("HealerTracker", {
         name = "Healer Tracker",
         category = "pvp",
-        description = "Monitorea healers enemigos y su mana.",
+        description = "Monitorea healers enemigos y su mana con cero impacto de rendimiento.",
         options = {
             {type = "checkbox", key = "enabled", label = "Habilitado", default = true, tooltip = "Activa el rastreo de healers"},
-            {type = "slider", key = "manaThreshold", label = "Umbral de mana bajo (%)", min = 10, max = 50, step = 5, default = 30, tooltip = "Alerta cuando el healer tiene menos de este % de mana"},
-            {type = "checkbox", key = "alerts", label = "Alertas de mana bajo", default = true, tooltip = "Alerta cuando un healer tiene mana bajo"},
-            {type = "checkbox", key = "showFrame", label = "Mostrar panel", default = true, tooltip = "Muestra el panel de healers rastreados"},
+            {type = "checkbox", key = "autoDetect", label = "Detección Automática", default = true, tooltip = "Detecta healers automáticamente por sus hechizos"},
+            {type = "checkbox", key = "alertLowMana", label = "Alertar Mana Bajo", default = true, tooltip = "Alerta cuando un healer tiene mana bajo"},
+            {type = "slider", key = "lowManaThreshold", label = "Umbral de mana bajo (%)", min = 10, max = 50, step = 5, default = 30, tooltip = "Alerta cuando el healer tiene menos de este % de mana"},
+            {type = "checkbox", key = "announceToGroup", label = "Anunciar al Grupo", default = false, tooltip = "Anuncia healers con mana bajo al grupo"},
+            {type = "checkbox", key = "playSound", label = "Reproducir Sonido", default = true, tooltip = "Reproduce sonido cuando healer tiene mana bajo"},
+            {type = "slider", key = "updateInterval", label = "Intervalo Actualización (seg)", min = 0.1, max = 1.0, step = 0.1, default = 0.2, tooltip = "Frecuencia de sondeo de mana"},
         }
     })
     
@@ -868,21 +871,24 @@ function MC:RegisterAllModules()
     self:RegisterModule("EventCalendar", {
         name = "Event Calendar",
         category = "utility",
-        description = "Calendario de eventos de guild.",
+        description = "Calendario de eventos y raids de hermandad.",
         options = {
-            {type = "checkbox", key = "enabled", label = "Habilitado", default = true, tooltip = "Activa el calendario"},
-            {type = "checkbox", key = "reminders", label = "Recordatorios", default = true, tooltip = "Muestra recordatorios de eventos"},
-            {type = "slider", key = "reminderTime", label = "Minutos antes", min = 5, max = 60, step = 5, default = 15, tooltip = "Minutos antes del evento para recordar"},
+            {type = "checkbox", key = "enabled", label = "Habilitado", default = true, tooltip = "Activa el calendario de eventos"},
+            {type = "checkbox", key = "reminders", label = "Recordatorios", default = true, tooltip = "Muestra recordatorios de eventos próximos en el chat"},
+            {type = "slider", key = "reminderTime", label = "Minutos antes", min = 5, max = 60, step = 5, default = 15, tooltip = "Minutos antes del evento para emitir el recordatorio"},
+            {type = "checkbox", key = "soundAlert", label = "Alerta Sonora", default = true, tooltip = "Reproduce un sonido de aviso cuando suena un recordatorio"},
         }
     })
     
     self:RegisterModule("VotingSystem", {
         name = "Voting System",
         category = "utility",
-        description = "Sistema de votaciones para raid.",
+        description = "Sistema democrático de votaciones para raid o grupo.",
         options = {
             {type = "checkbox", key = "enabled", label = "Habilitado", default = true, tooltip = "Activa el sistema de votaciones"},
-            {type = "slider", key = "timeout", label = "Tiempo límite (seg)", min = 30, max = 180, step = 15, default = 60, tooltip = "Segundos para votar antes de cerrar"},
+            {type = "slider", key = "timeout", label = "Tiempo límite (seg)", min = 15, max = 300, step = 15, default = 60, tooltip = "Segundos para votar antes de cerrar la encuesta"},
+            {type = "checkbox", key = "announceResults", label = "Anunciar resultados", default = true, tooltip = "Anuncia los resultados finales en el chat de banda o grupo"},
+            {type = "checkbox", key = "playSound", label = "Alerta Sonora", default = true, tooltip = "Emite un aviso sonoro al iniciar una votación"},
         }
     })
     
@@ -1019,11 +1025,69 @@ function MC:RegisterAllModules()
         options = { {type = "checkbox", key = "enabled", label = "Habilitado", default = true} }
     })
 
+    self:RegisterModule("WipeAnalyzer", {
+        name = "Analizador de Wipes",
+        icon = "Interface\\Icons\\Spell_Shadow_RitualOfSacrifice",
+        description = "Analiza wipes de raid y muestra estadísticas de muertes y consumibles",
+        category = "raid",
+        options = {
+            {key = "enabled", type = "checkbox", label = "Habilitar Wipe Analyzer", default = true},
+            {key = "autoShow", type = "checkbox", label = "Mostrar automáticamente tras wipe", default = true},
+            {key = "announceResults", type = "checkbox", label = "Anunciar análisis en banda/grupo", default = true},
+            {key = "trackConsumables", type = "checkbox", label = "Verificar pociones y piedras de salud", default = true},
+            {key = "trackInterrupts", type = "checkbox", label = "Rastrear interrupts", default = true},
+            {key = "minFightDuration", type = "slider", label = "Duración mínima (segundos)", min = 5, max = 60, step = 5, default = 10},
+        }
+    })
+
     self:RegisterModule("Logistics", {
         name = "Logística (Venta/Reparación)",
         category = "utility",
         description = "Venta automática de basura y reparación",
         options = { {type = "checkbox", key = "enabled", label = "Habilitado", default = true} }
+    })
+
+    self:RegisterModule("PlayerNotes", {
+        name = "Notas de Jugador",
+        category = "utility",
+        icon = "Interface\\Icons\\INV_Misc_Note_01",
+        description = "Sistema de notas personales sobre jugadores (tooltips, comandos slash e inspección)",
+        options = {
+            {type = "checkbox", key = "enabled", label = "Habilitar Notas", default = true, tooltip = "Activa/desactiva el sistema de notas"},
+            {type = "checkbox", key = "showInTooltip", label = "Mostrar en Tooltip", default = true, tooltip = "Muestra la nota en el GameTooltip al pasar el cursor sobre el jugador"},
+            {type = "checkbox", key = "autoSave", label = "Guardado Automático", default = true, tooltip = "Guarda los cambios automáticamente al cerrar la ventana"},
+            {type = "checkbox", key = "showInChatOnTarget", label = "Anunciar en Chat al Seleccionar", default = false, tooltip = "Imprime la nota en la consola de chat cuando seleccionas al jugador como objetivo (fuera de combate)"},
+        }
+    })
+
+    self:RegisterModule("QuickWhisper", {
+        name = "Whispers Rápidos",
+        category = "utility",
+        icon = "Interface\\Icons\\INV_Letter_15",
+        description = "Mensajes rápidos predefinidos con despacho inteligente y gestión de plantillas",
+        options = {
+            {type = "checkbox", key = "enabled", label = "Habilitar Whispers Rápidos", default = true, tooltip = "Habilitar/deshabilitar módulo de mensajes rápidos"},
+            {type = "dropdown", key = "sendMode", label = "Modo de Envío", options = {
+                {text = "Inteligente (Target > Grupo)", value = "smart"},
+                {text = "Solo Susurro (Objetivo)", value = "whisper"},
+                {text = "Solo Grupo (Banda/Grupo)", value = "group"},
+            }, default = "smart", tooltip = "Canal prioritario donde se despachan las plantillas"},
+            {type = "checkbox", key = "showInChat", label = "Eco en Chat Local", default = true, tooltip = "Muestra confirmación en el chat local al enviar una plantilla"},
+            {type = "slider", key = "maxTemplates", label = "Máximo de Plantillas", min = 5, max = 20, step = 1, default = 15, tooltip = "Capacidad máxima de plantillas almacenables en la interfaz"},
+        }
+    })
+
+    self:RegisterModule("VersionSync", {
+        name = "Version Sync",
+        category = "utility",
+        icon = "Interface\\Icons\\INV_Misc_Gear_08",
+        description = "Sincroniza y verifica versiones del addon con otros miembros de banda y hermandad",
+        options = {
+            {type = "checkbox", key = "enabled", label = "Habilitar Version Sync", default = true, tooltip = "Activa/desactiva la sincronización de versiones"},
+            {type = "checkbox", key = "autoCheck", label = "Verificación Automática", default = true, tooltip = "Verifica versiones automáticamente al entrar al juego y cambios de grupo"},
+            {type = "checkbox", key = "notifyOutdated", label = "Notificar Nueva Versión", default = true, tooltip = "Notifica cuando un compañero posea una versión más reciente"},
+            {type = "slider", key = "checkInterval", label = "Intervalo de Verificación (min)", min = 5, max = 60, step = 5, default = 30, tooltip = "Frecuencia de verificación automática"},
+        }
     })
 
     self:RegisterModule("PetManager", {
@@ -1034,17 +1098,40 @@ function MC:RegisterAllModules()
     })
 
     self:RegisterModule("CCTracker", {
-        name = "Rastreador de CC (Warlock/Mage)",
+        name = "Rastreador de CC",
+        category = "pvp",
+        description = "Rastrea duración de control de masas (Polymorph, Banish, Fear, etc.) con barras visuales.",
+        options = {
+            {type = "checkbox", key = "enabled", label = "Habilitar CC Tracker", default = true, tooltip = "Rastrear duración de hechizos de control"},
+            {type = "checkbox", key = "showBars", label = "Mostrar Barras", default = true, tooltip = "Mostrar barras visuales de duración de CC"},
+            {type = "checkbox", key = "playSound", label = "Sonido de Alerta", default = true, tooltip = "Reproducir sonido al aplicar o alertar CC"},
+            {type = "checkbox", key = "announceBreak", label = "Anunciar CC Roto", default = false, tooltip = "Anunciar en chat de grupo cuando se rompe un CC prematuramente"},
+            {type = "slider", key = "warningTime", label = "Tiempo de Advertencia (s)", min = 1, max = 10, step = 1, default = 5, tooltip = "Segundos restantes para alerta visual de fin de CC"},
+            {type = "slider", key = "barHeight", label = "Altura de Barras", min = 16, max = 32, step = 2, default = 20, tooltip = "Altura en píxeles de las barras de CC"},
+        }
+    })
+    
+    self:RegisterModule("Soulstones", {
+        name = "Piedras de Alma",
         category = "class",
-        description = "Monitoriza Banish, Fear, Polymorph",
-        options = { {type = "checkbox", key = "enabled", label = "Habilitado", default = true} }
+        description = "Monitor en tiempo real de piedras de alma activas",
+        options = {
+            {type = "checkbox", key = "enabled", label = "Habilitar Monitor", default = true},
+            {type = "checkbox", key = "alerts", label = "Anunciar Expiraciones en Grupo/Banda", default = true}
+        }
     })
     
     self:RegisterModule("RaidPanel", {
-        name = "Panel de Raid",
+        name = "Panel de Banda",
         category = "raid",
-        description = "Panel visual de estado de banda",
-        options = { {type = "checkbox", key = "enabled", label = "Habilitado", default = true} }
+        description = "Panel visual HUD con información y selección segura de miembros",
+        options = {
+            {type = "checkbox", key = "enabled", label = "Habilitar Panel de Banda", default = true},
+            {type = "checkbox", key = "autoShow", label = "Mostrar automáticamente en grupo/banda", default = false},
+            {type = "checkbox", key = "showHP", label = "Mostrar HP%", default = true},
+            {type = "checkbox", key = "showRoles", label = "Mostrar iconos de rol", default = true},
+            {type = "slider", key = "scale", label = "Escala del panel", min = 0.5, max = 1.5, step = 0.1, default = 1.0},
+        }
     })
 
     self:RegisterModule("RaidAssist", {
@@ -1059,6 +1146,21 @@ function MC:RegisterAllModules()
         category = "raid",
         description = "Interfaz gráfica del asistente",
         options = { {type = "checkbox", key = "enabled", label = "Habilitado", default = true} }
+    })
+
+    self:RegisterModule("ReadyChecker", {
+        name = "Ready Check Mejorado",
+        category = "raid",
+        description = "Verificación pre-pull de buffs, consumibles y preparación",
+        options = {
+            {type = "checkbox", key = "enabled", label = "Habilitar Ready Check", default = true, tooltip = "Habilitar/deshabilitar módulo de verificación"},
+            {type = "checkbox", key = "autoCheck", label = "Check Automático en Pull", default = false, tooltip = "Escanear automáticamente al disparar /readycheck"},
+            {type = "checkbox", key = "checkBuffs", label = "Verificar Buffs de Banda", default = true, tooltip = "Verificar entereza, don de lo salvaje, auras y sellos"},
+            {type = "checkbox", key = "checkConsumables", label = "Verificar Consumibles", default = true, tooltip = "Verificar frascos, elixires y comida de banda"},
+            {type = "checkbox", key = "checkClass", label = "Verificar Requisitos de Clase", default = true, tooltip = "Verificar venenos, piedras de brujo y mascotas"},
+            {type = "checkbox", key = "alertSound", label = "Sonido de Alerta", default = true, tooltip = "Reproducir sonido al detectar comprobación de preparación"},
+            {type = "checkbox", key = "announceResults", label = "Anunciar Faltantes al Chat", default = true, tooltip = "Emitir mensaje en el canal de banda/grupo"},
+        }
     })
 
 end

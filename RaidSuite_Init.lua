@@ -225,6 +225,7 @@ function S:OnEnable()
     local classRestrictions = {
         Coven = "WARLOCK",
         Soulstones = "WARLOCK",
+        DoTTracker = "WARLOCK",
         Runes = "DEATHKNIGHT",
     }
 
@@ -564,6 +565,11 @@ SlashCmdList["SEQUITO"] = function(msg)
             else
                 S.CCCoordinator:Toggle()
             end
+        end
+    -- CCTracker Commands (PvP/Class)
+    elseif cmd == "cct" or cmd == "cctracker" then
+        if S.CCTracker then
+            S.CCTracker:SlashCommand(arg)
         end
     -- HealerTracker Commands (PvP)
     elseif cmd == "healers" or cmd == "ht" then

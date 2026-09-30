@@ -1,44 +1,63 @@
 --[[
     SEQUITO - Smart Mount
     Lógica de montura inteligente (Voladora/Terrestre/Acuática).
-    Compatible con WotLK 3.3.5a (esES/esMX/enUS) y sincronizado con MacroGenerator.
+    Compatible con WotLK 3.3.5a (Build 12340) | Español (esES/esMX) & Inglés (enUS)
 ]]--
 
 local addonName, S = ...
 S.Mounts = {}
 
+-- Hechizos de monturas de clase en WotLK 3.3.5a
+local CLASS_MOUNT_SPELLS = {
+    -- Paladín
+    { id = 23214, type = "Ground", name = "Charger" },                  -- Destrero (100%)
+    { id = 13819, type = "Ground", name = "Warhorse" },                 -- Caballo de guerra (60%)
+    -- Brujo
+    { id = 23161, type = "Ground", name = "Dreadsteed" },               -- Corcel de la muerte (100%)
+    { id = 5784,  type = "Ground", name = "Felsteed" },                 -- Corcel vil (60%)
+    -- Caballero de la Muerte
+    { id = 48778, type = "Ground", name = "Acherus Deathcharger" },     -- Destrero de la Muerte de Acherus (100%)
+    { id = 54729, type = "Flying", name = "Winged Steed of the Ebon Blade" }, -- Corcel alado de la Espada de Ébano
+}
+
+-- Normalizador de cadenas contra fallas de tolower en UTF-8
+local function CleanString(str)
+    if not str then return "" end
+    local s = str:lower()
+    s = s:gsub("á", "a"):gsub("é", "e"):gsub("í", "i"):gsub("ó", "o"):gsub("ú", "u"):gsub("ñ", "n")
+    return s
+end
+
 -- Helper para obtener configuración
 function S.Mounts:GetOption(key)
     if S.ModuleConfig then
-        return S.ModuleConfig:GetValue("Mounts", key)
+        local val = S.ModuleConfig:GetValue("Mounts", key)
+        if val ~= nil then return val end
     end
     return true
 end
 
 function S.Mounts:Initialize()
     if self.initialized then return end
-    if not self:GetOption("enabled") then
-        return
-    end
+    if not self:GetOption("enabled") then return end
     self.initialized = true
     
-    -- Inicializar configuración de monturas en DB
     if S.db and S.db.profile and not S.db.profile.Mounts then
         S.db.profile.Mounts = {
-            FlyingMount = nil,  -- Nombre de montura voladora favorita
-            GroundMount = nil,  -- Nombre de montura terrestre favorita
-            AquaticMount = nil, -- Nombre de montura acuática favorita
-            UseRandom = true,   -- Usar monturas aleatorias si no hay favoritas
+            FlyingMount = nil,
+            GroundMount = nil,
+            AquaticMount = nil,
+            UseRandom = true,
         }
     end
     
-    -- Marco de eventos reactivo para actualización en caliente
     if not self.eventFrame then
         self.eventFrame = CreateFrame("Frame")
         self.eventFrame:RegisterEvent("COMPANION_LEARNED")
         self.eventFrame:RegisterEvent("COMPANION_UPDATE")
         self.eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
         self.eventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+        self.eventFrame:RegisterEvent("SPELLS_CHANGED")
         
         self.eventFrame:SetScript("OnEvent", function(frame, event, ...)
             if event == "PLAYER_REGEN_ENABLED" then
@@ -53,7 +72,6 @@ function S.Mounts:Initialize()
         end)
     end
     
-    -- Escaneo inicial diferido
     self:ScanMounts()
 end
 
@@ -63,29 +81,29 @@ function S.Mounts:ScanMounts()
         Ground = {},
         Aquatic = {},
     }
+    self.SpellMounts = {} -- Registro de monturas de clase aprendidas
     
+    -- 1. Escanear monturas de colección (Companions)
     local numCompanions = GetNumCompanions("MOUNT") or 0
     for i = 1, numCompanions do
         local creatureID, creatureName, spellID, icon, issummoned = GetCompanionInfo("MOUNT", i)
         if creatureName then
-            local name = creatureName:lower()
+            local name = CleanString(creatureName)
             
-            -- Detección bilingüe (Español / Inglés)
             local isFlying = name:find("drake") or name:find("draco") or name:find("proto") or
                              name:find("wyrm") or name:find("dracolich") or name:find("dracoliche") or
                              name:find("wind rider") or name:find("jinete del viento") or
                              name:find("gryphon") or name:find("grifo") or
                              name:find("hippogryph") or name:find("hipogrifo") or
-                             name:find("dragonhawk") or name:find("dracohalcón") or
+                             name:find("dragonhawk") or name:find("dracohalcon") or
                              name:find("nether ray") or name:find("raya abisal") or
                              name:find("flying") or name:find("volador") or name:find("voladora") or
                              name:find("carpet") or name:find("alfombra") or
-                             name:find("phoenix") or name:find("fénix") or name:find("al'ar") or
+                             name:find("phoenix") or name:find("fenix") or name:find("al'ar") or
                              name:find("rocket") or name:find("cohete") or
-                             name:find("machine") or name:find("máquina") or
+                             name:find("machine") or name:find("maquina") or
                              name:find("invincible") or name:find("invencible") or
-                             name:find("mimiron") or name:find("mimirón") or
-                             name:find("pegaso") or name:find("celestial")
+                             name:find("mimiron") or name:find("pegaso") or name:find("celestial")
 
             local isAquatic = not isFlying and (
                 name:find("turtle") or name:find("tortuga") or
@@ -102,21 +120,71 @@ function S.Mounts:ScanMounts()
             end
         end
     end
+    
+    -- 2. Escanear monturas del libro de hechizos (Paladín, Brujo, DK)
+    for _, spellData in ipairs(CLASS_MOUNT_SPELLS) do
+        if IsSpellKnown(spellData.id) then
+            local realSpellName = GetSpellInfo(spellData.id)
+            if realSpellName then
+                self.SpellMounts[realSpellName] = spellData.id
+                if spellData.type == "Flying" then
+                    table.insert(self.AvailableMounts.Flying, realSpellName)
+                else
+                    table.insert(self.AvailableMounts.Ground, realSpellName)
+                end
+            end
+        end
+    end
+end
+
+-- Determinar si el jugador realmente PUEDE volar en la zona actual (WotLK 3.3.5a)
+function S.Mounts:CanFlyInCurrentArea()
+    if not IsFlyableArea() then
+        return false
+    end
+    
+    -- Verificación de Rasganorte (Continente 4)
+    local continent = GetCurrentMapContinent()
+    if continent == 4 then
+        -- En Rasganorte es indispensable "Vuelo en clima frío" (Spell 54197)
+        if not IsSpellKnown(54197) then
+            return false
+        end
+        
+        -- Dalaran: vuelo prohibido excepto en El Alto de Krasus
+        local zone = CleanString(GetZoneText())
+        if zone:find("dalaran") then
+            local subzone = CleanString(GetSubZoneText())
+            if not (subzone:find("krasus") or subzone:find("alto")) then
+                return false
+            end
+        end
+        
+        -- Conquista del Invierno (Wintergrasp)
+        if zone:find("conquista del invierno") or zone:find("wintergrasp") then
+            return false
+        end
+    end
+    
+    return true
 end
 
 function S.Mounts:GetBestMount()
-    local flyable = IsFlyableArea()
+    local flyable = self:CanFlyInCurrentArea()
     local swimming = IsSwimming()
     local mountName = nil
     
-    if swimming and S.db.profile.Mounts.AquaticMount then
-        mountName = S.db.profile.Mounts.AquaticMount
-    elseif flyable and S.db.profile.Mounts.FlyingMount then
-        mountName = S.db.profile.Mounts.FlyingMount
-    elseif not flyable and S.db.profile.Mounts.GroundMount then
-        mountName = S.db.profile.Mounts.GroundMount
+    local mountsProfile = (S.db and S.db.profile and S.db.profile.Mounts) or {}
+    
+    if swimming and mountsProfile.AquaticMount then
+        mountName = mountsProfile.AquaticMount
+    elseif flyable and mountsProfile.FlyingMount then
+        mountName = mountsProfile.FlyingMount
+    elseif not flyable and mountsProfile.GroundMount then
+        mountName = mountsProfile.GroundMount
     else
-        if S.db.profile.Mounts.UseRandom then
+        local useRandom = self:GetOption("useRandom")
+        if useRandom or mountsProfile.UseRandom then
             if swimming and self.AvailableMounts.Aquatic and #self.AvailableMounts.Aquatic > 0 then
                 mountName = self.AvailableMounts.Aquatic[math.random(#self.AvailableMounts.Aquatic)]
             elseif flyable and self.AvailableMounts.Flying and #self.AvailableMounts.Flying > 0 then
@@ -134,37 +202,30 @@ function S.Mounts:GenerateMountMacro()
     if not self.AvailableMounts then
         self:ScanMounts()
     end
-    if not S.db.profile.Mounts then
-        S.db.profile.Mounts = { UseRandom = true }
-    end
     
     local body = "#showtooltip\n/dismount [mounted]\n/leavevehicle [vehicleui]\n"
     
-    local flyingMount = S.db.profile.Mounts.FlyingMount
+    -- Cancelar formas de Druida o Lobo Fantasma si aplica
+    local _, class = UnitClass("player")
+    if class == "DRUID" or class == "SHAMAN" then
+        body = body .. "/cancelform [form]\n"
+    end
+    
+    local mountsProfile = (S.db and S.db.profile and S.db.profile.Mounts) or {}
+    
+    local flyingMount = mountsProfile.FlyingMount
     if not flyingMount and self.AvailableMounts.Flying and #self.AvailableMounts.Flying > 0 then
         flyingMount = self.AvailableMounts.Flying[1]
     end
     
-    local aquaticMount = S.db.profile.Mounts.AquaticMount
+    local aquaticMount = mountsProfile.AquaticMount
     if not aquaticMount and self.AvailableMounts.Aquatic and #self.AvailableMounts.Aquatic > 0 then
         aquaticMount = self.AvailableMounts.Aquatic[1]
     end
     
-    local groundMount = S.db.profile.Mounts.GroundMount
+    local groundMount = mountsProfile.GroundMount
     if not groundMount and self.AvailableMounts.Ground and #self.AvailableMounts.Ground > 0 then
         groundMount = self.AvailableMounts.Ground[1]
-    end
-    
-    -- Detección de monturas nativas de clase si no hay favorita configurada
-    if not groundMount then
-        local _, class = UnitClass("player")
-        if class == "PALADIN" and IsSpellKnown(23214) then
-            groundMount = GetSpellInfo(23214)
-        elseif class == "WARLOCK" and IsSpellKnown(23161) then
-            groundMount = GetSpellInfo(23161)
-        elseif class == "DEATHKNIGHT" and IsSpellKnown(48778) then
-            groundMount = GetSpellInfo(48778)
-        end
     end
     
     local castConditions = {}
@@ -191,14 +252,12 @@ function S.Mounts:Refresh()
         return
     end
     
-    -- 1. Sincronizar macro en la Esfera Sequito (GUI)
     if S.Sphere and S.Sphere.SetAttribute then
         local mountMacro = self:GenerateMountMacro()
         local finalMacro = "/cleartarget [dead]\n/targetenemy [noexists][dead]\n/cast [combat] !Auto Attack\n" .. mountMacro
         S.Sphere:SetAttribute("macrotext1", finalMacro)
     end
     
-    -- 2. Sincronizar macro global SeqMount si MacroGen está cargado
     if S.MacroGen and S.MacroGen.GenerateClassMacros then
         S.MacroGen:GenerateClassMacros()
     end
@@ -206,31 +265,42 @@ end
 
 function S.Mounts:MountUp()
     if InCombatLockdown and InCombatLockdown() then return end
+    
+    -- Desmontar si ya está montado
     if IsMounted() then
         Dismount()
         return
     end
     
+    -- Cancelar formas de metamorfosis en 3.3.5a
+    if GetShapeshiftForm and GetShapeshiftForm() > 0 and CancelShapeshiftForm then
+        CancelShapeshiftForm()
+    end
+    
     local mountName = self:GetBestMount()
-    if mountName then
-        local numCompanions = GetNumCompanions("MOUNT") or 0
-        for i = 1, numCompanions do
-            local _, name = GetCompanionInfo("MOUNT", i)
-            if name == mountName then
-                CallCompanion("MOUNT", i)
-                return
-            end
+    if not mountName then return end
+    
+    -- Caso A: Es un hechizo de montura de clase (Paladín, Brujo, DK)
+    if self.SpellMounts and self.SpellMounts[mountName] then
+        if CastSpellByName then
+            CastSpellByName(mountName)
+        end
+        return
+    end
+    
+    -- Caso B: Es una montura de colección (Companion)
+    local numCompanions = GetNumCompanions("MOUNT") or 0
+    for i = 1, numCompanions do
+        local _, name = GetCompanionInfo("MOUNT", i)
+        if name == mountName then
+            CallCompanion("MOUNT", i)
+            return
         end
     end
     
-    -- Fallback de hechizo de clase
-    local _, class = UnitClass("player")
-    local spellID = (class == "PALADIN" and 23214) or (class == "WARLOCK" and 23161) or (class == "DEATHKNIGHT" and 48778)
-    if spellID and IsSpellKnown(spellID) then
-        local spellName = GetSpellInfo(spellID)
-        if spellName and CastSpellByName then
-            CastSpellByName(spellName)
-        end
+    -- Fallback final por nombre de hechizo
+    if CastSpellByName then
+        CastSpellByName(mountName)
     end
 end
 
@@ -239,6 +309,9 @@ function S.Mounts:Summon()
 end
 
 function S.Mounts:SetFavorite(mountType, mountName)
+    if not S.db or not S.db.profile then return end
+    if not S.db.profile.Mounts then S.db.profile.Mounts = {} end
+    
     if mountType == "flying" then
         S.db.profile.Mounts.FlyingMount = mountName
         print("|cFFFF00FFSequito|r: Montura voladora favorita: " .. (mountName or "Ninguna"))
@@ -273,49 +346,26 @@ function S.Mounts:ListMounts()
             print("  - " .. name)
         end
     end
+    
+    local mountsProfile = (S.db and S.db.profile and S.db.profile.Mounts) or {}
     print(" ")
     print("|cFFFFFF00Favoritas:|r")
-    print("  Voladora: " .. (S.db.profile.Mounts.FlyingMount or "Ninguna"))
-    print("  Terrestre: " .. (S.db.profile.Mounts.GroundMount or "Ninguna"))
-    print("  Acuática: " .. (S.db.profile.Mounts.AquaticMount or "Ninguna"))
+    print("  Voladora: " .. (mountsProfile.FlyingMount or "Ninguna"))
+    print("  Terrestre: " .. (mountsProfile.GroundMount or "Ninguna"))
+    print("  Acuática: " .. (mountsProfile.AquaticMount or "Ninguna"))
 end
 
+-- Registro en ModuleConfig
 if S.ModuleConfig then
-    S.ModuleConfig:RegisterModule({
-        id = "Mounts",
+    S.ModuleConfig:RegisterModule("Mounts", {
         name = "Monturas Inteligentes",
-        description = "Sistema de selección inteligente de monturas",
+        description = "Selección automática de monturas adaptada a Rasganorte, Dalaran y monturas de clase",
         category = "utility",
         icon = "Interface\\Icons\\Ability_Mount_RidingHorse",
         options = {
-            {
-                key = "enabled",
-                type = "checkbox",
-                name = "Habilitar Monturas",
-                description = "Habilitar/deshabilitar sistema de monturas",
-                default = true
-            },
-            {
-                key = "useRandom",
-                type = "checkbox",
-                name = "Usar Aleatorias",
-                description = "Usar monturas aleatorias si no hay favoritas",
-                default = true
-            },
-            {
-                key = "autoDetect",
-                type = "checkbox",
-                name = "Auto-Detectar Zona",
-                description = "Detectar automáticamente si usar voladora/terrestre",
-                default = true
-            },
-            {
-                key = "preferFlying",
-                type = "checkbox",
-                name = "Preferir Voladoras",
-                description = "Usar monturas voladoras cuando sea posible",
-                default = true
-            }
+            { type = "checkbox", key = "enabled", label = "Habilitar Monturas", default = true },
+            { type = "checkbox", key = "useRandom", label = "Usar Aleatorias", default = true },
+            { type = "checkbox", key = "preferFlying", label = "Preferir Voladoras", default = true },
         }
     })
 end

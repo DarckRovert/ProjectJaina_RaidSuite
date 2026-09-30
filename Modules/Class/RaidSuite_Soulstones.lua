@@ -1,135 +1,273 @@
 --[[
-    Sequito - Soulstone Tracker
-    Modulo v11.0: Monitor de Piedras de Alma.
-]]
+    SEQUITO - Soulstone Tracker
+    Módulo de Clase para Brujos (Warlock) en WotLK 3.3.5a (Build 12340).
+    Arquitectura desacoplada: Worker Frame inmortal + Display HUD con Zero-Heap.
+]]--
 
 local addonName, S = ...
 S.Soulstones = {}
 local SS = S.Soulstones
 
--- Config & Localized Buff Detection
-local SS_SPELL_ID = 20707 -- Soulstone Resurrection
-local SS_LOCALIZED_NAME = GetSpellInfo(SS_SPELL_ID) or "Soulstone Resurrection"
-local SS_ICON = "Interface\\Icons\\Spell_Shadow_SoulGem"
+-- Catálogo oficial de rangos de Piedra de Alma en WotLK 3.3.5a
+local SOULSTONE_SPELL_IDS = {
+    [20707] = true, -- Rango 1: Menor
+    [20762] = true, -- Rango 2: Inferior
+    [20763] = true, -- Rango 3: Normal
+    [20764] = true, -- Rango 4: Superior
+    [20765] = true, -- Rango 5: Mayor
+    [27239] = true, -- Rango 6: Sublime
+    [47883] = true, -- Rango 7: Demoníaca (Nivel 80)
+}
+
+-- Mapeo bilingüe dinámico
+local SOULSTONE_NAMES = {
+    ["Soulstone Resurrection"] = true,
+    ["Resurrección con piedra de alma"] = true,
+    ["Resurrección de piedra de alma"] = true,
+}
+
+for spellId in pairs(SOULSTONE_SPELL_IDS) do
+    local sName = GetSpellInfo(spellId)
+    if sName then
+        SOULSTONE_NAMES[sName] = true
+    end
+end
+
+-- Buffers estáticos (Zero Heap Thrashing - Ley IV)
+local staticStonedPool = {}
+for i = 1, 40 do
+    staticStonedPool[i] = {
+        name = "",
+        expires = 0,
+        duration = 0,
+        class = "WARRIOR",
+    }
+end
+local staticStonedList = {}
+local previousStonedMap = {}
+
+-- Helper de configuración
+function SS:GetOption(key)
+    if S.ModuleConfig then
+        local val = S.ModuleConfig:GetValue("Soulstones", key)
+        if val ~= nil then return val end
+    end
+    if S.db and S.db.profile then
+        if key == "enabled" and S.db.profile.SoulstoneTracker ~= nil then return S.db.profile.SoulstoneTracker end
+        if key == "alerts" and S.db.profile.SoulstoneAlerts ~= nil then return S.db.profile.SoulstoneAlerts end
+    end
+    if key == "enabled" or key == "alerts" then return true end
+    return false
+end
 
 function SS:Initialize()
     local _, class = UnitClass("player")
     if class ~= "WARLOCK" then return end
-    if S.db and S.db.profile and S.db.profile.SoulstoneTracker == false then return end
-    
-    self.Frame = CreateFrame("Frame", "SequitoSSTracker", UIParent)
-    self.Frame:SetSize(160, 60)
-    self.Frame:SetPoint("CENTER", UIParent, "CENTER", -300, 0)
-    
-    -- Background (Cumplimiento estricto Ley II: Texturas sólidas en 3.3.5a)
-    local bg = self.Frame:CreateTexture(nil, "BACKGROUND")
-    bg:SetAllPoints()
-    bg:SetTexture("Interface\\Buttons\\WHITE8X8")
-    bg:SetVertexColor(0, 0, 0, 0.5)
-    
-    -- Title
-    local title = self.Frame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-    title:SetPoint("TOP", 0, -2)
-    title:SetText("Soulstones")
-    
-    -- Dragging
-    self.Frame:EnableMouse(true)
-    self.Frame:SetMovable(true)
-    self.Frame:RegisterForDrag("LeftButton")
-    self.Frame:SetScript("OnDragStart", self.Frame.StartMoving)
-    self.Frame:SetScript("OnDragStop", self.Frame.StopMovingOrSizing)
-    
-    -- Scan Loop
-    self.Frame:SetScript("OnUpdate", function(f, elapsed)
-        f.elapsed = (f.elapsed or 0) + elapsed
-        if f.elapsed > 2.0 then -- Check every 2s
-            SS:ScanRaid()
-            f.elapsed = 0
-        end
-    end)
-    
+    if not self:GetOption("enabled") then return end
+    if self.initialized then return end
+    self.initialized = true
+
     self.Rows = {}
-    print("|cFF9900FFSequito SS Tracker|r: Online.")
+    self.isTestMode = false
+    self.testTimer = 0
+
+    self:CreateDisplayFrame()
+    self:CreateWorkerFrame()
+    self:CreateSlashCommands()
+
+    if S.Print then
+        S:Print("|cFF9900FF[Soulstones]|r Monitor de Piedras de Alma iniciado. Usa |cFFFFD700/ss test|r para posicionar.")
+    end
 end
 
--- Función estática fuera del bucle para evitar Heap Thrashing (Ley IV)
-local function CheckUnitBuffs(unit, stoned)
+-- Marco Visual HUD (Display Frame)
+function SS:CreateDisplayFrame()
+    if self.Frame then return self.Frame end
+
+    local f = CreateFrame("Frame", "SequitoSSTracker", UIParent)
+    f:SetSize(170, 50)
+    f:SetPoint("CENTER", UIParent, "CENTER", -300, 0)
+    f:SetFrameStrata("MEDIUM")
+    f:SetClampedToScreen(true)
+    f:SetMovable(true)
+    f:EnableMouse(true)
+    f:RegisterForDrag("LeftButton")
+
+    -- Estilo Glassmorphism WotLK 3.3.5a
+    f:SetBackdrop({
+        bgFile   = "Interface\\Buttons\\WHITE8X8",
+        edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+        tile     = false,
+        edgeSize = 12,
+        insets   = { left = 3, right = 3, top = 3, bottom = 3 }
+    })
+    f:SetBackdropColor(0.05, 0.04, 0.08, 0.88)
+    f:SetBackdropBorderColor(0.5, 0.25, 0.7, 0.85)
+
+    -- Título
+    f.title = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    f.title:SetPoint("TOPLEFT", 6, -5)
+    f.title:SetText("|cFFCC66FFPiedras de Alma|r")
+
+    -- Icono decorativo
+    f.icon = f:CreateTexture(nil, "OVERLAY")
+    f.icon:SetSize(12, 12)
+    f.icon:SetPoint("TOPRIGHT", -6, -5)
+    f.icon:SetTexture("Interface\\Icons\\Spell_Shadow_SoulGem")
+
+    f:SetScript("OnDragStart", function(self)
+        self:StartMoving()
+    end)
+    f:SetScript("OnDragStop", function(self)
+        self:StopMovingOrSizing()
+        if S.SmartDefaults then
+            S.SmartDefaults:SavePosition("Soulstones", self)
+        end
+    end)
+
+    -- Ticker suave de 1.0s para cuenta regresiva (solo corre cuando el DisplayFrame está visible)
+    f:SetScript("OnUpdate", function(self, elapsed)
+        self.elapsed = (self.elapsed or 0) + elapsed
+        if self.elapsed >= 1.0 then
+            self.elapsed = 0
+            if SS.isTestMode then
+                SS.testTimer = SS.testTimer - 1
+                if SS.testTimer <= 0 then
+                    SS.isTestMode = false
+                    SS:ScanRaid()
+                else
+                    SS:UpdateDisplayCountdown()
+                end
+            else
+                SS:UpdateDisplayCountdown()
+            end
+        end
+    end)
+
+    if S.SmartDefaults then
+        S.SmartDefaults:RestorePosition("Soulstones", f)
+    end
+
+    f:Hide()
+    self.Frame = f
+    return f
+end
+
+-- Marco Motor Permanente (Worker Frame inmortal - Nunca se oculta)
+function SS:CreateWorkerFrame()
+    if self.WorkerFrame then return self.WorkerFrame end
+
+    local wf = CreateFrame("Frame", "SequitoSSWorker", UIParent)
+    wf:RegisterEvent("UNIT_AURA")
+    wf:RegisterEvent("RAID_ROSTER_UPDATE")
+    wf:RegisterEvent("PARTY_MEMBERS_CHANGED")
+    wf:RegisterEvent("PLAYER_ENTERING_WORLD")
+
+    local scanPending = false
+    wf:SetScript("OnUpdate", function(self, elapsed)
+        if scanPending then
+            scanPending = false
+            SS:ScanRaid()
+        end
+    end)
+
+    wf:SetScript("OnEvent", function(self, event, unit)
+        if event == "UNIT_AURA" then
+            if unit and (unit:find("^raid") or unit:find("^party") or unit == "player") then
+                scanPending = true
+            end
+        else
+            scanPending = true
+        end
+    end)
+
+    self.WorkerFrame = wf
+    return wf
+end
+
+-- Inspección de auras en unidad sin asignación de heap
+local function CheckUnitSoulstone(unit, count)
     local name = UnitName(unit)
-    if not name then return end
-    
+    if not name or name == "" or name == UNKNOWNOBJECT then return count end
+
     for i = 1, 40 do
         local buffName, _, _, _, _, duration, expirationTime, _, _, _, spellId = UnitBuff(unit, i)
         if not buffName then break end
-        
-        if (spellId and spellId == SS_SPELL_ID) or 
-           buffName == SS_LOCALIZED_NAME or 
-           buffName == "Soulstone Resurrection" or 
-           buffName == "Resurrección de piedra de alma" then
-            table.insert(stoned, {
-                name = name,
-                expires = expirationTime or 0,
-                duration = duration or 0
-            })
+
+        if (spellId and SOULSTONE_SPELL_IDS[spellId]) or SOULSTONE_NAMES[buffName] then
+            count = count + 1
+            local item = staticStonedPool[count]
+            if item then
+                item.name = name
+                item.expires = expirationTime or 0
+                item.duration = duration or 1800
+                local _, class = UnitClass(unit)
+                item.class = class or "WARRIOR"
+                staticStonedList[count] = item
+            end
             break
         end
     end
+    return count
 end
 
+-- Escaneo de Banda / Grupo
 function SS:ScanRaid()
-    local stoned = {}
-    
+    if self.isTestMode then return end
+
+    for k in pairs(staticStonedList) do staticStonedList[k] = nil end
+    local count = 0
+
     if GetNumRaidMembers() > 0 then
-        for i = 1, GetNumRaidMembers() do
-            CheckUnitBuffs("raid"..i, stoned)
+        local num = math.min(40, GetNumRaidMembers())
+        for i = 1, num do
+            count = CheckUnitSoulstone("raid" .. i, count)
         end
     elseif GetNumPartyMembers() > 0 then
-        CheckUnitBuffs("player", stoned)
+        count = CheckUnitSoulstone("player", count)
         for i = 1, GetNumPartyMembers() do
-            CheckUnitBuffs("party"..i, stoned)
+            count = CheckUnitSoulstone("party" .. i, count)
         end
     else
-        CheckUnitBuffs("player", stoned)
+        count = CheckUnitSoulstone("player", count)
     end
-    
-    self:UpdateDisplay(stoned)
-    self:CheckExpirations(stoned)
+
+    self:CheckExpirations(count)
+    self:UpdateDisplay(count)
 end
 
-function SS:CheckExpirations(currentList)
-    -- Compare current with previous to detect drops
-    if not self.LastList then 
-        self.LastList = currentList 
-        return 
+-- Detección y anuncio de expiración o consumo
+function SS:CheckExpirations(count)
+    local currentMap = {}
+    for i = 1, count do
+        local d = staticStonedList[i]
+        if d then
+            currentMap[d.name] = d.expires
+        end
     end
-    
-    -- Mapa de nombres actuales
-    local currentNames = {}
-    for _, data in ipairs(currentList) do 
-        currentNames[data.name] = true 
-    end
-    
+
     local now = GetTime()
-    for _, oldData in ipairs(self.LastList) do
-        if not currentNames[oldData.name] then
-            -- Se ha perdido el buffo de oldData.name
-            local expiredByTime = oldData.expires and oldData.expires > 0 and (oldData.expires <= now)
+    for oldName, oldExpires in pairs(previousStonedMap) do
+        if not currentMap[oldName] then
+            local expiredByTime = oldExpires and oldExpires > 0 and (oldExpires <= now + 2)
             if expiredByTime then
-                self:AnnounceExpiration(oldData.name, "EXPIRED")
+                self:AnnounceExpiration(oldName, "EXPIRED")
             else
-                self:AnnounceExpiration(oldData.name, "GONE")
+                self:AnnounceExpiration(oldName, "GONE")
             end
         end
     end
-    
-    self.LastList = currentList
+
+    for k in pairs(previousStonedMap) do previousStonedMap[k] = nil end
+    for name, expires in pairs(currentMap) do
+        previousStonedMap[name] = expires
+    end
 end
 
 function SS:GetAnnouncementChannel()
-    if IsInInstance then
-        local inInstance, instanceType = IsInInstance()
-        if inInstance and instanceType == "pvp" then
-            return "BATTLEGROUND"
-        end
+    local inInstance, instanceType = IsInInstance()
+    if inInstance and instanceType == "pvp" then
+        return "BATTLEGROUND"
     end
     if GetNumRaidMembers() > 0 then
         if IsRaidLeader() or IsRaidOfficer() then
@@ -144,72 +282,139 @@ function SS:GetAnnouncementChannel()
 end
 
 function SS:AnnounceExpiration(name, alertType)
-    if S.db and S.db.profile and S.db.profile.SoulstoneAlerts == false then return end
-    
-    local msg = ""
-    if alertType == "EXPIRED" then
-        msg = "¡LA PIEDRA DE ALMA DE " .. name .. " HA EXPIRADO!"
-    else
-        msg = "¡La Piedra de Alma de " .. name .. " se ha consumido o perdido!"
-    end
-    
+    if not self:GetOption("alerts") then return end
+
+    local msg = (alertType == "EXPIRED")
+        and string.format("¡La Piedra de Alma de %s ha EXPIRADO!", name)
+        or string.format("¡La Piedra de Alma de %s ha sido consumida o purgada!", name)
+
     local channel = self:GetAnnouncementChannel()
     if channel then
         SendChatMessage(msg, channel)
     end
-    
+
     PlaySound("RaidWarning")
-    print("|cFFFF0000Sequito:|r " .. msg)
+    if S.Print then
+        S:Print("|cFFFF0000" .. msg .. "|r")
+    end
 end
 
-function SS:UpdateDisplay(list)
-    -- Hide old rows
-    for _, row in pairs(self.Rows) do row:Hide() end
-    
-    if #list == 0 then
+-- Renderizado visual de filas
+function SS:UpdateDisplay(count)
+    if not self.Frame then return end
+
+    if count == 0 and not self.isTestMode then
         self.Frame:Hide()
         return
     end
-    self.Frame:Show()
-    
-    local now = GetTime()
-    for i, data in ipairs(list) do
+
+    for i = 1, count do
         if not self.Rows[i] then
             local row = CreateFrame("Frame", nil, self.Frame)
-            row:SetSize(160, 20)
-            row:SetPoint("TOP", 0, -20 - ((i-1)*20))
-            
+            row:SetSize(160, 18)
+            row:SetPoint("TOPLEFT", self.Frame, "TOPLEFT", 6, -20 - ((i - 1) * 18))
+
             row.text = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-            row.text:SetPoint("LEFT", 5, 0)
-            
+            row.text:SetPoint("LEFT", 0, 0)
+            row.text:SetWidth(100)
+            row.text:SetJustifyH("LEFT")
+
             row.time = row:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-            row.time:SetPoint("RIGHT", -5, 0)
+            row.time:SetPoint("RIGHT", 0, 0)
             row.time:SetJustifyH("RIGHT")
-            
+
             self.Rows[i] = row
         end
-        
+
         local row = self.Rows[i]
-        row.text:SetText(data.name)
-        
-        local remaining = (data.expires and data.expires > 0) and (data.expires - now) or 0
-        if remaining > 0 then
-            local m = math.floor(remaining / 60)
-            local s = remaining % 60
-            row.time:SetText(string.format("%d:%02d", m, s))
-            
-            -- Color code time
-            if remaining < 60 then
-                row.time:SetTextColor(1, 0, 0) -- Red alert
-            else
-                row.time:SetTextColor(0, 1, 0)
-            end
-        else
-            row.time:SetText("EXP")
-            row.time:SetTextColor(1, 0.2, 0.2)
+        local data = staticStonedList[i]
+        if data then
+            row.text:SetText(data.name)
+            row:Show()
         end
-        row:Show()
     end
-    
-    self.Frame:SetHeight(25 + (#list * 20))
+
+    for i = count + 1, #self.Rows do
+        if self.Rows[i] then self.Rows[i]:Hide() end
+    end
+
+    self.Frame:SetHeight(28 + (math.max(1, count) * 18))
+    self:UpdateDisplayCountdown()
+    self.Frame:Show()
 end
+
+-- Actualización por segundo del temporizador MM:SS
+function SS:UpdateDisplayCountdown()
+    if not self.Frame or not self.Frame:IsShown() then return end
+
+    local now = GetTime()
+    local count = self.isTestMode and 2 or #staticStonedList
+
+    for i = 1, count do
+        local row = self.Rows[i]
+        local data = staticStonedList[i]
+        if row and data and row:IsShown() then
+            local remaining = (data.expires and data.expires > 0) and math.max(0, data.expires - now) or 0
+            if remaining > 0 then
+                local m = math.floor(remaining / 60)
+                local s = math.floor(remaining % 60)
+                row.time:SetText(string.format("%d:%02d", m, s))
+
+                if remaining < 60 then
+                    row.time:SetTextColor(1, 0.2, 0.2, 1) -- Alerta roja
+                elseif remaining < 300 then
+                    row.time:SetTextColor(1, 0.8, 0.2, 1) -- Advertencia naranja
+                else
+                    row.time:SetTextColor(0.3, 1, 0.3, 1) -- Seguro verde
+                end
+            else
+                row.time:SetText("|cFFFF0000EXP|r")
+            end
+        end
+    end
+end
+
+-- Modo de prueba para posicionamiento
+function SS:StartTestMode()
+    self.isTestMode = true
+    self.testTimer = 15
+
+    for k in pairs(staticStonedList) do staticStonedList[k] = nil end
+    staticStonedList[1] = { name = "TankPrincipal", expires = GetTime() + 1740, duration = 1800, class = "WARRIOR" }
+    staticStonedList[2] = { name = "HealerTop",     expires = GetTime() + 45,   duration = 1800, class = "PRIEST" }
+
+    self:UpdateDisplay(2)
+    if S.Print then
+        S:Print("|cFF9900FF[Soulstones]|r Modo prueba activado durante 15s. Arrastra la ventana para posicionarla.")
+    end
+end
+
+function SS:Toggle()
+    if not self.Frame then self:CreateDisplayFrame() end
+    if self.Frame:IsShown() then
+        self.isTestMode = false
+        self.Frame:Hide()
+    else
+        self:StartTestMode()
+    end
+end
+
+function SS:CreateSlashCommands()
+    SLASH_SEQUITOSS1 = "/ss"
+    SLASH_SEQUITOSS2 = "/soulstone"
+    SLASH_SEQUITOSS3 = "/soulstones"
+    SlashCmdList["SEQUITOSS"] = function(msg)
+        local cmd = (msg or ""):lower():match("^%s*(%S+)")
+        if cmd == "test" then
+            SS:StartTestMode()
+        elseif cmd == "scan" then
+            SS.isTestMode = false
+            SS:ScanRaid()
+        else
+            SS:Toggle()
+        end
+    end
+end
+
+-- Registro en Sequito
+S.Soulstones = SS

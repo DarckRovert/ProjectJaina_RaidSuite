@@ -1,14 +1,42 @@
 --[[
     Sequito - ReadyChecker.lua
-    Chequeo Pre-Pull Mejorado
-    Version: 7.2.0
-]]
+    Chequeo Pre-Pull Mejorado de Bandas y Grupos
+    Version: 8.5.0 (WotLK 3.3.5a Build 12340)
+
+    Características:
+    - Escaneo dinámico con UnitIDs válidos para mascotas (pet, partypetX, raidpetX).
+    - Desacople de escaneo manual vs auto-check por evento READY_CHECK.
+    - Soporte nativo de eventos READY_CHECK y READY_CHECK_FINISHED.
+    - Detección precisa de consumibles, auras y requisitos de clase WotLK 3.3.5a.
+    - Protección contra división por cero en cálculos de porcentaje de salud/maná.
+    - Transición de UnitMana a UnitPower(unit, 0).
+    - Guardado y restauración de ventana mediante SmartDefaults.
+    - Anuncio seguro al chat respetando el presupuesto de red (Ley III: 255 bytes).
+]]--
 
 local addonName, S = ...
-S.ReadyChecker = {}
+S.ReadyChecker = S.ReadyChecker or {}
 local RC = S.ReadyChecker
 
--- Buffs/Debuffs a verificar por clase
+-- Helper canónico de resolución de UnitID de mascota en WotLK 3.3.5a
+local function GetPetUnit(unit)
+    if unit == "player" then
+        return "pet"
+    end
+    local partyIdx = unit:match("^party(%d+)$")
+    if partyIdx then
+        return "partypet" .. partyIdx
+    end
+    local raidIdx = unit:match("^raid(%d+)$")
+    if raidIdx then
+        return "raidpet" .. raidIdx
+    end
+    return nil
+end
+
+-- ============================================================================
+-- VERIFICACIONES ESPECÍFICAS POR CLASE (WotLK 3.3.5a)
+-- ============================================================================
 local ClassChecks = {
     ROGUE = {
         {type = "poison_mh", name = "Veneno MH", check = function(unit) 
@@ -19,6 +47,8 @@ local ClassChecks = {
         end},
         {type = "poison_oh", name = "Veneno OH", check = function(unit)
             if unit == "player" then
+                local hasOHWeapon = GetInventoryItemLink("player", 17)
+                if not hasOHWeapon then return true end
                 local _, _, _, _, hasOH = GetWeaponEnchantInfo()
                 return hasOH
             end
@@ -27,10 +57,10 @@ local ClassChecks = {
     },
     WARLOCK = {
         {type = "pet", name = "Mascota", check = function(unit)
-            return UnitExists(unit.."pet")
+            local petUnit = GetPetUnit(unit)
+            return petUnit and UnitExists(petUnit)
         end},
         {type = "healthstone", name = "Piedra de Salud", check = function(unit)
-            -- Verificar si tiene healthstone en bolsas (solo para el jugador)
             if unit == "player" then
                 for bag = 0, 4 do
                     for slot = 1, GetContainerNumSlots(bag) do
@@ -40,23 +70,24 @@ local ClassChecks = {
                         end
                     end
                 end
+                return false
             end
-            return nil -- No podemos verificar otros jugadores
+            return true
         end},
         {type = "spellstone", name = "Piedra de Hechizo", check = function(unit)
             if unit == "player" then
-                local hasMainHandEnchant = GetWeaponEnchantInfo()
-                return hasMainHandEnchant
+                local hasMH = GetWeaponEnchantInfo()
+                return hasMH
             end
             return true
         end},
     },
     HUNTER = {
         {type = "pet", name = "Mascota", check = function(unit)
-            return UnitExists(unit.."pet")
+            local petUnit = GetPetUnit(unit)
+            return petUnit and UnitExists(petUnit)
         end},
         {type = "aspect", name = "Aspecto", check = function(unit)
-            -- Verificar aspectos comunes
             local aspects = {13165, 34074, 13163, 5118, 13159, 20043, 27044}
             for _, spellId in ipairs(aspects) do
                 local name = GetSpellInfo(spellId)
@@ -70,9 +101,9 @@ local ClassChecks = {
     DEATHKNIGHT = {
         {type = "presence", name = "Presencia", check = function(unit)
             local presences = {
-                GetSpellInfo(48263), -- Blood
-                GetSpellInfo(48266), -- Frost  
-                GetSpellInfo(48265), -- Unholy
+                GetSpellInfo(48263), -- Sangre
+                GetSpellInfo(48266), -- Escarcha
+                GetSpellInfo(48265), -- Profano
             }
             for _, name in ipairs(presences) do
                 if name and UnitBuff(unit, name) then
@@ -82,20 +113,20 @@ local ClassChecks = {
             return false
         end},
         {type = "horn", name = "Cuerno de Invierno", check = function(unit)
-            local name = GetSpellInfo(57623) -- Horn of Winter
+            local name = GetSpellInfo(57623)
             return name and UnitBuff(unit, name)
         end},
     },
     PALADIN = {
         {type = "aura", name = "Aura", check = function(unit)
             local auras = {
-                GetSpellInfo(48942), -- Devotion
-                GetSpellInfo(54043), -- Retribution
-                GetSpellInfo(19746), -- Concentration
-                GetSpellInfo(48943), -- Shadow Resistance
-                GetSpellInfo(48945), -- Frost Resistance
-                GetSpellInfo(48947), -- Fire Resistance
-                GetSpellInfo(32223), -- Crusader
+                GetSpellInfo(48942), -- Devoción
+                GetSpellInfo(54043), -- Reprensión
+                GetSpellInfo(19746), -- Concentración
+                GetSpellInfo(48943), -- Sombras
+                GetSpellInfo(48945), -- Escarcha
+                GetSpellInfo(48947), -- Fuego
+                GetSpellInfo(32223), -- Cruzado
             }
             for _, name in ipairs(auras) do
                 if name and UnitBuff(unit, name) then
@@ -106,13 +137,13 @@ local ClassChecks = {
         end},
         {type = "seal", name = "Sello", check = function(unit)
             local seals = {
-                GetSpellInfo(31801), -- Vengeance
-                GetSpellInfo(20165), -- Light
-                GetSpellInfo(20164), -- Justice
-                GetSpellInfo(20166), -- Wisdom
-                GetSpellInfo(53736), -- Corruption
-                GetSpellInfo(21084), -- Righteousness
-                GetSpellInfo(20375), -- Command
+                GetSpellInfo(31801), -- Venganza
+                GetSpellInfo(20165), -- Luz
+                GetSpellInfo(20164), -- Justicia
+                GetSpellInfo(20166), -- Sabiduría
+                GetSpellInfo(53736), -- Corrupción
+                GetSpellInfo(21084), -- Rectitud
+                GetSpellInfo(20375), -- Orden
             }
             for _, name in ipairs(seals) do
                 if name and UnitBuff(unit, name) then
@@ -125,9 +156,9 @@ local ClassChecks = {
     SHAMAN = {
         {type = "shield", name = "Escudo", check = function(unit)
             local shields = {
-                GetSpellInfo(57960), -- Water Shield
-                GetSpellInfo(49281), -- Lightning Shield
-                GetSpellInfo(974),   -- Earth Shield (on others)
+                GetSpellInfo(57960), -- Escudo de agua
+                GetSpellInfo(49281), -- Escudo de relámpagos
+                GetSpellInfo(974),   -- Escudo de tierra
             }
             for _, name in ipairs(shields) do
                 if name and UnitBuff(unit, name) then
@@ -146,9 +177,9 @@ local ClassChecks = {
     MAGE = {
         {type = "armor", name = "Armadura", check = function(unit)
             local armors = {
-                GetSpellInfo(43024), -- Molten Armor
-                GetSpellInfo(43046), -- Mage Armor
-                GetSpellInfo(43008), -- Ice Armor
+                GetSpellInfo(43024), -- Armadura de arrabio
+                GetSpellInfo(43046), -- Armadura de mago
+                GetSpellInfo(43008), -- Armadura de hielo
             }
             for _, name in ipairs(armors) do
                 if name and UnitBuff(unit, name) then
@@ -161,8 +192,8 @@ local ClassChecks = {
     WARRIOR = {
         {type = "shout", name = "Grito", check = function(unit)
             local shouts = {
-                GetSpellInfo(47436), -- Battle Shout
-                GetSpellInfo(47440), -- Commanding Shout
+                GetSpellInfo(47436), -- Grito de batalla
+                GetSpellInfo(47440), -- Grito de orden
             }
             for _, name in ipairs(shouts) do
                 if name and UnitBuff(unit, name) then
@@ -172,34 +203,33 @@ local ClassChecks = {
             return false
         end},
         {type = "stance", name = "Postura", check = function(unit)
-            -- Solo podemos verificar esto para el jugador
             if unit == "player" then
                 return GetShapeshiftForm() > 0
             end
-            return nil
+            return true
         end},
     },
     DRUID = {
         {type = "motw", name = "Don de lo Salvaje", check = function(unit)
-            local name = GetSpellInfo(48470) -- Gift of the Wild
-            local name2 = GetSpellInfo(48469) -- Mark of the Wild
+            local name = GetSpellInfo(48470)  -- Don de lo salvaje
+            local name2 = GetSpellInfo(48469) -- Marca de lo salvaje
             return (name and UnitBuff(unit, name)) or (name2 and UnitBuff(unit, name2))
         end},
     },
     PRIEST = {
         {type = "fortitude", name = "Fortaleza", check = function(unit)
-            local name = GetSpellInfo(48162) -- Prayer of Fortitude
-            local name2 = GetSpellInfo(48161) -- Power Word: Fortitude
+            local name = GetSpellInfo(48162)  -- Rezo de entereza
+            local name2 = GetSpellInfo(48161) -- Palabra de poder: entereza
             return (name and UnitBuff(unit, name)) or (name2 and UnitBuff(unit, name2))
         end},
         {type = "spirit", name = "Espíritu Divino", check = function(unit)
-            local name = GetSpellInfo(48074) -- Prayer of Spirit
-            local name2 = GetSpellInfo(48073) -- Divine Spirit
+            local name = GetSpellInfo(48074)  -- Rezo de espíritu
+            local name2 = GetSpellInfo(48073) -- Espíritu divino
             return (name and UnitBuff(unit, name)) or (name2 and UnitBuff(unit, name2))
         end},
         {type = "shadow", name = "Protección Sombras", check = function(unit)
-            local name = GetSpellInfo(48170) -- Prayer of Shadow Protection
-            local name2 = GetSpellInfo(48169) -- Shadow Protection
+            local name = GetSpellInfo(48170)  -- Rezo de Protección contra las Sombras
+            local name2 = GetSpellInfo(48169) -- Protección contra las Sombras
             return (name and UnitBuff(unit, name)) or (name2 and UnitBuff(unit, name2))
         end},
     },
@@ -207,7 +237,7 @@ local ClassChecks = {
 
 -- Consumibles a verificar
 local ConsumableChecks = {
-    {type = "flask", name = "Flask", buffs = {
+    {type = "flask", name = "Frasco", buffs = {
         GetSpellInfo(53758), -- Flask of Stoneblood
         GetSpellInfo(53755), -- Flask of the Frost Wyrm
         GetSpellInfo(53760), -- Flask of Endless Rage
@@ -215,8 +245,8 @@ local ConsumableChecks = {
         GetSpellInfo(53752), -- Lesser Flask of Toughness
     }},
     {type = "food", name = "Comida", buffs = {
-        GetSpellInfo(57399), -- Well Fed (Fish Feast)
-        GetSpellInfo(57294), -- Well Fed
+        GetSpellInfo(57399), -- Bien alimentado (Festín)
+        GetSpellInfo(57294), -- Bien alimentado
     }},
 }
 
@@ -224,20 +254,37 @@ RC.Frame = nil
 RC.Results = {}
 RC.IsVisible = false
 
--- Helper para obtener configuración
+-- ============================================================================
+-- HELPER DE CONFIGURACIÓN DEFENSIVA
+-- ============================================================================
 function RC:GetOption(key)
     if S.ModuleConfig then
-        return S.ModuleConfig:GetValue("ReadyChecker", key)
+        local val = S.ModuleConfig:GetValue("ReadyChecker", key)
+        if val ~= nil then return val end
+    end
+    -- Fallbacks seguros
+    if key == "enabled" then return true
+    elseif key == "autoCheck" then return false
+    elseif key == "checkBuffs" then return true
+    elseif key == "checkConsumables" then return true
+    elseif key == "checkClass" then return true
+    elseif key == "alertSound" then return true
+    elseif key == "announceResults" or key == "announce" then return true
     end
     return true
 end
 
 function RC:Initialize()
-    if not self:GetOption("enabled") then
-        return
-    end
-    
+    if self.initialized then return end
+    if not self:GetOption("enabled") then return end
+    self.initialized = true
+
     self:CreateFrame()
+    self:RegisterEvents()
+
+    if S.Print then
+        S:Print("|cFF00FF00[ReadyChecker]|r Módulo de verificación previa a combate activo.")
+    end
 end
 
 function RC:GetGroupChannel()
@@ -255,181 +302,204 @@ function RC:GetGroupChannel()
     return nil
 end
 
+-- ============================================================================
+-- INTERFAZ VISUAL
+-- ============================================================================
 function RC:CreateFrame()
-    if self.Frame then return end
-    
+    if self.Frame then return self.Frame end
+
     local f = CreateFrame("Frame", "SequitoReadyChecker", UIParent)
-    f:SetSize(350, 400)
+    f:SetSize(360, 420)
     f:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
     f:SetBackdrop({
-        bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
+        bgFile = "Interface\\Buttons\\WHITE8X8",
         edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-        tile = true, tileSize = 16, edgeSize = 16,
-        insets = {left = 4, right = 4, top = 4, bottom = 4}
+        tile = false, edgeSize = 14,
+        insets = {left = 3, right = 3, top = 3, bottom = 3}
     })
-    f:SetBackdropColor(0, 0, 0, 0.9)
-    f:SetBackdropBorderColor(0.2, 0.6, 0.2, 1)
+    f:SetBackdropColor(0.05, 0.05, 0.08, 0.92)
+    f:SetBackdropBorderColor(0.2, 0.7, 0.3, 0.9)
     f:EnableMouse(true)
     f:SetMovable(true)
     f:RegisterForDrag("LeftButton")
     f:SetScript("OnDragStart", f.StartMoving)
-    f:SetScript("OnDragStop", f.StopMovingOrSizing)
+    f:SetScript("OnDragStop", function(self)
+        self:StopMovingOrSizing()
+        if S.SmartDefaults then
+            S.SmartDefaults:SavePosition("ReadyChecker", self)
+        end
+    end)
     f:SetClampedToScreen(true)
     f:Hide()
-    
+
     -- Título
     local title = f:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-    title:SetPoint("TOP", f, "TOP", 0, -10)
-    title:SetText("|cff00ff00Sequito|r - Ready Check Mejorado")
-    
+    title:SetPoint("TOP", f, "TOP", 0, -12)
+    title:SetText("|cFF00FF00Sequito|r - Ready Check Mejorado")
+
     -- Botón cerrar
     local closeBtn = CreateFrame("Button", nil, f, "UIPanelCloseButton")
-    closeBtn:SetPoint("TOPRIGHT", f, "TOPRIGHT", -2, -2)
+    closeBtn:SetPoint("TOPRIGHT", f, "TOPRIGHT", -4, -4)
     closeBtn:SetScript("OnClick", function() RC:Toggle() end)
-    
-    -- Botón de escaneo
+
+    -- Botón de escaneo manual
     local scanBtn = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
-    scanBtn:SetSize(120, 24)
-    scanBtn:SetPoint("TOP", f, "TOP", 0, -35)
-    scanBtn:SetText("Escanear Raid")
-    scanBtn:SetScript("OnClick", function() RC:ScanRaid() end)
-    
+    scanBtn:SetSize(130, 24)
+    scanBtn:SetPoint("TOP", f, "TOP", 0, -38)
+    scanBtn:SetText("Escanear Banda")
+    scanBtn:SetScript("OnClick", function() RC:ScanRaid(false) end)
+
     -- Scroll frame para resultados
     local scrollFrame = CreateFrame("ScrollFrame", "SequitoRCScroll", f, "UIPanelScrollFrameTemplate")
-    scrollFrame:SetPoint("TOPLEFT", f, "TOPLEFT", 10, -65)
-    scrollFrame:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -30, 45)
-    
+    scrollFrame:SetPoint("TOPLEFT", f, "TOPLEFT", 12, -70)
+    scrollFrame:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -32, 48)
+
     local content = CreateFrame("Frame", nil, scrollFrame)
-    content:SetSize(300, 600)
+    content:SetSize(310, 600)
     scrollFrame:SetScrollChild(content)
     f.content = content
-    
+
     -- Botón anunciar problemas
     local announceBtn = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
-    announceBtn:SetSize(150, 24)
-    announceBtn:SetPoint("BOTTOM", f, "BOTTOM", 0, 12)
+    announceBtn:SetSize(170, 24)
+    announceBtn:SetPoint("BOTTOM", f, "BOTTOM", 0, 14)
     announceBtn:SetText("Anunciar Problemas")
-    announceBtn:SetScript("OnClick", function() RC:AnnounceProblems() end)
-    
+    announceBtn:SetScript("OnClick", function() RC:AnnounceProblems(true) end)
+
     self.Frame = f
     self.Rows = {}
+
+    if S.SmartDefaults then
+        S.SmartDefaults:RestorePosition("ReadyChecker")
+    end
+
+    return f
 end
 
 function RC:CreateResultRow(parent, index)
     local row = CreateFrame("Frame", nil, parent)
-    row:SetSize(300, 20)
-    row:SetPoint("TOPLEFT", parent, "TOPLEFT", 0, -((index - 1) * 22))
-    
-    -- Icono de estado
+    row:SetSize(310, 22)
+    row:SetPoint("TOPLEFT", parent, "TOPLEFT", 0, -((index - 1) * 24))
+
     local statusIcon = row:CreateTexture(nil, "ARTWORK")
     statusIcon:SetSize(16, 16)
-    statusIcon:SetPoint("LEFT", row, "LEFT", 0, 0)
+    statusIcon:SetPoint("LEFT", row, "LEFT", 2, 0)
     row.statusIcon = statusIcon
-    
-    -- Nombre del jugador
+
     local playerName = row:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     playerName:SetPoint("LEFT", statusIcon, "RIGHT", 4, 0)
-    playerName:SetWidth(80)
+    playerName:SetWidth(90)
     playerName:SetJustifyH("LEFT")
     row.playerName = playerName
-    
-    -- Problemas
+
     local problems = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
     problems:SetPoint("LEFT", playerName, "RIGHT", 4, 0)
-    problems:SetWidth(200)
+    problems:SetPoint("RIGHT", row, "RIGHT", -4, 0)
     problems:SetJustifyH("LEFT")
     row.problems = problems
-    
+
     row:Hide()
     return row
 end
 
-function RC:ScanRaid()
-    -- Verificar si auto-check está habilitado
-    if not self:GetOption("autoCheck") then
+-- ============================================================================
+-- LÓGICA DE ESCANEO PRE-PULL
+-- ============================================================================
+function RC:ScanRaid(isAutoCheck)
+    -- Si el escaneo fue disparado automáticamente por el evento READY_CHECK, respetar autoCheck
+    if isAutoCheck and not self:GetOption("autoCheck") then
         return
     end
-    
+
     self.Results = {}
-    
+
+    local checkBuffs = self:GetOption("checkBuffs")
+    local checkConsumables = self:GetOption("checkConsumables")
+    local checkClass = self:GetOption("checkClass")
+
     local function checkPlayer(unit, name, class)
         local result = {
-            name = name,
-            class = class,
+            name = name or UnitName(unit) or "Desconocido",
+            class = class or select(2, UnitClass(unit)) or "WARRIOR",
             unit = unit,
             problems = {},
             ready = true
         }
-        
+
         -- Verificar checks específicos de clase
-        local classChecks = ClassChecks[class]
-        if classChecks then
-            for _, check in ipairs(classChecks) do
-                local passed = check.check(unit)
-                if passed == false then
-                    table.insert(result.problems, check.name)
+        if checkClass and class then
+            local classChecks = ClassChecks[class]
+            if classChecks then
+                for _, check in ipairs(classChecks) do
+                    local passed = check.check(unit)
+                    if passed == false then
+                        table.insert(result.problems, check.name)
+                        result.ready = false
+                    end
+                end
+            end
+        end
+
+        -- Verificar consumibles
+        if checkConsumables then
+            for _, consumable in ipairs(ConsumableChecks) do
+                local hasConsumable = false
+                for _, buffName in ipairs(consumable.buffs) do
+                    if buffName and UnitBuff(unit, buffName) then
+                        hasConsumable = true
+                        break
+                    end
+                end
+                if not hasConsumable then
+                    table.insert(result.problems, "Sin " .. consumable.name)
                     result.ready = false
                 end
             end
         end
-        
-        -- Verificar consumibles
-        for _, consumable in ipairs(ConsumableChecks) do
-            local hasConsumable = false
-            for _, buffName in ipairs(consumable.buffs) do
-                if buffName and UnitBuff(unit, buffName) then
-                    hasConsumable = true
-                    break
-                end
-            end
-            if not hasConsumable then
-                table.insert(result.problems, "Sin " .. consumable.name)
-                result.ready = false
-            end
-        end
-        
-        -- Verificar vida y mana
-        local healthPct = UnitHealth(unit) / UnitHealthMax(unit) * 100
+
+        -- Verificar salud y maná con blindaje contra división por cero
+        local maxHP = UnitHealthMax(unit) or 0
+        local curHP = UnitHealth(unit) or 0
+        local healthPct = (maxHP > 0) and math.floor((curHP / maxHP) * 100) or 100
+
         if healthPct < 100 then
             table.insert(result.problems, string.format("Vida: %d%%", healthPct))
             if healthPct < 80 then
                 result.ready = false
             end
         end
-        
+
         local powerType = UnitPowerType(unit)
-        if powerType == 0 then -- Mana
-            local manaPct = UnitMana(unit) / UnitManaMax(unit) * 100
+        if powerType == 0 then -- Maná
+            local maxMana = UnitPowerMax(unit, 0) or 0
+            local curMana = UnitPower(unit, 0) or 0
+            local manaPct = (maxMana > 0) and math.floor((curMana / maxMana) * 100) or 100
             if manaPct < 80 then
-                table.insert(result.problems, string.format("Mana: %d%%", manaPct))
+                table.insert(result.problems, string.format("Maná: %d%%", manaPct))
                 result.ready = false
             end
         end
-        
-        -- Verificar si está muerto
-        if UnitIsDead(unit) then
+
+        -- Verificar si está muerto o fantasma
+        if UnitIsDeadOrGhost(unit) then
             result.problems = {"MUERTO"}
             result.ready = false
-        end
-        
         -- Verificar si está desconectado
-        if not UnitIsConnected(unit) then
+        elseif not UnitIsConnected(unit) then
             result.problems = {"DESCONECTADO"}
             result.ready = false
-        end
-        
         -- Verificar si está AFK
-        if UnitIsAFK(unit) then
+        elseif UnitIsAFK(unit) then
             table.insert(result.problems, "AFK")
             result.ready = false
         end
-        
+
         table.insert(self.Results, result)
     end
-    
+
     local numRaid = GetNumRaidMembers()
     local numParty = GetNumPartyMembers()
-    
+
     if numRaid > 0 then
         for i = 1, numRaid do
             local name, _, _, _, _, classFile = GetRaidRosterInfo(i)
@@ -438,12 +508,10 @@ function RC:ScanRaid()
             end
         end
     elseif numParty > 0 then
-        -- Jugador
-        local name = UnitName("player")
-        local class = select(2, UnitClass("player"))
-        checkPlayer("player", name, class)
-        
-        -- Party members
+        local myName = UnitName("player")
+        local myClass = select(2, UnitClass("player"))
+        checkPlayer("player", myName, myClass)
+
         for i = 1, numParty do
             local pname = UnitName("party"..i)
             local pclass = select(2, UnitClass("party"..i))
@@ -452,105 +520,105 @@ function RC:ScanRaid()
             end
         end
     else
-        -- Solo
-        local name = UnitName("player")
-        local class = select(2, UnitClass("player"))
-        checkPlayer("player", name, class)
+        local myName = UnitName("player")
+        local myClass = select(2, UnitClass("player"))
+        checkPlayer("player", myName, myClass)
     end
-    
-    -- Ordenar: problemas primero
+
+    -- Ordenar: miembros con problemas primero
     table.sort(self.Results, function(a, b)
         if a.ready and not b.ready then return false end
         if not a.ready and b.ready then return true end
         return a.name < b.name
     end)
-    
+
     self:UpdateDisplay()
-    
-    -- Resumen
+
+    -- Resumen en consola
     local readyCount = 0
     local totalCount = #self.Results
     for _, result in ipairs(self.Results) do
         if result.ready then readyCount = readyCount + 1 end
     end
-    
-    local color = readyCount == totalCount and "|cff00ff00" or "|cffff0000"
-    print(string.format("%s[Sequito]|r Ready Check: %d/%d listos", color, readyCount, totalCount))
+
+    local color = (readyCount == totalCount) and "|cFF00FF00" or "|cFFFF5555"
+    local summary = string.format("%s[ReadyCheck]|r Verificación: %d/%d listos.", color, readyCount, totalCount)
+    if S.Print then
+        S:Print(summary)
+    else
+        DEFAULT_CHAT_FRAME:AddMessage(summary)
+    end
 end
 
 function RC:UpdateDisplay()
     if not self.Frame or not self.Frame.content then return end
-    
-    -- Ocultar todas las filas
+
     for _, row in ipairs(self.Rows) do
         row:Hide()
     end
-    
+
     for i, result in ipairs(self.Results) do
         local row = self.Rows[i]
         if not row then
             row = self:CreateResultRow(self.Frame.content, i)
             self.Rows[i] = row
         end
-        
-        -- Icono de estado
+
         if result.ready then
             row.statusIcon:SetTexture("Interface\\RaidFrame\\ReadyCheck-Ready")
         else
             row.statusIcon:SetTexture("Interface\\RaidFrame\\ReadyCheck-NotReady")
         end
-        
-        -- Nombre con color de clase
-        local classColor = RAID_CLASS_COLORS[result.class] or {r=1, g=1, b=1}
-        row.playerName:SetText(string.format("|cff%02x%02x%02x%s|r",
+
+        local classColor = (RAID_CLASS_COLORS and RAID_CLASS_COLORS[result.class]) or {r=1, g=1, b=1}
+        row.playerName:SetText(string.format("|cFF%02x%02x%02x%s|r",
             classColor.r * 255, classColor.g * 255, classColor.b * 255, result.name))
-        
-        -- Problemas
+
         if #result.problems > 0 then
-            row.problems:SetText("|cffff6600" .. table.concat(result.problems, ", ") .. "|r")
+            row.problems:SetText("|cFFFF6600" .. table.concat(result.problems, ", ") .. "|r")
         else
-            row.problems:SetText("|cff00ff00OK|r")
+            row.problems:SetText("|cFF00FF00Listo|r")
         end
-        
+
         row:Show()
     end
-    
-    self.Frame.content:SetHeight(math.max(#self.Results * 22, 100))
+
+    self.Frame.content:SetHeight(math.max(#self.Results * 24, 120))
 end
 
-function RC:AnnounceProblems()
-    -- Verificar si anuncios están habilitados
-    if not self:GetOption("announce") then
+-- ============================================================================
+-- ANUNCIO SEGURO DE PROBLEMAS AL CHAT
+-- ============================================================================
+function RC:AnnounceProblems(forceManual)
+    if not forceManual and not (self:GetOption("announceResults") or self:GetOption("announce")) then
         return
     end
-    
+
     local problems = {}
-    
     for _, result in ipairs(self.Results) do
         if not result.ready and #result.problems > 0 then
             table.insert(problems, result.name .. ": " .. table.concat(result.problems, ", "))
         end
     end
-    
+
+    local channel = self:GetGroupChannel()
+
     if #problems == 0 then
-        local msg = "[Sequito] ¡Todos listos!"
-        local channel = self:GetGroupChannel()
+        local msg = "[Sequito] ¡Todos los miembros están listos para el pull!"
         if channel then
             SendChatMessage(msg, channel)
         else
-            print(msg)
+            if S.Print then S:Print(msg) else DEFAULT_CHAT_FRAME:AddMessage(msg) end
         end
         return
     end
-    
-    local channel = self:GetGroupChannel()
-    
+
     if channel then
-        -- Concatenar para evitar desconexión por flood (Ley III: 255 bytes max)
-        local header = string.format("[Sequito] %d jugador(es) con problemas: ", #problems)
+        -- Despacho seguro bajo el límite inviolable de 255 bytes (Ley III)
+        local header = string.format("[Sequito] %d miembro(s) con faltantes: ", #problems)
         local line = header
         for _, problem in ipairs(problems) do
-            if #(line .. problem .. "; ") > 240 then
+            if #(line .. problem .. "; ") > 230 then
                 SendChatMessage(line, channel)
                 line = "  - " .. problem .. "; "
             else
@@ -561,41 +629,51 @@ function RC:AnnounceProblems()
             SendChatMessage(line, channel)
         end
     else
-        print("|cffff0000[Sequito]|r Problemas detectados:")
+        local title = string.format("|cFFFF3333[Sequito]|r %d miembros con problemas detectados:", #problems)
+        if S.Print then S:Print(title) else DEFAULT_CHAT_FRAME:AddMessage(title) end
         for _, problem in ipairs(problems) do
-            print("  - " .. problem)
+            local line = "  - " .. problem
+            if S.Print then S:Print(line) else DEFAULT_CHAT_FRAME:AddMessage(line) end
         end
     end
 end
 
-function RC:QuickCheck()
-    self:ScanRaid()
-    
-    local allReady = true
-    for _, result in ipairs(self.Results) do
-        if not result.ready then
-            allReady = false
-            break
+-- ============================================================================
+-- EVENTOS DE SERVIDOR
+-- ============================================================================
+function RC:RegisterEvents()
+    local f = CreateFrame("Frame")
+    f:RegisterEvent("READY_CHECK")
+    f:RegisterEvent("READY_CHECK_FINISHED")
+    f:SetScript("OnEvent", function(self, event, ...)
+        if event == "READY_CHECK" then
+            if RC:GetOption("autoCheck") then
+                RC:Show()
+                RC:ScanRaid(true)
+                if RC:GetOption("alertSound") then
+                    PlaySound("ReadyCheck")
+                end
+            end
+        elseif event == "READY_CHECK_FINISHED" then
+            if RC:GetOption("autoCheck") and RC:GetOption("announceResults") then
+                RC:AnnounceProblems(false)
+            end
         end
-    end
-    
-    return allReady
+    end)
+    self.eventFrame = f
 end
 
+-- ============================================================================
+-- MÉTODOS DE CONTROL Y COMANDOS SLASH
+-- ============================================================================
 function RC:Toggle()
     if not self.Frame then
-        self:Initialize()
+        self:CreateFrame()
     end
-    
-    -- Check again after Initialize (module might be disabled)
-    if not self.Frame then
-        return
-    end
-    
     self.IsVisible = not self.IsVisible
     if self.IsVisible then
         self.Frame:Show()
-        self:ScanRaid()
+        self:ScanRaid(false)
     else
         self.Frame:Hide()
     end
@@ -603,11 +681,11 @@ end
 
 function RC:Show()
     if not self.Frame then
-        self:Initialize()
+        self:CreateFrame()
     end
     self.IsVisible = true
     self.Frame:Show()
-    self:ScanRaid()
+    self:ScanRaid(false)
 end
 
 function RC:Hide()
@@ -617,87 +695,15 @@ function RC:Hide()
     end
 end
 
--- Helper para obtener configuración
-function RC:GetOption(key)
-    if S.ModuleConfig then
-        return S.ModuleConfig:GetValue("ReadyChecker", key)
-    end
-    return true
+SLASH_SEQUITORC1 = "/src"
+SLASH_SEQUITORC2 = "/sreadycheck"
+SlashCmdList["SEQUITORC"] = function()
+    RC:Toggle()
 end
 
--- Registrar módulo en ModuleConfig
-if S.ModuleConfig then
-    S.ModuleConfig:RegisterModule({
-        id = "ReadyChecker",
-        name = "Ready Checker",
-        description = "Verificación pre-pull de buffs, consumibles y preparación",
-        category = "raid",
-        icon = "Interface\\Icons\\INV_Misc_QuestionMark",
-        options = {
-            {
-                key = "enabled",
-                type = "checkbox",
-                name = "Habilitar Ready Check",
-                description = "Habilitar/deshabilitar verificación de preparación",
-                default = true
-            },
-            {
-                key = "autoCheck",
-                type = "checkbox",
-                name = "Check Automático",
-                description = "Verificar automáticamente antes de pull",
-                default = false
-            },
-            {
-                key = "checkBuffs",
-                type = "checkbox",
-                name = "Verificar Buffs",
-                description = "Verificar buffs de raid (Fort, Mark, etc)",
-                default = true
-            },
-            {
-                key = "checkConsumables",
-                type = "checkbox",
-                name = "Verificar Consumibles",
-                description = "Verificar flasks, food, pots",
-                default = true
-            },
-            {
-                key = "checkClass",
-                type = "checkbox",
-                name = "Verificar Clase",
-                description = "Verificar requisitos específicos de clase (venenos, mascotas, etc)",
-                default = true
-            },
-            {
-                key = "alertSound",
-                type = "checkbox",
-                name = "Sonido de Alerta",
-                description = "Reproducir sonido cuando faltan requisitos",
-                default = true
-            },
-            {
-                key = "announceResults",
-                type = "checkbox",
-                name = "Anunciar Resultados",
-                description = "Anunciar resultados del check al raid",
-                default = false
-            }
-        }
-    })
-end
-
--- Auto-inicializar
-local initFrame = CreateFrame("Frame")
-initFrame:RegisterEvent("PLAYER_LOGIN")
-initFrame:SetScript("OnEvent", function()
-    local timer = CreateFrame("Frame")
-    local elapsed = 0
-    timer:SetScript("OnUpdate", function(self, delta)
-        elapsed = elapsed + delta
-        if elapsed >= 3 then
-            self:SetScript("OnUpdate", nil)
-            RC:Initialize()
-        end
-    end)
+-- Inicialización limpia al iniciar sesión
+local loader = CreateFrame("Frame")
+loader:RegisterEvent("PLAYER_LOGIN")
+loader:SetScript("OnEvent", function()
+    RC:Initialize()
 end)

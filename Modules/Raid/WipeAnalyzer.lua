@@ -82,9 +82,15 @@ function WA:AnalyzePatterns()
     local diedPrevious = self:GetDeathSource(previousFight, playerName)
     
     if diedLatest and diedPrevious then
-        if diedLatest.spellId == diedPrevious.spellId then
+        local match = false
+        if diedLatest.spellId and diedPrevious.spellId and diedLatest.spellId > 0 and diedLatest.spellId == diedPrevious.spellId then
+            match = true
+        elseif diedLatest.spellName and diedPrevious.spellName and diedLatest.spellName ~= "Desconocido" and diedLatest.spellName == diedPrevious.spellName then
+            match = true
+        end
+        if match then
             -- PATTERN DETECTED!
-            local spellLink = GetSpellLink(diedLatest.spellId) or diedLatest.spellName
+            local spellLink = (diedLatest.spellId and diedLatest.spellId > 0 and GetSpellLink(diedLatest.spellId)) or diedLatest.spellName
             local msg = string.format("Coach: Has muerto 2 veces seguidas por %s. ¡Cuidado!", spellLink)
             
             -- Send to SmartCoach (or print if not available)
@@ -114,9 +120,14 @@ WA.IsVisible = false
 -- Helper para obtener configuración
 function WA:GetOption(key)
     if S.ModuleConfig then
-        return S.ModuleConfig:GetValue("WipeAnalyzer", key)
+        local val = S.ModuleConfig:GetValue("WipeAnalyzer", key)
+        if val ~= nil then return val end
     end
-    return true
+    if key == "enabled" or key == "autoShow" or key == "announceResults" or key == "trackConsumables" or key == "trackInterrupts" then
+        return true
+    end
+    if key == "minFightDuration" then return 10 end
+    return false
 end
 
 function WA:Initialize()
@@ -165,7 +176,12 @@ function WA:CreateFrame()
     f:SetMovable(true)
     f:RegisterForDrag("LeftButton")
     f:SetScript("OnDragStart", f.StartMoving)
-    f:SetScript("OnDragStop", f.StopMovingOrSizing)
+    f:SetScript("OnDragStop", function(self)
+        self:StopMovingOrSizing()
+        if S.SmartDefaults then
+            S.SmartDefaults:SavePosition("WipeAnalyzer", self)
+        end
+    end)
     f:SetClampedToScreen(true)
     f:Hide()
     
@@ -179,6 +195,10 @@ function WA:CreateFrame()
     local closeBtn = CreateFrame("Button", nil, f, "UIPanelCloseButton")
     closeBtn:SetPoint("TOPRIGHT", f, "TOPRIGHT", -2, -2)
     closeBtn:SetScript("OnClick", function() WA:Toggle() end)
+    
+    if S.SmartDefaults then
+        S.SmartDefaults:RestorePosition("WipeAnalyzer", f)
+    end
     
     -- Resumen
     local summary = f:CreateFontString(nil, "OVERLAY", "GameFontNormal")
@@ -245,6 +265,10 @@ function WA:RegisterEvents()
         S.CLEU:Register("SPELL_INTERRUPT", onCLEU)
         S.CLEU:Register("SPELL_DAMAGE", onCLEU)
         S.CLEU:Register("SWING_DAMAGE", onCLEU)
+        S.CLEU:Register("SPELL_PERIODIC_DAMAGE", onCLEU)
+        S.CLEU:Register("RANGE_DAMAGE", onCLEU)
+        S.CLEU:Register("SPELL_BUILDING_DAMAGE", onCLEU)
+        S.CLEU:Register("ENVIRONMENTAL_DAMAGE", onCLEU)
     else
         eventFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
         eventFrame:HookScript("OnEvent", function(self, event, ...)
@@ -369,16 +393,21 @@ end
 function WA:OnCombatLog(...)
     if not self.CurrentFight.inCombat then return end
     
-    local timestamp, event, sourceGUID, sourceName, sourceFlags, destGUID, destName, destFlags, spellId, spellName, spellSchool, extraArg1 = ...
+    local timestamp, event, sourceGUID, sourceName, sourceFlags, destGUID, destName, destFlags, arg9, arg10, arg11, arg12 = ...
     
-    -- Fix for SWING_DAMAGE in 3.3.5a (Args shift because no spell info)
-    if event == "SWING_DAMAGE" then
-        -- Arg9 (spellId) is Amount
-        -- Arg10 (spellName) is Overkill
-        local amount = spellId
-        spellId = 0
-        spellName = "Melee"
-        extraArg1 = amount -- Map amount to extraArg1 for RecordDamage
+    -- Detección dinámica de Boss durante combate
+    if sourceGUID and not self.CurrentFight.bossGUID and not self:IsRaidMember(sourceGUID) then
+        if bit.band(sourceFlags or 0, COMBATLOG_OBJECT_REACTION_HOSTILE) > 0 then
+            if UnitExists("target") and UnitGUID("target") == sourceGUID and (UnitClassification("target") == "worldboss" or UnitLevel("target") == -1) then
+                self.CurrentFight.isBossEncounter = true
+                self.CurrentFight.bossGUID = sourceGUID
+                self.CurrentFight.encounterName = sourceName or UnitName("target")
+            elseif UnitExists("focus") and UnitGUID("focus") == sourceGUID and (UnitClassification("focus") == "worldboss" or UnitLevel("focus") == -1) then
+                self.CurrentFight.isBossEncounter = true
+                self.CurrentFight.bossGUID = sourceGUID
+                self.CurrentFight.encounterName = sourceName or UnitName("focus")
+            end
+        end
     end
     
     -- Detectar muertes
@@ -410,30 +439,32 @@ function WA:OnCombatLog(...)
     
     -- Detectar uso de consumibles (si está habilitado)
     if event == "SPELL_CAST_SUCCESS" then
-        if self:GetOption("trackConsumables") and TrackedConsumables[spellId] and self:IsRaidMember(sourceGUID) then
-            self:RecordConsumable(sourceName, spellId, TrackedConsumables[spellId])
+        if self:GetOption("trackConsumables") and TrackedConsumables[arg9] and self:IsRaidMember(sourceGUID) then
+            self:RecordConsumable(sourceName, arg9, TrackedConsumables[arg9])
         end
     end
     
     -- Detectar interrupts exitosos (si está habilitado)
     if event == "SPELL_INTERRUPT" then
         if self:GetOption("trackInterrupts") and self:IsRaidMember(sourceGUID) then
-            self:RecordInterrupt(sourceName, destName, spellId, extraArg1, true)
-        end
-    end
-    
-    -- Detectar casts enemigos que deberían haber sido interrumpidos
-    if event == "SPELL_CAST_SUCCESS" then
-        if bit.band(sourceFlags, COMBATLOG_OBJECT_REACTION_HOSTILE) > 0 then
-            -- Aquí podríamos trackear spells importantes que no fueron interrumpidos
-            -- Por ahora solo registramos para análisis
+            self:RecordInterrupt(sourceName, destName, arg9, arg12, true)
         end
     end
     
     -- Registrar daño recibido (para análisis de muerte)
-    if event == "SPELL_DAMAGE" or event == "SWING_DAMAGE" then
-        if self:IsRaidMember(destGUID) then
-            self:RecordDamage(destName, sourceName, spellName or "Melee", extraArg1 or spellId)
+    if self:IsRaidMember(destGUID) then
+        if event == "SWING_DAMAGE" then
+            local amount = arg9
+            self:RecordDamage(destName, sourceName, "Melee", amount, 0)
+        elseif event == "SPELL_DAMAGE" or event == "SPELL_PERIODIC_DAMAGE" or event == "RANGE_DAMAGE" or event == "SPELL_BUILDING_DAMAGE" then
+            local spellId = arg9
+            local spellName = arg10 or "Hechizo"
+            local amount = arg12
+            self:RecordDamage(destName, sourceName, spellName, amount, spellId)
+        elseif event == "ENVIRONMENTAL_DAMAGE" then
+            local hazardType = arg9 or "Entorno"
+            local amount = arg10
+            self:RecordDamage(destName, "Medio ambiente", hazardType, amount, 0)
         end
     end
 end
@@ -443,32 +474,34 @@ function WA:UpdateRoster()
     
     if GetNumRaidMembers() > 0 then
         for i = 1, GetNumRaidMembers() do
-            local guid = UnitGUID("raid"..i)
-            if guid then self.RaidGUIDs[guid] = true end
+            local unit = "raid" .. i
+            local guid = UnitGUID(unit)
+            if guid then self.RaidGUIDs[guid] = unit end
         end
-    end
-    
-    -- Always include player
-    local pGUID = UnitGUID("player")
-    if pGUID then self.RaidGUIDs[pGUID] = true end
-    
-    -- Include party
-    if GetNumPartyMembers() > 0 then
+    elseif GetNumPartyMembers() > 0 then
         for i = 1, GetNumPartyMembers() do
-             local guid = UnitGUID("party"..i)
-             if guid then self.RaidGUIDs[guid] = true end
+            local unit = "party" .. i
+            local guid = UnitGUID(unit)
+            if guid then self.RaidGUIDs[guid] = unit end
         end
     end
+    
+    local pGUID = UnitGUID("player")
+    if pGUID then self.RaidGUIDs[pGUID] = "player" end
 end
 
 function WA:IsRaidMember(guid)
+    return self.RaidGUIDs[guid] ~= nil
+end
+
+function WA:GetRaidUnit(guid)
     return self.RaidGUIDs[guid]
 end
 
 function WA:RecordDeath(playerName, playerGUID)
-    -- Evitar falsos positivos: si el jugador no está realmente muerto/fantasma (ej. Fingir Muerte de cazador)
-    if not UnitIsDeadOrGhost(playerName) then
-        return
+    local unit = self:GetRaidUnit(playerGUID)
+    if unit and UnitExists(unit) and UnitIsFeignDeath(unit) then
+        return -- Fingir muerte de cazador detectado
     end
 
     local deathTime = GetTime() - self.CurrentFight.startTime
@@ -496,15 +529,20 @@ function WA:RecordDeath(playerName, playerGUID)
         time = deathTime,
         killedBy = lastDamage and lastDamage.source or "Desconocido",
         lastSpell = lastDamage and lastDamage.spell or "Desconocido",
+        lastSpellId = lastDamage and lastDamage.spellId or 0,
         lastDamage = lastDamage and lastDamage.amount or 0,
         usedConsumables = usedConsumables,
         isTacticalSacrifice = isSacrifice,
-        order = #self.CurrentFight.deaths + 1
+        order = #self.CurrentFight.deaths + 1,
+        source = {
+            spellId = lastDamage and lastDamage.spellId or 0,
+            spellName = lastDamage and lastDamage.spell or "Desconocido"
+        }
     }
     
     -- Obtener clase
     local _, classFile = GetPlayerInfoByGUID(playerGUID)
-    deathInfo.class = classFile
+    deathInfo.class = classFile or (unit and select(2, UnitClass(unit)))
     
     table.insert(self.CurrentFight.deaths, deathInfo)
 end
@@ -535,7 +573,8 @@ function WA:RecordInterrupt(playerName, targetName, interruptSpellId, interrupte
     end
 end
 
-function WA:RecordDamage(destName, sourceName, spellName, amount)
+function WA:RecordDamage(destName, sourceName, spellName, amount, spellId)
+    if not destName then return end
     if not self.CurrentFight.damage[destName] then
         self.CurrentFight.damage[destName] = {}
     end
@@ -547,9 +586,10 @@ function WA:RecordDamage(destName, sourceName, spellName, amount)
     end
     
     table.insert(damageList, {
-        source = sourceName,
-        spell = spellName,
-        amount = amount,
+        source = sourceName or "Medio ambiente",
+        spell = spellName or "Golpe",
+        spellId = spellId or 0,
+        amount = amount or 0,
         time = GetTime() - self.CurrentFight.startTime
     })
 end
@@ -990,29 +1030,17 @@ end
 -- Registrar configuración en ModuleConfig
 if S.ModuleConfig then
     S.ModuleConfig:RegisterModule("WipeAnalyzer", {
-        name = "Wipe Analyzer",
+        name = "Analizador de Wipes",
         icon = "Interface\\Icons\\Spell_Shadow_RitualOfSacrifice",
-        description = "Analiza wipes de raid y muestra estadísticas de muertes",
+        description = "Analiza wipes de raid y muestra estadísticas de muertes y consumibles",
         category = "raid",
         options = {
-            {key = "enabled", type = "checkbox", label = L["CFG_ENABLED"] or "Habilitar", default = true},
-            {key = "announce", type = "checkbox", label = L["CFG_ANNOUNCE"] or "Anunciar Wipes", default = true},
-            {key = "trackInterrupts", type = "checkbox", label = L["CFG_TRACK_INTERRUPTS"] or "Rastrear Interrupts", default = true, tooltip = "Registra interrupts exitosos y fallidos"},
-            {key = "minFightDuration", type = "slider", label = L["CFG_MIN_DURATION"] or "Duración Mínima", min = 5, max = 60, step = 5, default = 10, tooltip = "Duración mínima del combate para analizar"},
+            {key = "enabled", type = "checkbox", label = "Habilitar Wipe Analyzer", default = true},
+            {key = "autoShow", type = "checkbox", label = "Mostrar automáticamente tras wipe", default = true},
+            {key = "announceResults", type = "checkbox", label = "Anunciar análisis en banda/grupo", default = true},
+            {key = "trackConsumables", type = "checkbox", label = "Verificar pociones y piedras de salud", default = true},
+            {key = "trackInterrupts", type = "checkbox", label = "Rastrear interrupts", default = true},
+            {key = "minFightDuration", type = "slider", label = "Duración mínima (segundos)", min = 5, max = 60, step = 5, default = 10},
         }
     })
 end
--- Auto-inicializar
-local initFrame = CreateFrame("Frame")
-initFrame:RegisterEvent("PLAYER_LOGIN")
-initFrame:SetScript("OnEvent", function()
-    local timer = CreateFrame("Frame")
-    local elapsed = 0
-    timer:SetScript("OnUpdate", function(self, delta)
-        elapsed = elapsed + delta
-        if elapsed >= 3 then
-            self:SetScript("OnUpdate", nil)
-            WA:Initialize()
-        end
-    end)
-end)

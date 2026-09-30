@@ -1,11 +1,18 @@
 --[[
     SEQUITO - Raid Assist UI
     Interface for raid assistance features
+    Optimizado: Zero Heap FontString Pooling & Live Assignments
 ]]--
 
 local addonName, S = ...
 S.RaidAssistUI = {}
 local RAUI = S.RaidAssistUI
+
+-- Pools de reciclaje para evitar fugas de memoria y superposición de texto
+local usersPool = {}
+local consumablesPool = {}
+local cooldownsPool = {}
+local assignmentsPool = {}
 
 -- Helper para obtener configuración
 function RAUI:GetOption(key)
@@ -30,7 +37,7 @@ function RAUI:Initialize()
     SLASH_SEQUITORAU2 = "/seqassist"
     SlashCmdList["SEQUITORAU"] = function()
         if not self.mainFrame then self:CreateMainWindow() end
-        if self.mainFrame:IsShown() then self.mainFrame:Hide() else self.mainFrame:Show() end
+        self:Toggle()
     end
     
     -- Auto-show en raid si está habilitado
@@ -38,18 +45,21 @@ function RAUI:Initialize()
         local eventFrame = CreateFrame("Frame")
         eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
         eventFrame:RegisterEvent("RAID_ROSTER_UPDATE")
-        eventFrame:SetScript("OnEvent", function(self, event)
+        eventFrame:SetScript("OnEvent", function()
             if (GetNumRaidMembers() > 0) and RAUI.mainFrame then
                 local onlyLeader = RAUI:GetOption("showOnlyLeader")
                 local isLeader = (IsRaidLeader and IsRaidLeader()) or (IsRaidOfficer and IsRaidOfficer())
                 if not onlyLeader or isLeader then
                     RAUI.mainFrame:Show()
+                    RAUI:UpdateCurrentTab()
                 end
             end
         end)
     end
     
-    print("|cFF9900FFSequito RaidAssistUI|r: Online.")
+    if S.Print then
+        S:Print("|cFF9900FFRaidAssistUI|r: Online.")
+    end
 end
 
 -- ============================================
@@ -58,33 +68,49 @@ end
 
 function RAUI:CreateMainWindow()
     local f = CreateFrame("Frame", "SequitoRaidAssistFrame", UIParent)
-    f:SetSize(400, 500)
+    f:SetSize(420, 520)
     f:SetPoint("CENTER")
-    f:SetBackdrop({
-        bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-        edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
-        tile = true, tileSize = 32, edgeSize = 32,
-        insets = {left = 8, right = 8, top = 8, bottom = 8}
-    })
-    f:SetFrameStrata("HIGH") -- Ensure it's above other windows
+    
+    if S.Theme and S.Theme.ApplyPanelBackdrop then
+        S.Theme:ApplyPanelBackdrop(f)
+    else
+        f:SetBackdrop({
+            bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+            edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
+            tile = true, tileSize = 16, edgeSize = 16,
+            insets = {left = 4, right = 4, top = 4, bottom = 4}
+        })
+    end
+    
+    f:SetFrameStrata("HIGH")
     f:SetMovable(true)
     f:EnableMouse(true)
     f:RegisterForDrag("LeftButton")
     f:SetScript("OnDragStart", f.StartMoving)
-    f:SetScript("OnDragStop", f.StopMovingOrSizing)
+    f:SetScript("OnDragStop", function(self)
+        self:StopMovingOrSizing()
+        if S.SmartDefaults then
+            S.SmartDefaults:SavePosition("RaidAssistUI", self)
+        end
+    end)
     f:Hide()
     
     -- Title
     f.title = f:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-    f.title:SetPoint("TOP", 0, -15)
-    f.title:SetText(S.L["SEQUITO_RAIDASSIST"] or "Sequito Asistente de Raid")
+    f.title:SetPoint("TOP", 0, -12)
+    f.title:SetText(S.L["SEQUITO_RAIDASSIST"] or "Asistente de Banda")
     
     -- Close button
     f.closeBtn = CreateFrame("Button", nil, f, "UIPanelCloseButton")
     f.closeBtn:SetPoint("TOPRIGHT", -5, -5)
+    f.closeBtn:SetScript("OnClick", function() f:Hide() end)
     
-    -- Store mainFrame BEFORE creating tabs
     self.mainFrame = f
+    self.frame = f -- Exposición canónica para SmartDefaults
+    
+    if S.SmartDefaults then
+        S.SmartDefaults:RestorePosition("RaidAssistUI")
+    end
     
     -- Tabs
     self:CreateTabs(f)
@@ -103,8 +129,8 @@ function RAUI:CreateTabs(parent)
     
     for i, tabInfo in ipairs(tabs) do
         local tab = CreateFrame("Button", nil, parent)
-        tab:SetSize(90, 25)
-        tab:SetPoint("TOPLEFT", 10 + (i-1)*95, -40)
+        tab:SetSize(95, 25)
+        tab:SetPoint("TOPLEFT", 10 + (i-1)*98, -40)
         tab:SetNormalTexture("Interface\\PaperDollInfoFrame\\UI-Character-Tab-Enabled")
         tab:SetHighlightTexture("Interface\\PaperDollInfoFrame\\UI-Character-Tab-Highlight")
         
@@ -118,7 +144,7 @@ function RAUI:CreateTabs(parent)
         
         parent.tabs[i] = tab
         
-        -- Create content frame
+        -- Content frame
         local content = CreateFrame("Frame", nil, parent)
         content:SetPoint("TOPLEFT", 10, -70)
         content:SetPoint("BOTTOMRIGHT", -10, 10)
@@ -131,58 +157,72 @@ function RAUI:CreateTabs(parent)
         parent.tabContents[i] = content
     end
     
+    self.currentTab = 1
     self:ShowTab(1)
 end
 
 function RAUI:ShowTab(index)
     local f = self.mainFrame
+    if not f or not f.tabContents then return end
+    
+    self.currentTab = index
     for i, content in ipairs(f.tabContents) do
         if i == index then
             content:Show()
+            if i == 1 then
+                self:UpdateStatusTab()
+            elseif i == 2 then
+                self:UpdateCooldownsTab()
+            elseif i == 3 then
+                self:UpdateAssignmentsTab()
+            elseif i == 4 then
+                self:UpdateStatsTab()
+            end
         else
             content:Hide()
         end
     end
 end
 
+function RAUI:UpdateCurrentTab()
+    if self.mainFrame and self.mainFrame:IsShown() and self.currentTab then
+        self:ShowTab(self.currentTab)
+    end
+end
+
 -- ============================================
--- STATUS TAB
+-- STATUS TAB (Reciclado en memoria)
 -- ============================================
 
 function RAUI:CreateStatusTab(parent)
-    -- Users with Sequito
     local usersLabel = parent:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     usersLabel:SetPoint("TOPLEFT", 10, -10)
-    usersLabel:SetText(S.L["USERS_WITH_SEQUITO"] or "Usuarios con Sequito:")
+    usersLabel:SetText(S.L["USERS_WITH_SEQUITO"] or "Usuarios con el Addon:")
     
     local usersList = CreateFrame("ScrollFrame", "SequitoRAUsersScrollFrame", parent, "UIPanelScrollFrameTemplate")
     usersList:SetPoint("TOPLEFT", 10, -35)
-    usersList:SetSize(360, 150)
+    usersList:SetSize(370, 140)
     
     local usersContent = CreateFrame("Frame", nil, usersList)
-    usersContent:SetSize(360, 150)
+    usersContent:SetSize(370, 140)
     usersList:SetScrollChild(usersContent)
-    
     parent.usersList = usersContent
     
-    -- Consumables status
     local consumablesLabel = parent:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-    consumablesLabel:SetPoint("TOPLEFT", 10, -200)
+    consumablesLabel:SetPoint("TOPLEFT", 10, -185)
     consumablesLabel:SetText(S.L["CONSUMABLES_STATUS"] or "Estado de Consumibles:")
     
     local consumablesList = CreateFrame("ScrollFrame", "SequitoRAConsumablesScrollFrame", parent, "UIPanelScrollFrameTemplate")
-    consumablesList:SetPoint("TOPLEFT", 10, -225)
-    consumablesList:SetSize(360, 150)
+    consumablesList:SetPoint("TOPLEFT", 10, -210)
+    consumablesList:SetSize(370, 170)
     
     local consumablesContent = CreateFrame("Frame", nil, consumablesList)
-    consumablesContent:SetSize(360, 150)
+    consumablesContent:SetSize(370, 170)
     consumablesList:SetScrollChild(consumablesContent)
-    
     parent.consumablesList = consumablesContent
     
-    -- Update button
     local updateBtn = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
-    updateBtn:SetSize(100, 25)
+    updateBtn:SetSize(120, 24)
     updateBtn:SetPoint("BOTTOM", 0, 10)
     updateBtn:SetText(S.L["UPDATE"] or "Actualizar")
     updateBtn:SetScript("OnClick", function()
@@ -191,61 +231,94 @@ function RAUI:CreateStatusTab(parent)
 end
 
 function RAUI:UpdateStatusTab()
-    local content = self.mainFrame.tabContents[1]
-    if not content then return end
+    local content = self.mainFrame and self.mainFrame.tabContents and self.mainFrame.tabContents[1]
+    if not content or not S.RaidAssist then return end
     
-    -- Update users list
-    local usersList = content.usersList
-    usersList:Hide()
-    usersList:Show()
-    
+    -- 1. Actualizar Usuarios
+    for _, fs in ipairs(usersPool) do fs:Hide() end
+    local uIdx = 1
     local y = 0
-    for name, info in pairs(S.RaidAssist.users) do
-        local text = usersList:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-        text:SetPoint("TOPLEFT", 5, y)
-        text:SetText(string.format("%s (v%s)", name, info.version))
-        y = y - 20
+    
+    if S.RaidAssist.users then
+        for name, info in pairs(S.RaidAssist.users) do
+            local fs = usersPool[uIdx]
+            if not fs then
+                fs = content.usersList:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+                usersPool[uIdx] = fs
+            end
+            fs:ClearAllPoints()
+            fs:SetPoint("TOPLEFT", 5, -y)
+            fs:SetText(string.format("|cFF00FF00%s|r (v%s)", name, info.version or "1.0"))
+            fs:Show()
+            y = y + 18
+            uIdx = uIdx + 1
+        end
     end
+    if uIdx == 1 then
+        local fs = usersPool[1] or content.usersList:CreateFontString(nil, "OVERLAY", "GameFontDisable")
+        usersPool[1] = fs
+        fs:ClearAllPoints()
+        fs:SetPoint("TOPLEFT", 5, 0)
+        fs:SetText("No se detectaron otros miembros con el addon.")
+        fs:Show()
+        y = 18
+    end
+    content.usersList:SetHeight(math.max(140, y))
     
-    -- Update consumables
-    local consumablesList = content.consumablesList
-    consumablesList:Hide()
-    consumablesList:Show()
-    
+    -- 2. Actualizar Consumibles
+    for _, fs in ipairs(consumablesPool) do fs:Hide() end
+    local cIdx = 1
     y = 0
-    for name, status in pairs(S.RaidAssist.consumables) do
-        local flaskIcon = status.flask and "|cFF00FF00✓|r" or "|cFFFF0000X|r"
-        local foodIcon = status.food and "|cFF00FF00✓|r" or "|cFFFF0000X|r"
-        
-        local text = consumablesList:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-        text:SetPoint("TOPLEFT", 5, y)
-        text:SetText(string.format("%s - Flask:%s Food:%s", name, flaskIcon, foodIcon))
-        y = y - 20
+    
+    if S.RaidAssist.consumables then
+        for name, status in pairs(S.RaidAssist.consumables) do
+            local fs = consumablesPool[cIdx]
+            if not fs then
+                fs = content.consumablesList:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+                consumablesPool[cIdx] = fs
+            end
+            local flaskText = status.flask and "|cFF00FF00Frasco OK|r" or "|cFFFF3333Sin Frasco|r"
+            local foodText  = status.food and "|cFF00FF00Comida OK|r" or "|cFFFF3333Sin Comida|r"
+            fs:ClearAllPoints()
+            fs:SetPoint("TOPLEFT", 5, -y)
+            fs:SetText(string.format("%s: %s | %s", name, flaskText, foodText))
+            fs:Show()
+            y = y + 18
+            cIdx = cIdx + 1
+        end
     end
+    if cIdx == 1 then
+        local fs = consumablesPool[1] or content.consumablesList:CreateFontString(nil, "OVERLAY", "GameFontDisable")
+        consumablesPool[1] = fs
+        fs:ClearAllPoints()
+        fs:SetPoint("TOPLEFT", 5, 0)
+        fs:SetText("Pulsa 'Revisar Consumibles' en el panel de líder.")
+        fs:Show()
+        y = 18
+    end
+    content.consumablesList:SetHeight(math.max(170, y))
 end
 
 -- ============================================
--- COOLDOWNS TAB
+-- COOLDOWNS TAB (Reciclado en memoria)
 -- ============================================
 
 function RAUI:CreateCooldownsTab(parent)
     local label = parent:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     label:SetPoint("TOPLEFT", 10, -10)
-    label:SetText(S.L["IMPORTANT_COOLDOWNS"] or "Cooldowns Importantes:")
+    label:SetText(S.L["IMPORTANT_COOLDOWNS"] or "Cooldowns de Banda:")
     
     local scroll = CreateFrame("ScrollFrame", "SequitoRACooldownsScrollFrame", parent, "UIPanelScrollFrameTemplate")
     scroll:SetPoint("TOPLEFT", 10, -35)
-    scroll:SetPoint("BOTTOMRIGHT", -30, 40)
+    scroll:SetPoint("BOTTOMRIGHT", -30, 45)
     
     local content = CreateFrame("Frame", nil, scroll)
-    content:SetSize(360, 400)
+    content:SetSize(370, 360)
     scroll:SetScrollChild(content)
-    
     parent.cooldownsList = content
     
-    -- Update button
     local updateBtn = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
-    updateBtn:SetSize(100, 25)
+    updateBtn:SetSize(120, 24)
     updateBtn:SetPoint("BOTTOM", 0, 10)
     updateBtn:SetText(S.L["UPDATE"] or "Actualizar")
     updateBtn:SetScript("OnClick", function()
@@ -254,47 +327,143 @@ function RAUI:CreateCooldownsTab(parent)
 end
 
 function RAUI:UpdateCooldownsTab()
-    local content = self.mainFrame.tabContents[2]
-    if not content or not content.cooldownsList then return end
+    local content = self.mainFrame and self.mainFrame.tabContents and self.mainFrame.tabContents[2]
+    if not content or not content.cooldownsList or not S.RaidAssist then return end
     
-    local list = content.cooldownsList
-    list:Hide()
-    list:Show()
-    
+    for _, fs in ipairs(cooldownsPool) do fs:Hide() end
+    local cdIdx = 1
     local y = 0
-    for name, cds in pairs(S.RaidAssist.cooldowns) do
-        for spellName, info in pairs(cds) do
-            -- spellName is already the spell name (not ID) in 3.3.5
-            local text = list:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-            text:SetPoint("TOPLEFT", 5, y)
-            
-            local remaining = info.remaining
-            local color = remaining > 60 and "|cFFFF0000" or "|cFFFFFF00"
-            
-            text:SetText(string.format("%s - %s: %s%ds|r", name, spellName, color, remaining))
-            y = y - 20
+    
+    if S.RaidAssist.cooldowns then
+        for name, cds in pairs(S.RaidAssist.cooldowns) do
+            for spellName, info in pairs(cds) do
+                local fs = cooldownsPool[cdIdx]
+                if not fs then
+                    fs = content.cooldownsList:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+                    cooldownsPool[cdIdx] = fs
+                end
+                local remaining = info.remaining or 0
+                local color = remaining > 60 and "|cFFFF4444" or "|cFFFFFF00"
+                fs:ClearAllPoints()
+                fs:SetPoint("TOPLEFT", 5, -y)
+                fs:SetText(string.format("%s - |cFFFFD100%s|r: %s%ds|r", name, spellName, color, remaining))
+                fs:Show()
+                y = y + 18
+                cdIdx = cdIdx + 1
+            end
         end
     end
+    
+    if cdIdx == 1 then
+        local fs = cooldownsPool[1] or content.cooldownsList:CreateFontString(nil, "OVERLAY", "GameFontDisable")
+        cooldownsPool[1] = fs
+        fs:ClearAllPoints()
+        fs:SetPoint("TOPLEFT", 5, 0)
+        fs:SetText("No hay cooldowns compartidos activos en este momento.")
+        fs:Show()
+        y = 18
+    end
+    content.cooldownsList:SetHeight(math.max(360, y))
 end
 
 -- ============================================
--- ASSIGNMENTS TAB
+-- ASSIGNMENTS TAB (Funcionalidad Real Conectada)
 -- ============================================
 
 function RAUI:CreateAssignmentsTab(parent)
     local label = parent:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     label:SetPoint("TOPLEFT", 10, -10)
-    label:SetText(S.L["RAID_ASSIGNMENTS"] or "Asignaciones de Raid:")
+    label:SetText(S.L["RAID_ASSIGNMENTS"] or "Asignaciones de Banda:")
     
     local scroll = CreateFrame("ScrollFrame", "SequitoRAAssignmentsScrollFrame", parent, "UIPanelScrollFrameTemplate")
     scroll:SetPoint("TOPLEFT", 10, -35)
-    scroll:SetPoint("BOTTOMRIGHT", -30, 10)
+    scroll:SetPoint("BOTTOMRIGHT", -30, 45)
     
     local content = CreateFrame("Frame", nil, scroll)
-    content:SetSize(360, 400)
+    content:SetSize(370, 360)
     scroll:SetScrollChild(content)
-    
     parent.assignmentsList = content
+    
+    local updateBtn = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
+    updateBtn:SetSize(120, 24)
+    updateBtn:SetPoint("BOTTOM", 0, 10)
+    updateBtn:SetText(S.L["UPDATE"] or "Actualizar")
+    updateBtn:SetScript("OnClick", function()
+        RAUI:UpdateAssignmentsTab()
+    end)
+end
+
+function RAUI:UpdateAssignmentsTab()
+    local content = self.mainFrame and self.mainFrame.tabContents and self.mainFrame.tabContents[3]
+    if not content or not content.assignmentsList then return end
+    
+    for _, fs in ipairs(assignmentsPool) do fs:Hide() end
+    local aIdx = 1
+    local y = 0
+    
+    -- 1. Asignaciones de RaidAssist (ROLE_ASSIGN)
+    if S.RaidAssist and S.RaidAssist.assignments then
+        for player, assign in pairs(S.RaidAssist.assignments) do
+            local fs = assignmentsPool[aIdx]
+            if not fs then
+                fs = content.assignmentsList:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+                assignmentsPool[aIdx] = fs
+            end
+            fs:ClearAllPoints()
+            fs:SetPoint("TOPLEFT", 5, -y)
+            fs:SetText(string.format("|cFF66BBFF[Rol]|r %s: |cFFFFFFFF%s|r", player, tostring(assign)))
+            fs:Show()
+            y = y + 18
+            aIdx = aIdx + 1
+        end
+    end
+    
+    -- 2. Asignaciones avanzadas del módulo Assignments (Tanques / Corte / Marcas)
+    if S.Assignments and S.Assignments.Current then
+        local cur = S.Assignments.Current
+        if cur.tanks and next(cur.tanks) then
+            for target, tank in pairs(cur.tanks) do
+                local fs = assignmentsPool[aIdx]
+                if not fs then
+                    fs = content.assignmentsList:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+                    assignmentsPool[aIdx] = fs
+                end
+                fs:ClearAllPoints()
+                fs:SetPoint("TOPLEFT", 5, -y)
+                fs:SetText(string.format("|cFFFFA500[Tanque]|r %s -> Objetivo: %s", tank, target))
+                fs:Show()
+                y = y + 18
+                aIdx = aIdx + 1
+            end
+        end
+        if cur.interrupts and next(cur.interrupts) then
+            for target, rot in pairs(cur.interrupts) do
+                local fs = assignmentsPool[aIdx]
+                if not fs then
+                    fs = content.assignmentsList:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+                    assignmentsPool[aIdx] = fs
+                end
+                local rotStr = type(rot) == "table" and table.concat(rot, ", ") or tostring(rot)
+                fs:ClearAllPoints()
+                fs:SetPoint("TOPLEFT", 5, -y)
+                fs:SetText(string.format("|cFFFF4444[Corte]|r %s: %s", target, rotStr))
+                fs:Show()
+                y = y + 18
+                aIdx = aIdx + 1
+            end
+        end
+    end
+    
+    if aIdx == 1 then
+        local fs = assignmentsPool[1] or content.assignmentsList:CreateFontString(nil, "OVERLAY", "GameFontDisable")
+        assignmentsPool[1] = fs
+        fs:ClearAllPoints()
+        fs:SetPoint("TOPLEFT", 5, 0)
+        fs:SetText("No hay asignaciones de banda configuradas.")
+        fs:Show()
+        y = 18
+    end
+    content.assignmentsList:SetHeight(math.max(360, y))
 end
 
 -- ============================================
@@ -311,34 +480,36 @@ function RAUI:CreateStatsTab(parent)
     parent.wipeCount:SetText((S.L["WIPES"] or "Wipes") .. ": 0")
     
     parent.mode = parent:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    parent.mode:SetPoint("TOPLEFT", 10, -60)
+    parent.mode:SetPoint("TOPLEFT", 10, -65)
     parent.mode:SetText((S.L["MODE"] or "Modo") .. ": FARM")
     
-    -- Reset button
     local resetBtn = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
-    resetBtn:SetSize(150, 25)
-    resetBtn:SetPoint("TOPLEFT", 10, -90)
-    resetBtn:SetText(S.L["RESET_COUNTER"] or "Reset Contador")
+    resetBtn:SetSize(160, 24)
+    resetBtn:SetPoint("TOPLEFT", 10, -100)
+    resetBtn:SetText(S.L["RESET_COUNTER"] or "Reset Contador Wipes")
     resetBtn:SetScript("OnClick", function()
-        S.RaidAssist:ResetWipeCounter()
+        if S.RaidAssist then
+            S.RaidAssist:ResetWipeCounter()
+        end
         RAUI:UpdateStatsTab()
     end)
     
-    -- Mode toggle
     local modeBtn = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
-    modeBtn:SetSize(150, 25)
-    modeBtn:SetPoint("TOPLEFT", 10, -120)
-    modeBtn:SetText(S.L["CHANGE_MODE"] or "Cambiar Modo")
+    modeBtn:SetSize(160, 24)
+    modeBtn:SetPoint("TOPLEFT", 10, -130)
+    modeBtn:SetText(S.L["CHANGE_MODE"] or "Alternar Progreso/Farm")
     modeBtn:SetScript("OnClick", function()
-        local newMode = S.RaidAssist.mode == "FARM" and "PROGRESSION" or "FARM"
-        S.RaidAssist:SetMode(newMode)
+        if S.RaidAssist then
+            local newMode = S.RaidAssist.mode == "FARM" and "PROGRESSION" or "FARM"
+            S.RaidAssist:SetMode(newMode)
+        end
         RAUI:UpdateStatsTab()
     end)
 end
 
 function RAUI:UpdateStatsTab()
-    local content = self.mainFrame.tabContents[4]
-    if not content then return end
+    local content = self.mainFrame and self.mainFrame.tabContents and self.mainFrame.tabContents[4]
+    if not content or not S.RaidAssist then return end
     
     content.wipeCount:SetText((S.L["WIPES"] or "Wipes") .. ": " .. (S.RaidAssist.wipeCount or 0))
     content.mode:SetText((S.L["MODE"] or "Modo") .. ": " .. (S.RaidAssist.mode or "FARM"))
@@ -352,60 +523,69 @@ function RAUI:CreateLeaderPanel()
     local f = CreateFrame("Frame", "SequitoLeaderPanel", UIParent)
     f:SetSize(200, 150)
     f:SetPoint("TOPRIGHT", -50, -200)
-    f:SetBackdrop({
-        bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-        edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-        tile = true, tileSize = 16, edgeSize = 16,
-        insets = {left = 4, right = 4, top = 4, bottom = 4}
-    })
-    f:SetBackdropColor(0, 0, 0, 0.8)
+    
+    if S.Theme and S.Theme.ApplyPanelBackdrop then
+        S.Theme:ApplyPanelBackdrop(f)
+    else
+        f:SetBackdrop({
+            bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
+            edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+            tile = true, tileSize = 16, edgeSize = 16,
+            insets = {left = 4, right = 4, top = 4, bottom = 4}
+        })
+        f:SetBackdropColor(0, 0, 0, 0.8)
+    end
+    
     f:SetFrameStrata("HIGH")
     f:SetMovable(true)
     f:EnableMouse(true)
     f:RegisterForDrag("LeftButton")
     f:SetScript("OnDragStart", f.StartMoving)
-    f:SetScript("OnDragStop", f.StopMovingOrSizing)
+    f:SetScript("OnDragStop", function(self)
+        self:StopMovingOrSizing()
+        if S.SmartDefaults then
+            S.SmartDefaults:SavePosition("LeaderPanel", self)
+        end
+    end)
     f:Hide()
     
-    -- Title
     f.title = f:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     f.title:SetPoint("TOP", 0, -10)
-    f.title:SetText(S.L["RAID_LEADER"] or "Raid Leader")
+    f.title:SetText(S.L["RAID_LEADER"] or "Líder de Banda")
     
-    -- Pull timer button
     local pullBtn = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
-    pullBtn:SetSize(180, 25)
+    pullBtn:SetSize(180, 24)
     pullBtn:SetPoint("TOP", 0, -30)
     pullBtn:SetText(S.L["PULL_TIMER_10S"] or "Pull Timer (10s)")
     pullBtn:SetScript("OnClick", function()
-        S.RaidAssist:StartPullTimer(10)
+        if S.RaidAssist then S.RaidAssist:StartPullTimer(10) end
     end)
     
-    -- Announce phase button
     local phaseBtn = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
-    phaseBtn:SetSize(180, 25)
-    phaseBtn:SetPoint("TOP", 0, -60)
+    phaseBtn:SetSize(180, 24)
+    phaseBtn:SetPoint("TOP", 0, -58)
     phaseBtn:SetText(S.L["ANNOUNCE_PHASE_2"] or "Anunciar Fase 2")
     phaseBtn:SetScript("OnClick", function()
-        S.RaidAssist:AnnouncePhase("2")
+        if S.RaidAssist then S.RaidAssist:AnnouncePhase("2") end
     end)
     
-    -- Check consumables button
     local checkBtn = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
-    checkBtn:SetSize(180, 25)
-    checkBtn:SetPoint("TOP", 0, -90)
+    checkBtn:SetSize(180, 24)
+    checkBtn:SetPoint("TOP", 0, -86)
     checkBtn:SetText(S.L["CHECK_CONSUMABLES"] or "Revisar Consumibles")
     checkBtn:SetScript("OnClick", function()
-        S.RaidAssist:CheckConsumables()
-        local report = S.RaidAssist:GetConsumableReport()
-        S:Print(S.L["CONSUMABLES_REPORT"] or "=== Reporte de Consumibles ===")
-        S:Print(report)
+        if S.RaidAssist then
+            S.RaidAssist:CheckConsumables()
+            local report = S.RaidAssist:GetConsumableReport()
+            S:Print(S.L["CONSUMABLES_REPORT"] or "=== Reporte de Consumibles ===")
+            S:Print(report)
+            RAUI:UpdateStatusTab()
+        end
     end)
     
-    -- Open full window button
     local openBtn = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
-    openBtn:SetSize(180, 25)
-    openBtn:SetPoint("TOP", 0, -120)
+    openBtn:SetSize(180, 24)
+    openBtn:SetPoint("TOP", 0, -114)
     openBtn:SetText(S.L["OPEN_FULL_PANEL"] or "Abrir Panel Completo")
     openBtn:SetScript("OnClick", function()
         RAUI:Toggle()
@@ -414,28 +594,22 @@ function RAUI:CreateLeaderPanel()
     self.leaderPanel = f
 end
 
--- ============================================
--- TOGGLE FUNCTIONS
--- ============================================
-
 function RAUI:Toggle()
     if not self.mainFrame then
-        S:Print("RaidAssistUI no está habilitado.")
-        return
+        self:CreateMainWindow()
     end
     
     if self.mainFrame:IsShown() then
         self.mainFrame:Hide()
     else
         self.mainFrame:Show()
-        self:UpdateStatusTab()
+        self:UpdateCurrentTab()
     end
 end
 
 function RAUI:ToggleLeaderPanel()
     if not self.leaderPanel then
-        S:Print("RaidAssistUI no está habilitado.")
-        return
+        self:CreateLeaderPanel()
     end
     
     if self.leaderPanel:IsShown() then
@@ -450,18 +624,14 @@ function RAUI:ShowLeaderPanel()
         self:CreateLeaderPanel()
     end
     
-    -- Check if player is raid leader or assistant
     local numRaid = GetNumRaidMembers()
     local isLeader = false
     
     if numRaid > 0 then
-        -- In raid: check if leader or assistant
         isLeader = (IsRaidLeader and IsRaidLeader()) or (IsRaidOfficer and IsRaidOfficer())
     elseif GetNumPartyMembers() > 0 then
-        -- In party: check if party leader
         isLeader = IsPartyLeader and IsPartyLeader()
     else
-        -- Solo o fuera de grupo: permitir apertura para pruebas/configuración
         isLeader = true
     end
     
@@ -473,7 +643,6 @@ function RAUI:ShowLeaderPanel()
     self.leaderPanel:Show()
 end
 
--- Registrar módulo en ModuleConfig
 if S.ModuleConfig then
     S.ModuleConfig:RegisterModule({
         id = "RaidAssistUI",
@@ -502,21 +671,6 @@ if S.ModuleConfig then
                 name = "Solo Líder/Asistente",
                 description = "Mostrar solo si eres líder o asistente",
                 default = true
-            },
-            {
-                key = "compactMode",
-                type = "checkbox",
-                name = "Modo Compacto",
-                description = "Usar interfaz compacta",
-                default = false
-            },
-            {
-                key = "position",
-                type = "dropdown",
-                name = "Posición",
-                description = "Posición de la ventana",
-                values = {"CENTER", "TOP", "BOTTOM", "LEFT", "RIGHT"},
-                default = "CENTER"
             }
         }
     })

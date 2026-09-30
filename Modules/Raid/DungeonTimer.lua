@@ -1,13 +1,8 @@
 --[[
     Sequito - DungeonTimer.lua
-    Timer de Heroic/Daily Dungeons
-    Version: 7.3.0
-    
-    Funcionalidades:
-    - Mostrar tiempo restante para reset de heroicas
-    - Recordar qué dungeons ya hiciste hoy
-    - Tooltip en la esfera con info
-    - Tracking de lockouts
+    Timer de Heroic/Daily Dungeons y Lockouts
+    Version: 8.0.0 (Bilingual & Ecosystem Sync Edition)
+    Compatibilidad: WotLK 3.3.5a (Build 12340) | Español (esES/esMX) & Inglés (enUS)
 ]]
 
 local addonName, S = ...
@@ -19,35 +14,36 @@ DT.Frame = nil
 DT.CompletedDungeons = {}
 DT.DailyReset = 0
 DT.IsVisible = false
+DT.lastRunCompleted = false
 
--- Lista de Heroicas de WotLK
+-- Función utilitaria para normalizar texto (sin tildes, minúsculas)
+local function CleanString(str)
+    if not str then return "" end
+    local s = str:lower()
+    s = s:gsub("á", "a"):gsub("é", "e"):gsub("í", "i"):gsub("ó", "o"):gsub("ú", "u"):gsub("ñ", "n")
+    return s
+end
+
+-- Catálogo Maestro de Heroicas de WotLK (Soporte Bilingüe y Claves de Búsqueda)
 local HEROIC_DUNGEONS = {
-    -- Northrend Dungeons
-    {id = 574, name = "Utgarde Keep", abbrev = "UK"},
-    {id = 575, name = "Utgarde Pinnacle", abbrev = "UP"},
-    {id = 576, name = "The Nexus", abbrev = "Nex"},
-    {id = 578, name = "The Oculus", abbrev = "Ocu"},
-    {id = 595, name = "The Culling of Stratholme", abbrev = "CoS"},
-    {id = 599, name = "Halls of Stone", abbrev = "HoS"},
-    {id = 600, name = "Drak'Tharon Keep", abbrev = "DTK"},
-    {id = 601, name = "Azjol-Nerub", abbrev = "AN"},
-    {id = 602, name = "Halls of Lightning", abbrev = "HoL"},
-    {id = 604, name = "Gundrak", abbrev = "Gun"},
-    {id = 608, name = "The Violet Hold", abbrev = "VH"},
-    {id = 619, name = "Ahn'kahet: The Old Kingdom", abbrev = "OK"},
-    {id = 632, name = "The Forge of Souls", abbrev = "FoS"},
-    {id = 650, name = "Trial of the Champion", abbrev = "ToC5"},
-    {id = 658, name = "Pit of Saron", abbrev = "PoS"},
-    {id = 668, name = "Halls of Reflection", abbrev = "HoR"},
+    { id = 574, name = "Fortaleza de Utgarde",      nameEn = "Utgarde Keep",              abbrev = "UK",   keys = {"utgarde keep", "fortaleza de utgarde"} },
+    { id = 575, name = "Pináculo de Utgarde",       nameEn = "Utgarde Pinnacle",          abbrev = "UP",   keys = {"utgarde pinnacle", "pinaculo de utgarde"} },
+    { id = 576, name = "El Nexo",                  nameEn = "The Nexus",                 abbrev = "Nex",  keys = {"the nexus", "el nexo", "nexo"} },
+    { id = 578, name = "El Oculus",                nameEn = "The Oculus",                abbrev = "Ocu",  keys = {"the oculus", "el oculus", "oculus"} },
+    { id = 595, name = "La Matanza de Stratholme", nameEn = "The Culling of Stratholme", abbrev = "CoS",  keys = {"the culling of stratholme", "matanza de stratholme", "stratholme"} },
+    { id = 599, name = "Cámaras de Piedra",        nameEn = "Halls of Stone",            abbrev = "HoS",  keys = {"halls of stone", "camaras de piedra"} },
+    { id = 600, name = "Fortaleza de Drak'Tharon", nameEn = "Drak'Tharon Keep",          abbrev = "DTK",  keys = {"drak'tharon keep", "draktharon keep", "fortaleza de drak'tharon", "drak'tharon"} },
+    { id = 601, name = "Azjol-Nerub",              nameEn = "Azjol-Nerub",               abbrev = "AN",   keys = {"azjol-nerub", "azjol nerub"} },
+    { id = 602, name = "Cámaras de Relámpagos",    nameEn = "Halls of Lightning",        abbrev = "HoL",  keys = {"halls of lightning", "camaras de relampagos"} },
+    { id = 604, name = "Gundrak",                  nameEn = "Gundrak",                   abbrev = "Gun",  keys = {"gundrak"} },
+    { id = 608, name = "El Bastión Violeta",       nameEn = "The Violet Hold",           abbrev = "VH",   keys = {"the violet hold", "violet hold", "bastion violeta", "el bastion violeta"} },
+    { id = 619, name = "Ahn'kahet: El Antiguo Reino", nameEn = "Ahn'kahet: The Old Kingdom", abbrev = "OK", keys = {"ahn'kahet", "the old kingdom", "antiguo reino"} },
+    { id = 632, name = "La Forja de Almas",        nameEn = "The Forge of Souls",        abbrev = "FoS",  keys = {"the forge of souls", "forge of souls", "forja de almas", "la forja de almas"} },
+    { id = 650, name = "Prueba del Campeón",       nameEn = "Trial of the Champion",     abbrev = "ToC5", keys = {"trial of the champion", "prueba del campeon"} },
+    { id = 658, name = "Foso de Saron",            nameEn = "Pit of Saron",              abbrev = "PoS",  keys = {"pit of saron", "foso de saron"} },
+    { id = 668, name = "Cámaras de Reflexión",     nameEn = "Halls of Reflection",       abbrev = "HoR",  keys = {"halls of reflection", "camaras de reflexion"} },
 }
 
--- Dailies especiales
-local DAILY_DUNGEONS = {
-    {name = "Random Heroic", abbrev = "RH", questId = 24790},
-    {name = "Random Normal", abbrev = "RN", questId = 24788},
-}
-
--- Helper para obtener configuración
 function DT:GetOption(key)
     if S.ModuleConfig then
         return S.ModuleConfig:GetValue("DungeonTimer", key)
@@ -66,82 +62,91 @@ function DT:Initialize()
     self:RegisterEvents()
     self:LoadSavedData()
     self:CalculateResetTime()
+    self:SyncWithSavedInstances()
 end
 
 function DT:CreateFrame()
-    self.Frame = CreateFrame("Frame", "SequitoDungeonTimerFrame", UIParent)
-    self.Frame:SetSize(280, 350)
-    self.Frame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
-    self.Frame:SetFrameStrata("HIGH")
-    self.Frame:SetMovable(true)
-    self.Frame:EnableMouse(true)
-    self.Frame:RegisterForDrag("LeftButton")
-    self.Frame:SetScript("OnDragStart", function(f) f:StartMoving() end)
-    self.Frame:SetScript("OnDragStop", function(f) f:StopMovingOrSizing() end)
-    self.Frame:Hide()
+    local f = CreateFrame("Frame", "SequitoDungeonTimerFrame", UIParent)
+    f:SetSize(300, 370)
+    f:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+    f:SetFrameStrata("HIGH")
+    f:SetMovable(true)
+    f:EnableMouse(true)
+    f:RegisterForDrag("LeftButton")
+    f:SetScript("OnDragStart", function(frame) frame:StartMoving() end)
+    f:SetScript("OnDragStop", function(frame)
+        frame:StopMovingOrSizing()
+        if S.SmartDefaults then
+            S.SmartDefaults:SavePosition("DungeonTimer", frame)
+        end
+    end)
+    f:Hide()
     
-    -- Fondo
-    self.Frame.bg = self.Frame:CreateTexture(nil, "BACKGROUND")
-    self.Frame.bg:SetAllPoints()
-    self.Frame.bg:SetTexture("Interface\\Buttons\\WHITE8X8")
-    self.Frame.bg:SetVertexColor(0, 0, 0, 0.9)
-    
-    -- Borde
-    self.Frame.border = CreateFrame("Frame", nil, self.Frame)
-    self.Frame.border:SetAllPoints()
-    self.Frame.border:SetBackdrop({
-        edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-        edgeSize = 14,
-    })
-    self.Frame.border:SetBackdropBorderColor(0.4, 0.6, 0.8, 1)
+    -- Fondo con respaldo unificado
+    if S.Theme and S.Theme.ApplyPanelBackdrop then
+        S.Theme:ApplyPanelBackdrop(f)
+    else
+        f.bg = f:CreateTexture(nil, "BACKGROUND")
+        f.bg:SetAllPoints()
+        f.bg:SetTexture("Interface\\Buttons\\WHITE8X8")
+        f.bg:SetVertexColor(0, 0, 0, 0.9)
+        
+        f.border = CreateFrame("Frame", nil, f)
+        f.border:SetAllPoints()
+        f.border:SetBackdrop({
+            edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+            edgeSize = 14,
+        })
+        f.border:SetBackdropBorderColor(0.4, 0.6, 0.8, 1)
+    end
     
     -- Título
-    self.Frame.title = self.Frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-    self.Frame.title:SetPoint("TOP", self.Frame, "TOP", 0, -10)
-    self.Frame.title:SetText("|cFF6699FFDungeon Timer|r")
+    f.title = f:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    f.title:SetPoint("TOP", f, "TOP", 0, -10)
+    f.title:SetText("|cFF6699FFHeroicas Diarias|r")
     
     -- Botón cerrar
-    self.Frame.closeBtn = CreateFrame("Button", nil, self.Frame, "UIPanelCloseButton")
-    self.Frame.closeBtn:SetPoint("TOPRIGHT", self.Frame, "TOPRIGHT", -2, -2)
-    self.Frame.closeBtn:SetScript("OnClick", function() self.Frame:Hide() end)
+    f.closeBtn = CreateFrame("Button", nil, f, "UIPanelCloseButton")
+    f.closeBtn:SetPoint("TOPRIGHT", f, "TOPRIGHT", -2, -2)
+    f.closeBtn:SetScript("OnClick", function() f:Hide() end)
     
     -- Timer de reset
-    self.Frame.resetTimer = self.Frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    self.Frame.resetTimer:SetPoint("TOPLEFT", self.Frame, "TOPLEFT", 15, -35)
-    self.Frame.resetTimer:SetText("|cFFFFFF00Reset en:|r Calculando...")
+    f.resetTimer = f:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    f.resetTimer:SetPoint("TOPLEFT", f, "TOPLEFT", 15, -35)
+    f.resetTimer:SetText("|cFFFFFF00Reset en:|r Calculando...")
     
     -- Daily status
-    self.Frame.dailyStatus = self.Frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    self.Frame.dailyStatus:SetPoint("TOPLEFT", self.Frame.resetTimer, "BOTTOMLEFT", 0, -5)
-    self.Frame.dailyStatus:SetText("")
+    f.dailyStatus = f:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    f.dailyStatus:SetPoint("TOPLEFT", f.resetTimer, "BOTTOMLEFT", 0, -5)
+    f.dailyStatus:SetText("")
     
     -- Separador
-    self.Frame.sep = self.Frame:CreateTexture(nil, "ARTWORK")
-    self.Frame.sep:SetSize(250, 1)
-    self.Frame.sep:SetPoint("TOPLEFT", self.Frame.dailyStatus, "BOTTOMLEFT", 0, -10)
-    self.Frame.sep:SetTexture("Interface\\Buttons\\WHITE8X8")
-    self.Frame.sep:SetVertexColor(0.5, 0.5, 0.5, 0.5)
+    f.sep = f:CreateTexture(nil, "ARTWORK")
+    f.sep:SetSize(270, 1)
+    f.sep:SetPoint("TOPLEFT", f.dailyStatus, "BOTTOMLEFT", 0, -8)
+    f.sep:SetTexture("Interface\\Buttons\\WHITE8X8")
+    f.sep:SetVertexColor(0.5, 0.5, 0.5, 0.5)
     
     -- Header de dungeons
-    self.Frame.dungeonHeader = self.Frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    self.Frame.dungeonHeader:SetPoint("TOPLEFT", self.Frame.sep, "BOTTOMLEFT", 0, -10)
-    self.Frame.dungeonHeader:SetText("|cFF00FFFFHeroicas Completadas:|r")
+    f.dungeonHeader = f:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    f.dungeonHeader:SetPoint("TOPLEFT", f.sep, "BOTTOMLEFT", 0, -8)
+    f.dungeonHeader:SetText("|cFF00FFFFHeroicas Completadas Hoy:|r")
     
     -- Lista de dungeons (scroll frame)
-    self.Frame.scrollFrame = CreateFrame("ScrollFrame", "SequitoDTListScroll", self.Frame, "UIPanelScrollFrameTemplate")
-    self.Frame.scrollFrame:SetSize(240, 200)
-    self.Frame.scrollFrame:SetPoint("TOPLEFT", self.Frame.dungeonHeader, "BOTTOMLEFT", 0, -5)
+    f.scrollFrame = CreateFrame("ScrollFrame", "SequitoDTListScroll", f, "UIPanelScrollFrameTemplate")
+    f.scrollFrame:SetSize(255, 210)
+    f.scrollFrame:SetPoint("TOPLEFT", f.dungeonHeader, "BOTTOMLEFT", 0, -5)
     
-    self.Frame.scrollChild = CreateFrame("Frame", nil, self.Frame.scrollFrame)
-    self.Frame.scrollChild:SetSize(240, 400)
-    self.Frame.scrollFrame:SetScrollChild(self.Frame.scrollChild)
+    f.scrollChild = CreateFrame("Frame", nil, f.scrollFrame)
+    f.scrollChild:SetSize(255, 360)
+    f.scrollFrame:SetScrollChild(f.scrollChild)
     
     -- Crear filas de dungeons
-    self.Frame.dungeonRows = {}
+    f.dungeonRows = {}
     for i, dungeon in ipairs(HEROIC_DUNGEONS) do
-        local row = CreateFrame("Frame", nil, self.Frame.scrollChild)
-        row:SetSize(230, 18)
-        row:SetPoint("TOPLEFT", self.Frame.scrollChild, "TOPLEFT", 0, -(i-1) * 20)
+        local row = CreateFrame("Frame", nil, f.scrollChild)
+        row:SetSize(250, 18)
+        row:SetPoint("TOPLEFT", f.scrollChild, "TOPLEFT", 0, -(i-1) * 21)
         
         -- Checkbox
         row.check = row:CreateTexture(nil, "ARTWORK")
@@ -153,38 +158,44 @@ function DT:CreateFrame()
         -- Nombre
         row.name = row:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
         row.name:SetPoint("LEFT", row.check, "RIGHT", 5, 0)
-        row.name:SetText(dungeon.abbrev .. " - " .. dungeon.name)
+        row.name:SetText(string.format("[%s] %s", dungeon.abbrev, dungeon.name))
         row.name:SetTextColor(0.7, 0.7, 0.7)
         
         row.dungeonId = dungeon.id
-        self.Frame.dungeonRows[i] = row
+        f.dungeonRows[i] = row
     end
     
-    -- Botón de reset manual
-    local resetBtn = CreateFrame("Button", nil, self.Frame)
-    resetBtn:SetSize(100, 24)
-    resetBtn:SetPoint("BOTTOM", self.Frame, "BOTTOM", 0, 15)
-    
-    resetBtn.bg = resetBtn:CreateTexture(nil, "BACKGROUND")
-    resetBtn.bg:SetAllPoints()
-    resetBtn.bg:SetTexture("Interface\\Buttons\\WHITE8X8")
-    resetBtn.bg:SetVertexColor(0.3, 0.3, 0.5, 0.8)
-    
-    resetBtn.text = resetBtn:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-    resetBtn.text:SetPoint("CENTER")
-    resetBtn.text:SetText("Resetear Lista")
-    
-    resetBtn:SetHighlightTexture("Interface\\Buttons\\UI-Listbox-Highlight")
-    resetBtn:SetScript("OnClick", function() DT:ResetCompleted() end)
-    
-    self.Frame.resetBtn = resetBtn
-    
-    -- OnUpdate para timer
-    self.Frame:SetScript("OnUpdate", function(frame, elapsed)
-        self:OnUpdate(elapsed)
+    -- Botón de sincronizar con servidor
+    local syncBtn = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
+    syncBtn:SetSize(120, 22)
+    syncBtn:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 15, 12)
+    syncBtn:SetText("Sincronizar")
+    syncBtn:SetScript("OnClick", function()
+        DT:SyncWithSavedInstances()
+        if S.Print then S:Print("Sincronizado con bloqueos del servidor.") end
     end)
     
+    -- Botón de reset manual
+    local resetBtn = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
+    resetBtn:SetSize(120, 22)
+    resetBtn:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -15, 12)
+    resetBtn:SetText("Resetear Lista")
+    resetBtn:SetScript("OnClick", function() DT:ResetCompleted() end)
+    
+    f.syncBtn = syncBtn
+    f.resetBtn = resetBtn
+    
+    f:SetScript("OnUpdate", function(_, elapsed)
+        DT:OnUpdate(elapsed)
+    end)
+    
+    self.Frame = f
+    self.frame = f -- Conexión para SmartDefaults
     self.updateTimer = 0
+    
+    if S.SmartDefaults then
+        S.SmartDefaults:RestorePosition("DungeonTimer")
+    end
 end
 
 function DT:RegisterEvents()
@@ -192,27 +203,30 @@ function DT:RegisterEvents()
     eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     eventFrame:RegisterEvent("LFG_COMPLETION_REWARD")
     eventFrame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
+    eventFrame:RegisterEvent("UPDATE_INSTANCE_INFO")
     
-    eventFrame:SetScript("OnEvent", function(self, event, ...)
+    eventFrame:SetScript("OnEvent", function(_, event)
         if event == "PLAYER_ENTERING_WORLD" then
             DT:CheckDailyReset()
+            DT:SyncWithSavedInstances()
             DT:UpdateDisplay()
         elseif event == "LFG_COMPLETION_REWARD" then
             DT:OnDungeonComplete()
         elseif event == "ZONE_CHANGED_NEW_AREA" then
             DT:CheckCurrentDungeon()
+        elseif event == "UPDATE_INSTANCE_INFO" then
+            DT:SyncWithSavedInstances()
         end
     end)
     
-    -- Detección real de bosses en 3.3.5a vía CLEU Dispatcher
     if S.CLEU and S.CLEU.Register then
         S.CLEU:Register("UNIT_DIED", function(...)
             local _, _, _, _, _, destGUID, destName = ...
             if destGUID and destName then
                 local unitType = tonumber(destGUID:sub(5, 5), 16)
-                if unitType == 3 or unitType == 5 then -- Creature/Vehicle
+                if unitType == 3 or unitType == 5 then
                     local _, instanceType, difficultyID = GetInstanceInfo()
-                    if instanceType == "party" or instanceType == "raid" then
+                    if instanceType == "party" and difficultyID == 2 then
                         DT:OnBossKill(destName)
                     end
                 end
@@ -229,9 +243,8 @@ function DT:LoadSavedData()
 end
 
 function DT:SaveData()
-    if not SequitoDB then SequitoDB = {} end
-    if not SequitoDB.DungeonTimer then SequitoDB.DungeonTimer = {} end
-    
+    SequitoDB = SequitoDB or {}
+    SequitoDB.DungeonTimer = SequitoDB.DungeonTimer or {}
     SequitoDB.DungeonTimer.completed = self.CompletedDungeons
     SequitoDB.DungeonTimer.dailyReset = self.DailyReset
 end
@@ -244,47 +257,68 @@ function DT:CalculateResetTime()
         return
     end
 
-    -- El reset diario es a las 3:00 AM hora del servidor (fallback aproximado)
-    -- En WotLK privados puede variar
-    local resetHour = 3 -- 3 AM
-    
-    -- Calcular próximo reset
-    local date = date("*t", serverTime)
+    local dateT = date("*t", serverTime)
     local todayReset = time({
-        year = date.year,
-        month = date.month,
-        day = date.day,
-        hour = resetHour,
+        year = dateT.year,
+        month = dateT.month,
+        day = dateT.day,
+        hour = 4, -- 04:00 AM hora oficial de reinicio del Reino Andino
         min = 0,
         sec = 0
     })
     
     if serverTime >= todayReset then
-        -- El reset de hoy ya pasó, calcular el de mañana
-        self.DailyReset = todayReset + 86400 -- +24 horas
+        self.DailyReset = todayReset + 86400
     else
         self.DailyReset = todayReset
     end
 end
 
 function DT:CheckDailyReset()
-    local serverTime = GetServerTime()
+    local serverTime = (GetServerTime and GetServerTime()) or time()
     
-    if serverTime >= self.DailyReset then
-        -- Reset ocurrió, limpiar dungeons completados
+    if self.DailyReset > 0 and serverTime >= self.DailyReset then
         wipe(self.CompletedDungeons)
         self:CalculateResetTime()
         self:SaveData()
+        self:UpdateDisplay()
         
-        -- Notificar si está habilitado
         if self:GetOption("notifyOnReset") and S.Print then
-            S:Print("|cFF00FF00¡Reset diario! Lista de heroicas limpiada.|r")
+            S:Print("|cFF00FF00¡Reset diario completado! Lista de heroicas limpiada.|r")
         end
     end
 end
 
+function DT:SyncWithSavedInstances()
+    RequestRaidInfo()
+    local count = GetNumSavedInstances()
+    if not count or count == 0 then return end
+    
+    local anyAdded = false
+    local sTime = (GetServerTime and GetServerTime()) or time()
+
+    for i = 1, count do
+        local name, _, reset, difficulty, locked, _, _, isRaid = GetSavedInstanceInfo(i)
+        if difficulty == 2 and not isRaid and locked then
+            local matched = self:MarkDungeonComplete(name, true)
+            if matched then anyAdded = true end
+            if reset and reset > 0 then
+                local candidate = sTime + reset
+                if self.DailyReset == 0 or candidate < self.DailyReset then
+                    self.DailyReset = candidate
+                end
+            end
+        end
+    end
+    
+    if anyAdded then
+        self:SaveData()
+        self:UpdateDisplay()
+    end
+end
+
 function DT:OnUpdate(elapsed)
-    self.updateTimer = self.updateTimer + elapsed
+    self.updateTimer = (self.updateTimer or 0) + elapsed
     if self.updateTimer < 1 then return end
     self.updateTimer = 0
     
@@ -292,7 +326,9 @@ function DT:OnUpdate(elapsed)
 end
 
 function DT:UpdateResetTimer()
-    local serverTime = GetServerTime()
+    if not self.Frame or not self.Frame:IsShown() then return end
+    
+    local serverTime = (GetServerTime and GetServerTime()) or time()
     local timeLeft = self.DailyReset - serverTime
     
     if timeLeft <= 0 then
@@ -301,8 +337,8 @@ function DT:UpdateResetTimer()
     end
     
     local hours = math.floor(timeLeft / 3600)
-    local mins = math.floor((timeLeft % 3600) / 60)
-    local secs = timeLeft % 60
+    local mins  = math.floor((timeLeft % 3600) / 60)
+    local secs  = timeLeft % 60
     
     self.Frame.resetTimer:SetText(string.format(
         "|cFFFFFF00Reset en:|r |cFFFFFFFF%02d:%02d:%02d|r",
@@ -312,75 +348,67 @@ end
 
 function DT:OnDungeonComplete()
     local instanceName = GetInstanceInfo()
-    self:MarkDungeonComplete(instanceName)
+    self:MarkDungeonComplete(instanceName, false)
 end
 
 function DT:OnBossKill(bossName)
-    -- Verificar si tracking está habilitado
-    if not self:GetOption("trackLockouts") then
-        return
-    end
-    
-    -- Verificar si estamos en una heroica
+    if not self:GetOption("trackLockouts") then return end
     local name, instanceType, difficultyID = GetInstanceInfo()
-    if difficultyID == 2 then -- Heroic 5-man
-        -- Marcar como completada después del último boss
-        -- (simplificado: marcamos en cualquier boss kill)
+    if instanceType == "party" and difficultyID == 2 then
+        self:MarkDungeonComplete(name, false)
     end
 end
 
 function DT:CheckCurrentDungeon()
-    local name, instanceType, difficultyID, difficultyName, 
-          maxPlayers, dynamicDifficulty, isDynamic, instanceID = GetInstanceInfo()
-    
+    local name, instanceType, difficultyID = GetInstanceInfo()
     if instanceType == "party" and difficultyID == 2 then
-        -- Estamos en una heroica
         if S.Print then
             S:Print(string.format("|cFF6699FF[Dungeon]|r Entrando a: %s (Heroica)", name))
         end
     end
 end
 
-function DT:MarkDungeonComplete(dungeonName)
-    -- Buscar el dungeon por nombre
+function DT:MarkDungeonComplete(rawName, silent)
+    if not rawName or rawName == "" then return false end
+    local clean = CleanString(rawName)
+    
     for _, dungeon in ipairs(HEROIC_DUNGEONS) do
-        if dungeon.name == dungeonName or string.find(dungeonName, dungeon.abbrev) then
+        local matched = false
+        if CleanString(dungeon.name) == clean or CleanString(dungeon.nameEn) == clean then
+            matched = true
+        else
+            for _, key in ipairs(dungeon.keys) do
+                if clean:find(key, 1, true) then
+                    matched = true
+                    break
+                end
+            end
+        end
+        
+        if matched then
+            local isNew = (self.CompletedDungeons[dungeon.id] == nil)
             self.CompletedDungeons[dungeon.id] = {
                 name = dungeon.name,
-                time = GetServerTime(),
+                time = (GetServerTime and GetServerTime()) or time(),
             }
-            self:SaveData()
-            self:UpdateDisplay()
-            
             self.lastRunCompleted = true
+            
+            -- Notificar al EcosystemBridge para alimentar el BattlePass
             if S.EcosystemBridge and S.EcosystemBridge.NotifyDungeonComplete then
                 S.EcosystemBridge:NotifyDungeonComplete()
             end
-
-            if S.Print then
-                S:Print(string.format("|cFF00FF00✓|r %s completada.", dungeon.name))
-            end
-            return
-        end
-    end
-end
-
-function DT:MarkComplete(dungeonId)
-    for _, dungeon in ipairs(HEROIC_DUNGEONS) do
-        if dungeon.id == dungeonId then
-            self.CompletedDungeons[dungeon.id] = {
-                name = dungeon.name,
-                time = GetServerTime(),
-            }
-            self:SaveData()
-            self:UpdateDisplay()
             
-            if S.Print then
-                S:Print(string.format("|cFF00FF00✓|r %s marcada como completada.", dungeon.name))
+            if isNew and not silent then
+                self:SaveData()
+                self:UpdateDisplay()
+                if S.Print then
+                    S:Print(string.format("|cFF00FF00[Dungeon]|r ¡%s completada!", dungeon.name))
+                end
             end
-            return
+            return true
         end
     end
+    return false
 end
 
 function DT:MarkIncomplete(dungeonId)
@@ -407,23 +435,21 @@ function DT:ResetCompleted()
 end
 
 function DT:UpdateDisplay()
-    if not self.Frame:IsShown() then return end
+    if not self.Frame or not self.Frame:IsShown() then return end
     
-    -- Actualizar filas de dungeons
     for i, row in ipairs(self.Frame.dungeonRows) do
         local dungeon = HEROIC_DUNGEONS[i]
         if dungeon then
             if self.CompletedDungeons[dungeon.id] then
                 row.check:Show()
-                row.name:SetTextColor(0.3, 0.8, 0.3)
+                row.name:SetTextColor(0.3, 0.9, 0.3)
             else
                 row.check:Hide()
-                row.name:SetTextColor(0.7, 0.7, 0.7)
+                row.name:SetTextColor(0.65, 0.65, 0.65)
             end
         end
     end
     
-    -- Actualizar contador
     local completed = 0
     for _ in pairs(self.CompletedDungeons) do
         completed = completed + 1
@@ -444,54 +470,37 @@ function DT:GetCompletedCount()
 end
 
 function DT:GetTimeToReset()
-    local serverTime = GetServerTime()
+    local serverTime = (GetServerTime and GetServerTime()) or time()
     return math.max(0, self.DailyReset - serverTime)
 end
 
 function DT:GetTimeToResetFormatted()
     local timeLeft = self:GetTimeToReset()
     local hours = math.floor(timeLeft / 3600)
-    local mins = math.floor((timeLeft % 3600) / 60)
+    local mins  = math.floor((timeLeft % 3600) / 60)
     return string.format("%dh %dm", hours, mins)
 end
 
 function DT:Toggle()
-    if not self.Frame then return end
+    if not self.Frame then
+        self:CreateFrame()
+    end
     if self.Frame:IsShown() then
         self.Frame:Hide()
     else
         self.Frame:Show()
+        self:SyncWithSavedInstances()
         self:UpdateDisplay()
         self:UpdateResetTimer()
     end
 end
 
-function DT:PrintStatus()
-    local completed, total = self:GetCompletedCount()
-    local resetTime = self:GetTimeToResetFormatted()
-    
-    if S.Print then
-        S:Print(string.format("|cFF6699FF[Dungeon Timer]|r Completadas: %d/%d | Reset en: %s",
-            completed, total, resetTime))
-    end
-    
-    -- Listar completadas
-    for id, data in pairs(self.CompletedDungeons) do
-        if S.Print then
-            S:Print(string.format("  |cFF00FF00✓|r %s", data.name))
-        end
-    end
-end
-
--- Tooltip para la esfera
 function DT:GetTooltipText()
     local completed, total = self:GetCompletedCount()
     local resetTime = self:GetTimeToResetFormatted()
-    
     return string.format("Heroicas: %d/%d\nReset: %s", completed, total, resetTime)
 end
 
--- Registrar configuración en ModuleConfig
 if S.ModuleConfig then
     S.ModuleConfig:RegisterModule("DungeonTimer", {
         name = "Dungeon Timer",
@@ -508,23 +517,9 @@ if S.ModuleConfig then
             },
             {
                 type = "checkbox",
-                key = "showReminders",
-                label = "Mostrar Recordatorios",
-                tooltip = "Muestra recordatorios de dungeons disponibles",
-                default = true,
-            },
-            {
-                type = "checkbox",
                 key = "trackLockouts",
                 label = "Trackear Lockouts",
                 tooltip = "Registra qué dungeons ya completaste",
-                default = true,
-            },
-            {
-                type = "checkbox",
-                key = "showInTooltip",
-                label = "Mostrar en Tooltip",
-                tooltip = "Muestra info de dungeons en el tooltip de la esfera",
                 default = true,
             },
             {
@@ -534,21 +529,10 @@ if S.ModuleConfig then
                 tooltip = "Notifica cuando se resetean los lockouts diarios",
                 default = true,
             },
-            {
-                type = "slider",
-                key = "reminderTime",
-                label = "Tiempo Recordatorio (min)",
-                tooltip = "Cuánto tiempo antes del reset mostrar recordatorio",
-                min = 15,
-                max = 120,
-                step = 15,
-                default = 60,
-            },
         },
     })
 end
 
--- Inicializar
 if S.RegisterModule then
     S:RegisterModule("DungeonTimer", DT)
 else

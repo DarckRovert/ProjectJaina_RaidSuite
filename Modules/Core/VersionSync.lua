@@ -1,92 +1,150 @@
 --[[
     Sequito - VersionSync Module
-    Sincronización de versiones del addon con UI completa
-    Version: 7.3.0
+    Sincronización y auditoría de versiones del addon para WotLK 3.3.5a
+    Version: 8.0.0
 ]]
 
 local addonName, S = ...
-S.VersionSync = {}
+S.VersionSync = S.VersionSync or {}
 local VSy = S.VersionSync
 
-local ADDON_VERSION = S.Version or "8.0.0"
 local guildVersions = {}
+VSy.notifiedSenders = {}
+VSy.lastResponse = {}
 
--- Helper para obtener configuración
+local DEFAULT_OPTIONS = {
+    enabled = true,
+    autoCheck = true,
+    notifyOutdated = true,
+    showInTooltip = false,
+    checkInterval = 30,
+}
+
+-- Helper para obtener la versión real en tiempo de ejecución (evita carreras de carga en el TOC)
+function VSy:GetVersion()
+    return S.Version or (GetAddOnMetadata and GetAddOnMetadata(addonName, "Version")) or "11.1.0"
+end
+
+-- Helper para obtener configuración con fallback defensivo
 function VSy:GetOption(key)
-    if S.ModuleConfig then
-        return S.ModuleConfig:GetValue("VersionSync", key)
+    if S.ModuleConfig and S.ModuleConfig.GetValue then
+        local val = S.ModuleConfig:GetValue("VersionSync", key)
+        if val ~= nil then return val end
+    end
+    if DEFAULT_OPTIONS[key] ~= nil then
+        return DEFAULT_OPTIONS[key]
     end
     return true
 end
 
 function VSy:Initialize()
+    if self.initialized then return end
     if not self:GetOption("enabled") then
         return
     end
-    if self.initialized then return end
     self.initialized = true
     
-    self:CreateFrame()
-    self:RegisterEvents()
     if RegisterAddonMessagePrefix then
         RegisterAddonMessagePrefix("SeqVer")
     end
+
+    self.frame = self:CreateFrame()
+    self.Frame = self.frame
+    self:RegisterEvents()
 end
 
 function VSy:CreateFrame()
+    if self.frame then return self.frame end
+
     local f = CreateFrame("Frame", "SequitoVersionSyncFrame", UIParent)
-    f:SetSize(350, 300)
-    f:SetPoint("CENTER")
-    f:SetBackdrop({
-        bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-        edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
-        edgeSize = 16,
-        insets = {left = 4, right = 4, top = 4, bottom = 4}
-    })
+    self.frame = f
+    self.Frame = f
+    f:SetSize(360, 320)
+    f:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+    
+    if S.Theme and S.Theme.ApplyPanelBackdrop then
+        S.Theme:ApplyPanelBackdrop(f)
+    else
+        f:SetBackdrop({
+            bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+            edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
+            tile = true, tileSize = 32, edgeSize = 16,
+            insets = {left = 4, right = 4, top = 4, bottom = 4}
+        })
+    end
+    
     f:SetMovable(true)
     f:EnableMouse(true)
     f:RegisterForDrag("LeftButton")
     f:SetScript("OnDragStart", f.StartMoving)
-    f:SetScript("OnDragStop", f.StopMovingOrSizing)
+    f:SetScript("OnDragStop", function(selfFrame)
+        selfFrame:StopMovingOrSizing()
+        if S.SmartDefaults then
+            S.SmartDefaults:SavePosition("VersionSync", selfFrame)
+        end
+    end)
+    f:SetClampedToScreen(true)
     f:Hide()
     
     f.title = f:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     f.title:SetPoint("TOP", 0, -12)
-    f.title:SetText("|cff00ff00Sequito|r - Versiones")
+    f.title:SetText("|cFFD4AF37Sequito - Versiones de Addon|r")
     
     f.close = CreateFrame("Button", nil, f, "UIPanelCloseButton")
-    f.close:SetPoint("TOPRIGHT", -5, -5)
+    f.close:SetPoint("TOPRIGHT", -4, -4)
+    f.close:SetScript("OnClick", function() f:Hide() end)
     
-    f.myVersion = f:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    f.myVersion:SetPoint("TOPLEFT", 15, -40)
-    f.myVersion:SetText("Tu versión: |cff00ff00" .. ADDON_VERSION .. "|r")
+    f.myVersion = f:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    f.myVersion:SetPoint("TOPLEFT", 16, -38)
+    f.myVersion:SetText("Tu versión: |cFF00FF00" .. self:GetVersion() .. "|r")
     
-    f.scrollFrame = CreateFrame("ScrollFrame", "SequitoVSScroll", f, "UIPanelScrollFrameTemplate")
-    f.scrollFrame:SetPoint("TOPLEFT", 10, -65)
-    f.scrollFrame:SetPoint("BOTTOMRIGHT", -30, 50)
+    local sf = CreateFrame("ScrollFrame", "SequitoVSScroll", f, "UIPanelScrollFrameTemplate")
+    f.scrollFrame = sf
+    sf:SetPoint("TOPLEFT", 12, -62)
+    sf:SetPoint("BOTTOMRIGHT", -32, 50)
     
-    f.scrollChild = CreateFrame("Frame", nil, f.scrollFrame)
-    f.scrollChild:SetSize(300, 200)
-    f.scrollFrame:SetScrollChild(f.scrollChild)
+    local content = CreateFrame("Frame", nil, sf)
+    f.scrollChild = content
+    content:SetSize(300, 200)
+    sf:SetScrollChild(content)
     
     f.refreshBtn = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
-    f.refreshBtn:SetSize(120, 25)
-    f.refreshBtn:SetPoint("BOTTOMLEFT", 15, 15)
+    f.refreshBtn:SetSize(110, 24)
+    f.refreshBtn:SetPoint("BOTTOMLEFT", 14, 14)
     f.refreshBtn:SetText("Actualizar")
     f.refreshBtn:SetScript("OnClick", function()
         VSy:RequestVersions(true)
-        S:Print("Solicitando versiones...")
+        local msg = "Solicitando versiones al grupo/hermandad..."
+        if S.Print then S:Print(msg) else print("|cFFFF9900[Sequito]|r " .. msg) end
     end)
+
+    f.closeBottomBtn = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
+    f.closeBottomBtn:SetSize(90, 24)
+    f.closeBottomBtn:SetPoint("BOTTOMRIGHT", -14, 14)
+    f.closeBottomBtn:SetText("Cerrar")
+    f.closeBottomBtn:SetScript("OnClick", function() f:Hide() end)
     
-    f.status = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-    f.status:SetPoint("BOTTOM", 0, 45)
-    f.status:SetText("")
+    f.status = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    f.status:SetPoint("BOTTOM", 0, 42)
+    f.status:SetText("No hay datos. Haz clic en Actualizar.")
     
-    self.frame = f
     self.versionRows = {}
+    
+    if S.SmartDefaults then
+        S.SmartDefaults:RestorePosition("VersionSync")
+    end
+    
+    return f
 end
 
 function VSy:UpdateVersionList()
+    if not self.frame or not self.frame.scrollChild then return end
+
+    local myVer = self:GetVersion()
+    if self.frame.myVersion then
+        self.frame.myVersion:SetText("Tu versión: |cFF00FF00" .. myVer .. "|r")
+    end
+
     for _, row in ipairs(self.versionRows) do
         row:Hide()
     end
@@ -106,24 +164,24 @@ function VSy:UpdateVersionList()
         local row = self.versionRows[index]
         if not row then
             row = CreateFrame("Frame", nil, self.frame.scrollChild)
-            row:SetSize(290, 22)
+            row:SetSize(296, 22)
             
             row.icon = row:CreateTexture(nil, "ARTWORK")
             row.icon:SetSize(16, 16)
-            row.icon:SetPoint("LEFT", 5, 0)
+            row.icon:SetPoint("LEFT", 4, 0)
             
-            row.name = row:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-            row.name:SetPoint("LEFT", 25, 0)
-            row.name:SetWidth(150)
+            row.name = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+            row.name:SetPoint("LEFT", 24, 0)
+            row.name:SetWidth(160)
             row.name:SetJustifyH("LEFT")
             
-            row.version = row:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-            row.version:SetPoint("RIGHT", -10, 0)
+            row.version = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+            row.version:SetPoint("RIGHT", -8, 0)
+            row.version:SetJustifyH("RIGHT")
             
             row.bg = row:CreateTexture(nil, "BACKGROUND")
             row.bg:SetAllPoints()
             row.bg:SetTexture("Interface\\Buttons\\WHITE8X8")
-            row.bg:SetVertexColor(1, 1, 1, 0.05)
             
             self.versionRows[index] = row
         end
@@ -131,24 +189,27 @@ function VSy:UpdateVersionList()
         row:SetPoint("TOPLEFT", 0, -yOffset)
         row:Show()
         
-        local comparison = self:CompareVersions(data.version, ADDON_VERSION)
+        local comparison = self:CompareVersions(data.version, myVer)
         if comparison < 0 then
             row.icon:SetTexture("Interface\\RAIDFRAME\\ReadyCheck-NotReady")
-            row.version:SetTextColor(1, 0.3, 0.3)
+            row.version:SetText("|cFFFF4444" .. data.version .. "|r")
+            outdatedCount = outdatedCount + 1
+        elseif comparison > 0 then
+            row.icon:SetTexture("Interface\\RAIDFRAME\\ReadyCheck-Waiting")
+            row.version:SetText("|cFF00CCFF" .. data.version .. " (Nueva)|r")
             outdatedCount = outdatedCount + 1
         else
             row.icon:SetTexture("Interface\\RAIDFRAME\\ReadyCheck-Ready")
-            row.version:SetTextColor(0.3, 1, 0.3)
+            row.version:SetText("|cFF00FF00" .. data.version .. "|r")
             upToDateCount = upToDateCount + 1
         end
         
         row.name:SetText(data.name)
-        row.version:SetText(data.version)
         
         if index % 2 == 0 then
-            row.bg:SetVertexColor(1, 1, 1, 0.05)
+            row.bg:SetVertexColor(1, 1, 1, 0.04)
         else
-            row.bg:SetVertexColor(0, 0, 0, 0.2)
+            row.bg:SetVertexColor(0, 0, 0, 0.25)
         end
         
         yOffset = yOffset + 22
@@ -159,13 +220,16 @@ function VSy:UpdateVersionList()
     
     local total = outdatedCount + upToDateCount
     if total > 0 then
-        self.frame.status:SetText(string.format("|cff00ff00%d|r actualizados, |cffff0000%d|r desactualizados", upToDateCount, outdatedCount))
+        self.frame.status:SetText(string.format("|cFF00FF00%d|r al día, |cFFFF4444%d|r con diferente versión", upToDateCount, outdatedCount))
     else
         self.frame.status:SetText("No hay datos. Haz clic en Actualizar.")
     end
 end
 
 function VSy:RegisterEvents()
+    if self.eventsRegistered then return end
+    self.eventsRegistered = true
+
     local events = CreateFrame("Frame")
     events:RegisterEvent("CHAT_MSG_ADDON")
     events:RegisterEvent("RAID_ROSTER_UPDATE")
@@ -175,19 +239,16 @@ function VSy:RegisterEvents()
         if event == "CHAT_MSG_ADDON" then
             VSy:OnAddonMessage(...)
         elseif event == "RAID_ROSTER_UPDATE" or event == "PARTY_MEMBERS_CHANGED" or event == "GUILD_ROSTER_UPDATE" then
-            VSy:RequestVersions()
+            VSy:RequestVersions(false)
         end
     end)
 end
 
 function VSy:GetSyncChannel()
-    if IsInInstance then
-        local inInstance, instanceType = IsInInstance()
-        if inInstance and instanceType == "pvp" then
-            return "BATTLEGROUND"
-        end
-    end
-    if GetNumRaidMembers() > 0 then
+    local inInstance, instanceType = IsInInstance()
+    if inInstance and (instanceType == "pvp" or instanceType == "arena") then
+        return "BATTLEGROUND"
+    elseif GetNumRaidMembers() > 0 then
         return "RAID"
     elseif GetNumPartyMembers() > 0 then
         return "PARTY"
@@ -198,13 +259,12 @@ function VSy:GetSyncChannel()
 end
 
 function VSy:RequestVersions(force)
-    -- Verificar si auto-check está habilitado
     if not force and not self:GetOption("autoCheck") then
         return
     end
     
     local now = GetTime()
-    if not force and self.lastRequest and (now - self.lastRequest < 15) then
+    if not force and self.lastRequest and (now - self.lastRequest < 20) then
         return
     end
     self.lastRequest = now
@@ -217,48 +277,71 @@ end
 
 function VSy:SendVersion(channel)
     local targetChannel = channel or self:GetSyncChannel()
-    if targetChannel then
-        SendAddonMessage("SeqVer", "VERSION:" .. ADDON_VERSION, targetChannel)
+    if not targetChannel then return end
+
+    -- Blindaje anti-tormentas de red: máximo 1 respuesta cada 30 segundos por canal
+    local now = GetTime()
+    local last = self.lastResponse[targetChannel] or 0
+    if (now - last) < 30 then
+        return
     end
+    self.lastResponse[targetChannel] = now
+
+    local payload = "VERSION:" .. self:GetVersion()
+    SendAddonMessage("SeqVer", payload, targetChannel)
 end
 
 function VSy:OnAddonMessage(prefix, msg, channel, sender)
-    if prefix ~= "SeqVer" then return end
+    if prefix ~= "SeqVer" or not msg then return end
     if sender == UnitName("player") then return end
     
     if msg == "REQUEST" then
         self:SendVersion(channel)
-    elseif msg:find("VERSION:") then
-        local version = msg:gsub("VERSION:", "")
-        guildVersions[sender] = version
-        
-        if self:CompareVersions(version, ADDON_VERSION) > 0 and self:GetOption("notifyOutdated") then
-            S:Print("|cffff0000" .. sender .. " tiene una versión más nueva: " .. version .. "|r")
-        end
-        
-        if self.frame and self.frame:IsShown() then
-            self:UpdateVersionList()
+    elseif msg:find("^VERSION:") then
+        local version = msg:gsub("^VERSION:", ""):match("^%s*(.-)%s*$")
+        if version and version ~= "" then
+            guildVersions[sender] = version
+            
+            local myVer = self:GetVersion()
+            if self:CompareVersions(version, myVer) > 0 and self:GetOption("notifyOutdated") then
+                local notifyKey = sender .. "_" .. version
+                if not self.notifiedSenders[notifyKey] then
+                    self.notifiedSenders[notifyKey] = true
+                    local note = string.format("Una versión más reciente de Sequito RaidSuite está disponible (|cFFFFD100v%s|r por %s).", version, sender)
+                    if S.Print then S:Print(note) else print("|cFFFF9900[Sequito]|r " .. note) end
+                end
+            end
+            
+            if self.frame and self.frame:IsShown() then
+                self:UpdateVersionList()
+            end
         end
     end
 end
 
 function VSy:Toggle()
-    if not self.frame then return end
+    if not self.frame then
+        self:CreateFrame()
+    end
     if self.frame:IsShown() then
         self.frame:Hide()
     else
-        self.frame:Show()
         self:UpdateVersionList()
+        self.frame:Show()
     end
 end
 
+-- Comparador semántico resiliente a sufijos (ej. 11.1.0 vs 11.1.0b)
 function VSy:CompareVersions(v1, v2)
-    local p1 = {strsplit(".", v1)}
-    local p2 = {strsplit(".", v2)}
+    if not v1 or not v2 then return 0 end
+    local p1 = {strsplit(".", tostring(v1))}
+    local p2 = {strsplit(".", tostring(v2))}
     
     for i = 1, 3 do
-        local n1 = tonumber(p1[i]) or 0
-        local n2 = tonumber(p2[i]) or 0
+        local token1 = p1[i] and p1[i]:match("%d+") or "0"
+        local token2 = p2[i] and p2[i]:match("%d+") or "0"
+        local n1 = tonumber(token1) or 0
+        local n2 = tonumber(token2) or 0
         if n1 > n2 then return 1 end
         if n1 < n2 then return -1 end
     end
@@ -266,22 +349,44 @@ function VSy:CompareVersions(v1, v2)
 end
 
 function VSy:ShowVersions()
-    S:Print("Versiones de Sequito:")
-    S:Print("  Tu versión: " .. ADDON_VERSION)
+    local myVer = self:GetVersion()
+    local header = "Versiones de Sequito RaidSuite registradas (Tu versión: |cFF00FF00" .. myVer .. "|r):"
+    if S.Print then S:Print(header) else print("|cFFFF9900[Sequito]|r " .. header) end
+    
+    local hasAny = false
     for name, ver in pairs(guildVersions) do
-        local color = self:CompareVersions(ver, ADDON_VERSION) < 0 and "|cffff0000" or "|cff00ff00"
-        S:Print("  " .. color .. name .. ": " .. ver .. "|r")
+        hasAny = true
+        local cmp = self:CompareVersions(ver, myVer)
+        local color = (cmp < 0 and "|cFFFF4444") or (cmp > 0 and "|cFF00CCFF") or "|cFF00FF00"
+        print(string.format("  • %s: %s%s|r", name, color, ver))
+    end
+    if not hasAny then
+        print("  (No hay versiones recibidas aún. Usa /vs check para solicitar)")
     end
 end
 
+function VSy:PrintHelp()
+    print("|cFFD4AF37=== Sequito VersionSync - Comandos ===|r")
+    print("  |cFFFFD100/vs|r : Abre o alterna la interfaz de versiones.")
+    print("  |cFFFFD100/vs check|r : Solicita versiones al grupo o hermandad.")
+    print("  |cFFFFD100/vs list|r : Muestra en chat las versiones recibidas.")
+    print("  |cFFFFD100/vs help|r : Muestra esta guía de ayuda.")
+end
+
 function VSy:SlashCommand(msg)
-    if msg == "check" then
-        self:RequestVersions()
-        S:Print("Solicitando versiones...")
-    elseif msg == "" or msg == "ui" then
-        self:Toggle()
-    else
+    msg = msg and msg:match("^%s*(.-)%s*$") or ""
+    local lower = msg:lower()
+    
+    if lower == "check" or lower == "verificar" then
+        self:RequestVersions(true)
+        local text = "Solicitando versiones..."
+        if S.Print then S:Print(text) else print("|cFFFF9900[Sequito]|r " .. text) end
+    elseif lower == "list" or lower == "lista" then
         self:ShowVersions()
+    elseif lower == "help" or lower == "ayuda" then
+        self:PrintHelp()
+    else
+        self:Toggle()
     end
 end
 
@@ -304,22 +409,15 @@ if S.ModuleConfig then
                 type = "checkbox",
                 key = "autoCheck",
                 label = "Verificación Automática",
-                tooltip = "Verifica versiones automáticamente al entrar al juego",
+                tooltip = "Verifica versiones automáticamente al entrar al juego y cambios de grupo",
                 default = true,
             },
             {
                 type = "checkbox",
                 key = "notifyOutdated",
-                label = "Notificar Versión Antigua",
-                tooltip = "Notifica cuando tu versión está desactualizada",
+                label = "Notificar Nueva Versión",
+                tooltip = "Notifica cuando un compañero posea una versión más reciente",
                 default = true,
-            },
-            {
-                type = "checkbox",
-                key = "showInTooltip",
-                label = "Mostrar en Tooltip",
-                tooltip = "Muestra info de versiones en el tooltip de la esfera",
-                default = false,
             },
             {
                 type = "slider",
@@ -335,6 +433,16 @@ if S.ModuleConfig then
     })
 end
 
+-- Registro canónico de Comandos Slash en WoW 3.3.5a
+SLASH_VERSIONSYNC1 = "/vs"
+SLASH_VERSIONSYNC2 = "/versionsync"
+SLASH_VERSIONSYNC3 = "/vsy"
+SlashCmdList["VERSIONSYNC"] = function(msg)
+    VSy:SlashCommand(msg)
+end
+
 local loader = CreateFrame("Frame")
 loader:RegisterEvent("PLAYER_LOGIN")
-loader:SetScript("OnEvent", function() VSy:Initialize() end)
+loader:SetScript("OnEvent", function()
+    VSy:Initialize()
+end)

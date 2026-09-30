@@ -43,6 +43,14 @@ function SD:HookFrames()
         "EventCalendar",
         "Logistics",
         "Assignments",
+        "DoTTracker",
+        "RaidAssistUI",
+        "DungeonTimer",
+        "CCCoordinator",
+        "CCTracker",
+        "HealerTracker",
+        "PullGuide",
+        "Soulstones",
         "AlertHub"
     }
     

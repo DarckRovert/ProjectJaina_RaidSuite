@@ -196,22 +196,20 @@ function S.GUI:CreateBuffMonitor()
     icon:SetPoint("CENTER", S.Sphere, "CENTER", 0, 0) -- Center overlay
     icon:SetTexture("Interface\\Icons\\Spell_Shadow_DemonBreath") -- Warning Icon
     
-    -- Flashing Animation
-    local ag = icon:CreateAnimationGroup()
-    local a1 = ag:CreateAnimation("Alpha")
-    a1:SetChange(-1) 
-    a1:SetDuration(0.5) 
-    a1:SetOrder(1) 
-    a1:SetSmoothing("IN_OUT")
-    local a2 = ag:CreateAnimation("Alpha")
-    a2:SetChange(1) 
-    a2:SetDuration(0.5) 
-    a2:SetOrder(2) 
-    a2:SetSmoothing("IN_OUT")
-    ag:SetLooping("BOUNCE")
+    -- Oscilador de parpadeo 3.3.5a (sin AnimationGroup/BOUNCE)
+    icon.flashTimer = 0
+    icon.flashing = false
     
-    self.BuffMonitor = { icon = icon, anim = ag }
+    self.BuffMonitor = { icon = icon, anim = icon }
     icon:Hide()
+    
+    -- Oscilador único con math.sin en el icono
+    icon:SetScript("OnUpdate", function(frame, elapsed)
+        if not frame.flashing then return end
+        frame.flashTimer = frame.flashTimer + elapsed
+        local sine = (math.sin(frame.flashTimer * 4) + 1) / 2
+        frame:SetAlpha(0.3 + sine * 0.7)
+    end)
     
     -- Check loop (1s interval)
     local f = CreateFrame("Frame")
@@ -295,10 +293,12 @@ function S.GUI:CheckBuffs()
     
     if missing then
         self.BuffMonitor.icon:Show()
-        if not self.BuffMonitor.anim:IsPlaying() then self.BuffMonitor.anim:Play() end
+        self.BuffMonitor.icon.flashing = true
+        self.BuffMonitor.icon.flashTimer = 0
     else
+        self.BuffMonitor.icon.flashing = false
+        self.BuffMonitor.icon:SetAlpha(1)
         self.BuffMonitor.icon:Hide()
-        self.BuffMonitor.anim:Stop()
     end
 end
 

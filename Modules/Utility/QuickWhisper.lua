@@ -27,9 +27,11 @@ function QW:GetOption(key)
 end
 
 function QW:Initialize()
+    if self.initialized then return end
     if not self:GetOption("enabled") then
         return
     end
+    self.initialized = true
     
     self.frame = self:CreateFrame()
 end
@@ -75,16 +77,37 @@ function QW:UpdateButtons()
     end
 end
 
+function QW:GetGroupChannel()
+    local inInstance, instanceType = IsInInstance()
+    if inInstance and (instanceType == "pvp" or instanceType == "arena") then
+        return "BATTLEGROUND"
+    elseif GetNumRaidMembers() > 0 then
+        return "RAID"
+    elseif GetNumPartyMembers() > 0 then
+        return "PARTY"
+    end
+    return nil
+end
+
 function QW:SendTemplate(index)
     local template = SequitoQuickWhisperDB.templates[index]
-    if template then
-        local channel = IsInRaid() and "RAID" or IsInGroup() and "PARTY" or nil
+    if template and template.text and template.text ~= "" then
+        local msg = template.text
+        if #msg > 240 then msg = msg:sub(1, 237) .. "..." end
+        local channel = self:GetGroupChannel()
         if channel then
-            SendChatMessage(template.text, channel)
+            SendChatMessage(msg, channel)
         elseif UnitExists("target") and UnitIsPlayer("target") then
-            SendChatMessage(template.text, "WHISPER", nil, UnitName("target"))
+            local targetName = UnitName("target")
+            if targetName and targetName ~= "" and targetName ~= UNKNOWNOBJECT then
+                SendChatMessage(msg, "WHISPER", nil, targetName)
+            end
         else
-            S:Print("No hay grupo o target para enviar mensaje")
+            if S.Print then
+                S:Print("No hay grupo o target para enviar mensaje")
+            else
+                print("|cFFFF9900[Sequito]|r No hay grupo o target para enviar mensaje")
+            end
         end
     end
 end

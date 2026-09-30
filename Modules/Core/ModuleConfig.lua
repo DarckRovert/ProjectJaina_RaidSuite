@@ -992,8 +992,16 @@ function MC:RegisterAllModules()
     self:RegisterModule("Visuals", {
         name = "Efectos Visuales",
         category = "utility",
-        description = "Efectos de pantalla (Latido, Procs)",
-        options = { {type = "checkbox", key = "enabled", label = "Habilitado", default = true} }
+        icon = "Interface\\Icons\\Spell_Shadow_SoulGem",
+        description = "Efectos visuales inmersivos: latido de corazón, brillo de procs y efectos de pantalla completa",
+        options = {
+            {type = "checkbox", key = "enabled", label = "Habilitar Efectos Visuales", default = true, tooltip = "Activar o desactivar todos los efectos visuales"},
+            {type = "checkbox", key = "heartbeatEnabled", label = "Latido de Corazón", default = true, tooltip = "Efecto de latido y pulsación roja cuando la vida está por debajo del 35%"},
+            {type = "checkbox", key = "procGlowEnabled", label = "Brillo de Procs", default = true, tooltip = "Resaltar botones satélite cuando hay procs activos"},
+            {type = "checkbox", key = "procOverlayEnabled", label = "Overlay de Procs", default = true, tooltip = "Efecto visual inmersivo en pantalla al activarse procs mayores"},
+            {type = "checkbox", key = "soulSiphonEnabled", label = "Soul Siphon (Brujo)", default = true, tooltip = "Efecto visual morado y auditivo de absorción de alma al matar a un enemigo (Solo Brujo)"},
+            {type = "slider", key = "glowIntensity", label = "Intensidad del Brillo", min = 0.5, max = 2.0, step = 0.1, default = 1.0, tooltip = "Intensidad y opacidad del efecto de brillo en los botones"}
+        }
     })
 
     self:RegisterModule("SpecWatcher", {

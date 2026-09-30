@@ -7,8 +7,9 @@ local addonName, S = ...
 S.Soulstones = {}
 local SS = S.Soulstones
 
--- Config
-local SS_SPELL_NAME = "Resurrección de piedra de alma" -- Check locale
+-- Config & Localized Buff Detection
+local SS_SPELL_ID = 20707 -- Soulstone Resurrection
+local SS_LOCALIZED_NAME = GetSpellInfo(SS_SPELL_ID) or "Soulstone Resurrection"
 local SS_ICON = "Interface\\Icons\\Spell_Shadow_SoulGem"
 
 function SS:Initialize()
@@ -20,10 +21,11 @@ function SS:Initialize()
     self.Frame:SetSize(160, 60)
     self.Frame:SetPoint("CENTER", UIParent, "CENTER", -300, 0)
     
-    -- Background
+    -- Background (Cumplimiento estricto Ley II: Texturas sólidas en 3.3.5a)
     local bg = self.Frame:CreateTexture(nil, "BACKGROUND")
     bg:SetAllPoints()
-    bg:SetTexture(0, 0, 0, 0.5)
+    bg:SetTexture("Interface\\Buttons\\WHITE8X8")
+    bg:SetVertexColor(0, 0, 0, 0.5)
     
     -- Title
     local title = self.Frame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
@@ -38,11 +40,11 @@ function SS:Initialize()
     self.Frame:SetScript("OnDragStop", self.Frame.StopMovingOrSizing)
     
     -- Scan Loop
-    self.Frame:SetScript("OnUpdate", function(self, elapsed)
-        self.elapsed = (self.elapsed or 0) + elapsed
-        if self.elapsed > 2.0 then -- Check every 2s
+    self.Frame:SetScript("OnUpdate", function(f, elapsed)
+        f.elapsed = (f.elapsed or 0) + elapsed
+        if f.elapsed > 2.0 then -- Check every 2s
             SS:ScanRaid()
-            self.elapsed = 0
+            f.elapsed = 0
         end
     end)
     
@@ -50,40 +52,43 @@ function SS:Initialize()
     print("|cFF9900FFSequito SS Tracker|r: Online.")
 end
 
+-- Función estática fuera del bucle para evitar Heap Thrashing (Ley IV)
+local function CheckUnitBuffs(unit, stoned)
+    local name = UnitName(unit)
+    if not name then return end
+    
+    for i = 1, 40 do
+        local buffName, _, _, _, _, duration, expirationTime, _, _, _, spellId = UnitBuff(unit, i)
+        if not buffName then break end
+        
+        if (spellId and spellId == SS_SPELL_ID) or 
+           buffName == SS_LOCALIZED_NAME or 
+           buffName == "Soulstone Resurrection" or 
+           buffName == "Resurrección de piedra de alma" then
+            table.insert(stoned, {
+                name = name,
+                expires = expirationTime or 0,
+                duration = duration or 0
+            })
+            break
+        end
+    end
+end
+
 function SS:ScanRaid()
     local stoned = {}
     
-    -- Helper to check unit
-    local function CheckUnit(unit)
-        local name = UnitName(unit)
-        if not name then return end
-        
-        for i=1, 40 do
-            local buffName, _, _, _, _, duration, expirationTime = UnitBuff(unit, i)
-            if not buffName then break end
-            
-            if buffName == "Resurrección de piedra de alma" or buffName == "Soulstone Resurrection" then
-                table.insert(stoned, {
-                    name = name,
-                    expires = expirationTime,
-                    duration = duration
-                })
-                break
-            end
-        end
-    end
-    
     if GetNumRaidMembers() > 0 then
-        for i=1, GetNumRaidMembers() do
-            CheckUnit("raid"..i)
+        for i = 1, GetNumRaidMembers() do
+            CheckUnitBuffs("raid"..i, stoned)
         end
     elseif GetNumPartyMembers() > 0 then
-        CheckUnit("player")
-        for i=1, GetNumPartyMembers() do
-            CheckUnit("party"..i)
+        CheckUnitBuffs("player", stoned)
+        for i = 1, GetNumPartyMembers() do
+            CheckUnitBuffs("party"..i, stoned)
         end
     else
-        CheckUnit("player")
+        CheckUnitBuffs("player", stoned)
     end
     
     self:UpdateDisplay(stoned)
@@ -92,25 +97,25 @@ end
 
 function SS:CheckExpirations(currentList)
     -- Compare current with previous to detect drops
-    if not self.LastList then self.LastList = currentList return end
+    if not self.LastList then 
+        self.LastList = currentList 
+        return 
+    end
     
     -- Mapa de nombres actuales
     local currentNames = {}
-    for _, data in ipairs(currentList) do currentNames[data.name] = true end
+    for _, data in ipairs(currentList) do 
+        currentNames[data.name] = true 
+    end
     
+    local now = GetTime()
     for _, oldData in ipairs(self.LastList) do
         if not currentNames[oldData.name] then
             -- Se ha perdido el buffo de oldData.name
-            -- Verificar que no haya muerto (si muere, se consume, no expira por tiempo necesariamente, aunque ambos son criticos)
-            -- Necrosis avisa SIEMPRE que se pierde.
-            
-            -- Solo avisar si le quedaba tiempo (no fue un despawn/offline inmediato irrelevante)
-            if oldData.expires - GetTime() < 0 then
-                -- Expiró por tiempo
+            local expiredByTime = oldData.expires and oldData.expires > 0 and (oldData.expires <= now)
+            if expiredByTime then
                 self:AnnounceExpiration(oldData.name, "EXPIRED")
             else
-                -- Se consumió (murió y resucitó?) o fue dispelled
-                -- Asumimos "Se ha roto/consumido"
                 self:AnnounceExpiration(oldData.name, "GONE")
             end
         end
@@ -119,17 +124,40 @@ function SS:CheckExpirations(currentList)
     self.LastList = currentList
 end
 
-function SS:AnnounceExpiration(name, type)
-    if not S.db.profile.SoulstoneAlerts then return end
+function SS:GetAnnouncementChannel()
+    if IsInInstance then
+        local inInstance, instanceType = IsInInstance()
+        if inInstance and instanceType == "pvp" then
+            return "BATTLEGROUND"
+        end
+    end
+    if GetNumRaidMembers() > 0 then
+        if IsRaidLeader() or IsRaidOfficer() then
+            return "RAID_WARNING"
+        else
+            return "RAID"
+        end
+    elseif GetNumPartyMembers() > 0 then
+        return "PARTY"
+    end
+    return nil
+end
+
+function SS:AnnounceExpiration(name, alertType)
+    if S.db and S.db.profile and S.db.profile.SoulstoneAlerts == false then return end
     
     local msg = ""
-    if type == "EXPIRED" then
+    if alertType == "EXPIRED" then
         msg = "¡LA PIEDRA DE ALMA DE " .. name .. " HA EXPIRADO!"
     else
         msg = "¡La Piedra de Alma de " .. name .. " se ha consumido o perdido!"
     end
     
-    SendChatMessage(msg, "RAID_WARNING") -- O "RAID" si no es lider
+    local channel = self:GetAnnouncementChannel()
+    if channel then
+        SendChatMessage(msg, channel)
+    end
+    
     PlaySound("RaidWarning")
     print("|cFFFF0000Sequito:|r " .. msg)
 end
@@ -144,6 +172,7 @@ function SS:UpdateDisplay(list)
     end
     self.Frame:Show()
     
+    local now = GetTime()
     for i, data in ipairs(list) do
         if not self.Rows[i] then
             local row = CreateFrame("Frame", nil, self.Frame)
@@ -163,7 +192,7 @@ function SS:UpdateDisplay(list)
         local row = self.Rows[i]
         row.text:SetText(data.name)
         
-        local remaining = data.expires - GetTime()
+        local remaining = (data.expires and data.expires > 0) and (data.expires - now) or 0
         if remaining > 0 then
             local m = math.floor(remaining / 60)
             local s = remaining % 60
@@ -177,6 +206,7 @@ function SS:UpdateDisplay(list)
             end
         else
             row.time:SetText("EXP")
+            row.time:SetTextColor(1, 0.2, 0.2)
         end
         row:Show()
     end

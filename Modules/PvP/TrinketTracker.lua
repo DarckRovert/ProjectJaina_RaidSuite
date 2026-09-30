@@ -50,6 +50,19 @@ function TT:GetOption(key)
     return true -- Default habilitado
 end
 
+-- Helper canónico de canal PvP en 3.3.5a
+function TT:GetChannel()
+    local _, instanceType = IsInInstance()
+    if instanceType == "pvp" then
+        return "BATTLEGROUND"
+    elseif IsInRaid() then
+        return "RAID"
+    elseif (IsInGroup and IsInGroup()) or (GetNumPartyMembers() > 0) then
+        return "PARTY"
+    end
+    return nil
+end
+
 function TT:Initialize()
     -- Verificar si el módulo está habilitado
     if not self:GetOption("enabled") then
@@ -123,7 +136,8 @@ function TT:CreateTrinketRow(parent, index)
     -- Fondo de la fila
     row.bg = row:CreateTexture(nil, "BACKGROUND")
     row.bg:SetAllPoints()
-    row.bg:SetTexture(0, 0, 0, 0.3)
+    row.bg:SetTexture("Interface\\Buttons\\WHITE8X8")
+    row.bg:SetVertexColor(0, 0, 0, 0.3)
     
     -- Icono del trinket
     local icon = row:CreateTexture(nil, "ARTWORK")
@@ -276,14 +290,11 @@ function TT:AlertTrinketUsed(playerName, class)
     -- También en chat local
     print(string.format("|cffff0000[Sequito]|r %s%s|r usó su trinket PvP! (CD: 2 min)", colorCode, playerName))
     
-    -- Anunciar en party/raid (configurable)
+    -- Anunciar en party/raid/battleground (configurable)
     if self:GetOption("announce") then
-        local _, instanceType = IsInInstance()
-        if instanceType == "arena" or instanceType == "pvp" then
-            if IsInGroup() then
-                local channel = IsInRaid() and "RAID" or "PARTY"
-                SendChatMessage(string.format("[Sequito] %s usó TRINKET!", playerName), channel)
-            end
+        local channel = self:GetChannel()
+        if channel then
+            SendChatMessage(string.format("[Sequito] %s usó TRINKET!", playerName), channel)
         end
     end
 end
@@ -478,11 +489,31 @@ function TT:CreateNameplateHook()
         if self.elapsed < 0.2 then return end
         self.elapsed = 0
         
-        -- Iterar sobre nameplates visibles
+        -- Iterar sobre nameplates visibles (soporte híbrido addon/nativo 3.3.5a)
+        local foundCustom = false
         for i = 1, 40 do
             local nameplate = _G["NamePlate" .. i]
             if nameplate and nameplate:IsVisible() then
+                foundCustom = true
                 UpdateNameplate(nameplate)
+            end
+        end
+        
+        -- Fallback para nameplates nativos de WotLK 3.3.5a en WorldFrame
+        if not foundCustom and WorldFrame then
+            local numChildren = WorldFrame:GetNumChildren()
+            for i = 1, numChildren do
+                local frame = select(i, WorldFrame:GetChildren())
+                if frame and frame:IsShown() and frame:GetName() == nil then
+                    local regions = { frame:GetRegions() }
+                    for _, region in ipairs(regions) do
+                        if region:GetObjectType() == "FontString" then
+                            frame.name = region
+                            UpdateNameplate(frame)
+                            break
+                        end
+                    end
+                end
             end
         end
     end)
@@ -563,7 +594,7 @@ function TT:AnnounceAll()
         end
     end
     
-    local channel = IsInRaid() and "RAID" or (IsInGroup() and "PARTY" or nil)
+    local channel = self:GetChannel()
     
     if channel then
         if #onCD > 0 then

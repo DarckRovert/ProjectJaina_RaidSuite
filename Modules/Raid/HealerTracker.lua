@@ -107,9 +107,26 @@ function HT:Initialize()
     if not self:GetOption("enabled") then
         return
     end
+    if self.initialized then return end
+    self.initialized = true
     
     self:CreateFrame()
     self:RegisterEvents()
+end
+
+function HT:GetGroupChannel()
+    if IsInInstance then
+        local inInstance, instanceType = IsInInstance()
+        if inInstance and instanceType == "pvp" then
+            return "BATTLEGROUND"
+        end
+    end
+    if GetNumRaidMembers() > 0 then
+        return "RAID"
+    elseif GetNumPartyMembers() > 0 then
+        return "PARTY"
+    end
+    return nil
 end
 
 function HT:CreateFrame()
@@ -126,7 +143,8 @@ function HT:CreateFrame()
     -- Fondo
     self.Frame.bg = self.Frame:CreateTexture(nil, "BACKGROUND")
     self.Frame.bg:SetAllPoints()
-    self.Frame.bg:SetTexture(0, 0, 0, 0.85)
+    self.Frame.bg:SetTexture("Interface\\Buttons\\WHITE8X8")
+    self.Frame.bg:SetVertexColor(0, 0, 0, 0.85)
     
     -- Borde
     self.Frame.border = CreateFrame("Frame", nil, self.Frame)
@@ -178,7 +196,8 @@ function HT:CreateFrame()
         -- Fondo de barra
         row.manaBar.bg = row.manaBar:CreateTexture(nil, "BACKGROUND")
         row.manaBar.bg:SetAllPoints()
-        row.manaBar.bg:SetTexture(0.1, 0.1, 0.3, 0.8)
+        row.manaBar.bg:SetTexture("Interface\\Buttons\\WHITE8X8")
+        row.manaBar.bg:SetVertexColor(0.1, 0.1, 0.3, 0.8)
         
         -- Texto de mana
         row.manaText = row.manaBar:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
@@ -427,12 +446,7 @@ function HT:CheckManaAlert(healer, oldPercent)
 end
 
 function HT:AnnounceHealer(healer, status)
-    local channel = nil
-    if IsInRaid() then
-        channel = "RAID"
-    elseif IsInGroup() then
-        channel = "PARTY"
-    end
+    local channel = self:GetGroupChannel()
     
     if channel then
         SendChatMessage(string.format("[Sequito] Healer %s - Mana %s: %.0f%%", 
@@ -509,12 +523,7 @@ function HT:Toggle()
 end
 
 function HT:AnnounceAll()
-    local channel = nil
-    if IsInRaid() then
-        channel = "RAID"
-    elseif IsInGroup() then
-        channel = "PARTY"
-    end
+    local channel = self:GetGroupChannel()
     
     if not channel then
         if S.Print then
@@ -523,11 +532,21 @@ function HT:AnnounceAll()
         return
     end
     
-    SendChatMessage("=== Healers Enemigos ===", channel)
+    local parts = {}
     for guid, healer in pairs(self.TrackedHealers) do
-        SendChatMessage(string.format("%s (%s): %.0f%% mana", 
-            healer.name, healer.class, healer.manaPercent), channel)
+        table.insert(parts, string.format("%s: %.0f%%", healer.name, healer.manaPercent))
     end
+    
+    if #parts == 0 then
+        SendChatMessage("[Sequito] No hay healers enemigos detectados.", channel)
+        return
+    end
+    
+    local msg = "[Sequito] Healers: " .. table.concat(parts, " | ")
+    if #msg > 240 then
+        msg = msg:sub(1, 237) .. "..."
+    end
+    SendChatMessage(msg, channel)
 end
 
 function HT:GetHealerCount()

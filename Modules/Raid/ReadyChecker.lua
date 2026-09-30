@@ -12,11 +12,17 @@ local RC = S.ReadyChecker
 local ClassChecks = {
     ROGUE = {
         {type = "poison_mh", name = "Veneno MH", check = function(unit) 
-            return GetWeaponEnchantInfo() 
+            if unit == "player" then
+                return GetWeaponEnchantInfo()
+            end
+            return true
         end},
         {type = "poison_oh", name = "Veneno OH", check = function(unit)
-            local _, _, _, _, hasOH = GetWeaponEnchantInfo()
-            return hasOH
+            if unit == "player" then
+                local _, _, _, _, hasOH = GetWeaponEnchantInfo()
+                return hasOH
+            end
+            return true
         end},
     },
     WARLOCK = {
@@ -38,8 +44,11 @@ local ClassChecks = {
             return nil -- No podemos verificar otros jugadores
         end},
         {type = "spellstone", name = "Piedra de Hechizo", check = function(unit)
-            local hasMainHandEnchant = GetWeaponEnchantInfo()
-            return hasMainHandEnchant
+            if unit == "player" then
+                local hasMainHandEnchant = GetWeaponEnchantInfo()
+                return hasMainHandEnchant
+            end
+            return true
         end},
     },
     HUNTER = {
@@ -128,7 +137,10 @@ local ClassChecks = {
             return false
         end},
         {type = "weapon", name = "Imbuir Arma", check = function(unit)
-            return GetWeaponEnchantInfo()
+            if unit == "player" then
+                return GetWeaponEnchantInfo()
+            end
+            return true
         end},
     },
     MAGE = {
@@ -226,6 +238,21 @@ function RC:Initialize()
     end
     
     self:CreateFrame()
+end
+
+function RC:GetGroupChannel()
+    if IsInInstance then
+        local inInstance, instanceType = IsInInstance()
+        if inInstance and instanceType == "pvp" then
+            return "BATTLEGROUND"
+        end
+    end
+    if GetNumRaidMembers() > 0 then
+        return "RAID"
+    elseif GetNumPartyMembers() > 0 then
+        return "PARTY"
+    end
+    return nil
 end
 
 function RC:CreateFrame()
@@ -400,21 +427,24 @@ function RC:ScanRaid()
         table.insert(self.Results, result)
     end
     
-    if UnitInRaid("player") then
-        for i = 1, GetNumRaidMembers() do
+    local numRaid = GetNumRaidMembers()
+    local numParty = GetNumPartyMembers()
+    
+    if numRaid > 0 then
+        for i = 1, numRaid do
             local name, _, _, _, _, classFile = GetRaidRosterInfo(i)
             if name then
                 checkPlayer("raid"..i, name, classFile)
             end
         end
-    elseif UnitInParty("player") then
+    elseif numParty > 0 then
         -- Jugador
         local name = UnitName("player")
         local class = select(2, UnitClass("player"))
         checkPlayer("player", name, class)
         
         -- Party members
-        for i = 1, GetNumPartyMembers() do
+        for i = 1, numParty do
             local pname = UnitName("party"..i)
             local pclass = select(2, UnitClass("party"..i))
             if pname then
@@ -504,22 +534,31 @@ function RC:AnnounceProblems()
     
     if #problems == 0 then
         local msg = "[Sequito] ¡Todos listos!"
-        if IsInRaid() then
-            SendChatMessage(msg, "RAID")
-        elseif IsInGroup() then
-            SendChatMessage(msg, "PARTY")
+        local channel = self:GetGroupChannel()
+        if channel then
+            SendChatMessage(msg, channel)
         else
             print(msg)
         end
         return
     end
     
-    local channel = IsInRaid() and "RAID" or (IsInGroup() and "PARTY" or nil)
+    local channel = self:GetGroupChannel()
     
     if channel then
-        SendChatMessage("[Sequito] Problemas detectados:", channel)
+        -- Concatenar para evitar desconexión por flood (Ley III: 255 bytes max)
+        local header = string.format("[Sequito] %d jugador(es) con problemas: ", #problems)
+        local line = header
         for _, problem in ipairs(problems) do
-            SendChatMessage("  - " .. problem, channel)
+            if #(line .. problem .. "; ") > 240 then
+                SendChatMessage(line, channel)
+                line = "  - " .. problem .. "; "
+            else
+                line = line .. problem .. "; "
+            end
+        end
+        if line ~= "" then
+            SendChatMessage(line, channel)
         end
     else
         print("|cffff0000[Sequito]|r Problemas detectados:")

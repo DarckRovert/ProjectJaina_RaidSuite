@@ -23,10 +23,29 @@ function VS:Initialize()
     if not self:GetOption("enabled") then
         return
     end
+    if self.initialized then return end
+    self.initialized = true
     
     self.frame = self:CreateFrame()
     self:RegisterEvents()
-    RegisterAddonMessagePrefix("SeqVote")
+    if RegisterAddonMessagePrefix then
+        RegisterAddonMessagePrefix("SeqVote")
+    end
+end
+
+function VS:GetGroupChannel()
+    if IsInInstance then
+        local inInstance, instanceType = IsInInstance()
+        if inInstance and instanceType == "pvp" then
+            return "BATTLEGROUND"
+        end
+    end
+    if GetNumRaidMembers() > 0 then
+        return "RAID"
+    elseif GetNumPartyMembers() > 0 then
+        return "PARTY"
+    end
+    return nil
 end
 
 function VS:CreateFrame()
@@ -90,7 +109,7 @@ function VS:CreatePoll(question, ...)
         msg = msg .. "|" .. opt
     end
     
-    local channel = IsInRaid() and "RAID" or IsInGroup() and "PARTY" or nil
+    local channel = self:GetGroupChannel()
     if channel then
         SendAddonMessage("SeqVote", msg, channel)
         SendChatMessage("[Sequito] Votación: " .. question, channel)
@@ -113,11 +132,16 @@ function VS:ShowPoll(question, options)
     
     self.frame:Show()
     
-    -- Auto-cerrar después de timeout configurado
+    -- Auto-cerrar después de timeout configurado (Ley II & IV: Ticker OnUpdate en 3.3.5a)
     local timeout = self:GetOption("voteTimeout") or 60
-    C_Timer.After(timeout, function()
-        if currentPoll then
-            VS:ClosePoll()
+    self.frame.timeRemaining = timeout
+    self.frame:SetScript("OnUpdate", function(f, elapsed)
+        f.timeRemaining = (f.timeRemaining or 60) - elapsed
+        if f.timeRemaining <= 0 then
+            f:SetScript("OnUpdate", nil)
+            if currentPoll then
+                VS:ClosePoll()
+            end
         end
     end)
 end
@@ -135,7 +159,7 @@ function VS:Vote(optionIndex)
         end
         opt = opt or 1
         
-        local channel = IsInRaid() and "RAID" or IsInGroup() and "PARTY" or nil
+        local channel = self:GetGroupChannel()
         if channel then
             SendAddonMessage("SeqVote", "VOTE:" .. opt, channel)
         end
@@ -193,12 +217,16 @@ end
 function VS:ClosePoll()
     if not currentPoll then return end
     
+    if self.frame then
+        self.frame:SetScript("OnUpdate", nil)
+    end
+    
     -- Anunciar resultados si está habilitado
     if self:GetOption("announceResults") then
         self:AnnounceResults()
     end
     
-    local channel = IsInRaid() and "RAID" or IsInGroup() and "PARTY" or nil
+    local channel = self:GetGroupChannel()
     if channel then
         SendAddonMessage("SeqVote", "END:", channel)
     end
@@ -220,8 +248,11 @@ function VS:AnnounceResults()
         msg = msg .. option .. " (" .. (counts[i] or 0) .. ") "
     end
     
-    local channel = IsInRaid() and "RAID" or IsInGroup() and "PARTY" or nil
+    local channel = self:GetGroupChannel()
     if channel then
+        if #msg > 240 then
+            msg = msg:sub(1, 237) .. "..."
+        end
         SendChatMessage(msg, channel)
     end
 end

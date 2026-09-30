@@ -45,7 +45,7 @@ function SC:Initialize()
         local btnSync = CreateFrame("Button", nil, syncGroup, "UIPanelButtonTemplate")
         btnSync:SetSize(220, 30)
         btnSync:SetPoint("TOPLEFT", 0, 0)
-        btnSync:SetText("Transmitir Configuración a Raid")
+        btnSync:SetText("Transmitir Configuración al Grupo")
         btnSync:SetScript("OnClick", function() 
             if IsRaidLeader() or IsRaidOfficer() or IsPartyLeader() then
                 SC:BroadcastConfig()
@@ -98,27 +98,67 @@ end
 -- ===========================================================================
 -- SYNC LOGIC
 -- ===========================================================================
+function SC:GetBroadcastChannel()
+    if IsInInstance then
+        local inInstance, instanceType = IsInInstance()
+        if inInstance and instanceType == "pvp" then
+            return "BATTLEGROUND"
+        end
+    end
+    if GetNumRaidMembers() > 0 then
+        return "RAID"
+    elseif GetNumPartyMembers() > 0 then
+        return "PARTY"
+    end
+    return nil
+end
+
 function SC:BroadcastConfig()
+    local channel = self:GetBroadcastChannel()
+    if not channel then
+        print("|cFFFF0000Sequito:|r Debes estar en un grupo o banda para transmitir configuración.")
+        return
+    end
+
     -- Serialize CONFIG ONLY (Safety: Don't send entire DB if it has other stuff)
     local cfg = SequitoDB or {}
     local serialized = SC:TableToLua(cfg)
     local msgID = tostring(time())
     local chunks = {}
-    local chunkSize = 200 -- Safe limit for SendAddonMessage
+    local chunkSize = 180 -- Safe limit for SendAddonMessage (Ley III: 255 bytes max)
     
     for i=1, #serialized, chunkSize do
         table.insert(chunks, string.sub(serialized, i, i+chunkSize-1))
     end
     
     local total = #chunks
-    print("|cFF00FFFFSequito:|r Iniciando transmisión ("..total.." paquetes)...")
+    print("|cFF00FFFFSequito:|r Iniciando transmisión hacia " .. channel .. " ("..total.." paquetes)...")
     
-    for i, chunk in ipairs(chunks) do
-        -- Protocol: ID:INDEX:TOTAL:PAYLOAD
-        local packet = string.format("%s:%d:%d:%s", msgID, i, total, chunk)
-        SendAddonMessage("SEQUITO_CFG", packet, "RAID")
+    if not self.queueFrame then
+        self.queueFrame = CreateFrame("Frame")
     end
-    print("|cFF00FF00Sequito:|r Transmisión completada.")
+    
+    local queue = {}
+    for i, chunk in ipairs(chunks) do
+        local packet = string.format("%s:%d:%d:%s", msgID, i, total, chunk)
+        table.insert(queue, packet)
+    end
+    
+    local queueIndex = 1
+    local elapsedThrottle = 0
+    self.queueFrame:SetScript("OnUpdate", function(f, elapsed)
+        elapsedThrottle = elapsedThrottle + elapsed
+        if elapsedThrottle >= 0.05 then -- 20 paquetes/segundo maximo (Ley III & IV)
+            elapsedThrottle = 0
+            if queueIndex <= #queue then
+                SendAddonMessage("SEQUITO_CFG", queue[queueIndex], channel)
+                queueIndex = queueIndex + 1
+            else
+                f:SetScript("OnUpdate", nil)
+                print("|cFF00FF00Sequito:|r Transmisión completada exitosamente.")
+            end
+        end
+    end)
 end
 
 function SC:OnComm(event, prefix, msg, channel, sender)
@@ -157,18 +197,19 @@ function SC:OfferConfig(dataString, sender)
         button1 = "Aceptar",
         button2 = "Cancelar",
         OnAccept = function()
-            -- Deserialize safely
+            -- Deserialize safely con Sandbox aislado (Ley V)
             local func = loadstring("return " .. dataString)
             if func then
-                local newConfig = func()
-                if newConfig and type(newConfig) == "table" then
+                setfenv(func, {}) -- Entorno cerrado sin acceso a _G
+                local ok, newConfig = pcall(func)
+                if ok and newConfig and type(newConfig) == "table" then
                     SequitoDB = newConfig
                     ReloadUI()
                 else
-                    print("Error: Configuración inválida.")
+                    print("|cFFFF0000Sequito:|r Error: Configuración inválida o rechazada.")
                 end
             else
-                print("Error: Datos corruptos.")
+                print("|cFFFF0000Sequito:|r Error: Datos corruptos.")
             end
         end,
         timeout = 0,
@@ -202,25 +243,6 @@ function SC:TableToLua(val)
     else
         return "nil"
     end
-end
-
-function SC:SimpleJSON(val)
-    -- Kept for Export Manual display
-    local t = type(val)
-    if t == "number" then return tostring(val)
-    elseif t == "string" then return string.format("%q", val)
-    elseif t == "boolean" then return val and "true" or "false"
-    elseif t == "table" then
-        local s = "{"
-        local first = true
-        for k,v in pairs(val) do
-            if not first then s = s .. "," end
-            local key = type(k)=="number" and tostring(k) or k
-            s = s .. string.format("%q:%s", key, SC:SimpleJSON(v))
-            first = false
-        end
-        return s .. "}"
-    else return "null" end
 end
 
 function SC:RegisterCommands()

@@ -101,6 +101,36 @@ function AS:Initialize()
     end
 end
 
+-- ============================================================================
+-- RESOLUCIÓN CONTEXTUAL DE CANAL DE RED Y CHAT (WotLK 3.3.5a)
+-- ============================================================================
+function AS:GetGroupChannel()
+    if IsInInstance then
+        local inInstance, instanceType = IsInInstance()
+        if inInstance and instanceType == "pvp" then
+            return "BATTLEGROUND"
+        end
+    end
+    if GetNumRaidMembers and GetNumRaidMembers() > 0 then
+        return "RAID"
+    elseif GetNumPartyMembers and GetNumPartyMembers() > 0 then
+        return "PARTY"
+    end
+    return nil
+end
+
+function AS:SendChat(msg)
+    local channel = self:GetGroupChannel()
+    if channel then
+        SendChatMessage(msg, channel)
+    else
+        local f = DEFAULT_CHAT_FRAME or ChatFrame1
+        if f and f.AddMessage then
+            f:AddMessage(msg)
+        end
+    end
+end
+
 function AS:CreateFrame()
     if self.Frame then return end
     
@@ -111,7 +141,8 @@ function AS:CreateFrame()
     -- Fondo elegante
     local bg = f:CreateTexture(nil, "BACKGROUND")
     bg:SetAllPoints()
-    bg:SetTexture(0, 0, 0, 0.85)
+    bg:SetTexture("Interface\\Buttons\\WHITE8X8")
+    bg:SetVertexColor(0, 0, 0, 0.85)
     f.bg = bg
     
     -- Borde fino
@@ -127,7 +158,8 @@ function AS:CreateFrame()
     local headerBg = f:CreateTexture(nil, "ARTWORK")
     headerBg:SetPoint("TOPLEFT", f, "TOPLEFT", 0, 0)
     headerBg:SetPoint("BOTTOMRIGHT", f, "TOPRIGHT", 0, -24)
-    headerBg:SetTexture(0.3, 0.2, 0.05, 1) -- Header naranja oscuro
+    headerBg:SetTexture("Interface\\Buttons\\WHITE8X8")
+    headerBg:SetVertexColor(0.3, 0.2, 0.05, 1) -- Header naranja oscuro
     
     f:EnableMouse(true)
     f:SetMovable(true)
@@ -314,10 +346,10 @@ function AS:AnnounceNote(key)
     local text = self.Current[key]
     if type(text) == "string" and text ~= "" and text ~= L["NOTE_PLACEHOLDER"] then
         local title = key == "tanks" and L["TANK_ASSIGNMENTS"] or (key == "healers" and L["HEALER_ASSIGNMENTS"] or (key == "cooldowns" and "Cooldowns" or "Assignments"))
-        SendChatMessage("[Sequito] --- " .. title .. " ---", "RAID")
+        self:SendChat("[Sequito] --- " .. title .. " ---")
         -- Split por líneas para evitar mensajes muy largos
         for line in string.gmatch(text, "[^\r\n]+") do
-            SendChatMessage(line, "RAID")
+            self:SendChat(line)
         end
     end
 end
@@ -551,13 +583,7 @@ function AS:AnnounceInterrupts()
         end
     end
     
-    if IsInRaid() then
-        SendChatMessage(msg, "RAID")
-    elseif IsInGroup() then
-        SendChatMessage(msg, "PARTY")
-    else
-        print(msg)
-    end
+    self:SendChat(msg)
 end
 
 function AS:AssignTank(tankName, target)
@@ -625,24 +651,29 @@ function AS:RegisterComm()
         AS:OnCommReceived(msg, sender)
     end)
     
-    RegisterAddonMessagePrefix(prefix)
+    if RegisterAddonMessagePrefix then
+        RegisterAddonMessagePrefix(prefix)
+    end
 end
 
 function AS:SyncToRaid()
-    if not IsInRaid() and not IsInGroup() then
+    local channel = self:GetGroupChannel()
+    if not channel then
         print("|cffff0000[Sequito]|r No estás en un grupo")
         return
     end
     
-    -- Serializar asignaciones
-    local data = self:SerializeAssignments()
-    local channel = IsInRaid() and "RAID" or "PARTY"
-    
-    SendAddonMessage("SEQ_ASSIGN", data, channel)
+    -- Serializar y despachar en fragmentos individuales < 255 bytes (Ley III)
+    local parts = self:GetSerializedParts()
+    for _, part in ipairs(parts) do
+        if #part <= 250 then
+            SendAddonMessage("SEQ_ASSIGN", part, channel)
+        end
+    end
     print("|cff00ff00[Sequito]|r Asignaciones sincronizadas con el grupo")
 end
 
-function AS:SerializeAssignments()
+function AS:GetSerializedParts()
     -- Formato: INT:nombres|NOTE:key:contenido|NOTE:key:contenido
     local parts = {}
     
@@ -665,7 +696,11 @@ function AS:SerializeAssignments()
     AddNote("cooldowns")
     AddNote("marks")
     
-    return table.concat(parts, "|")
+    return parts
+end
+
+function AS:SerializeAssignments()
+    return table.concat(self:GetSerializedParts(), "|")
 end
 
 function AS:OnCommReceived(msg, sender)
@@ -708,8 +743,8 @@ function AS:StartPullTimer(seconds)
     -- Enviar mensaje sync
     -- Usamos formato compatible con nuestra funcion Serialize/Deserialize manual
     -- Enviamos mensaje directo separado para evitar conflicto con sync de asignaciones
-    local channel = IsInRaid() and "RAID" or "PARTY"
-    if IsInGroup() then
+    local channel = self:GetGroupChannel()
+    if channel then
         SendAddonMessage("SEQ_ASSIGN", "PULL:" .. seconds, channel)
     end
     self:ShowPullTimer(seconds)

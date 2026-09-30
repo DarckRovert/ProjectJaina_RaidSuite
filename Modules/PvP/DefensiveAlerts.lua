@@ -142,6 +142,19 @@ function DA:GetOption(key)
     return true
 end
 
+-- Helper canónico de canal PvP en 3.3.5a
+function DA:GetChannel()
+    local _, instanceType = IsInInstance()
+    if instanceType == "pvp" then
+        return "BATTLEGROUND"
+    elseif IsInRaid() then
+        return "RAID"
+    elseif (IsInGroup and IsInGroup()) or (GetNumPartyMembers() > 0) then
+        return "PARTY"
+    end
+    return nil
+end
+
 function DA:Initialize()
     if not self:GetOption("enabled") then
         return
@@ -168,7 +181,8 @@ function DA:CreateFrame()
     -- Fondo
     self.Frame.bg = self.Frame:CreateTexture(nil, "BACKGROUND")
     self.Frame.bg:SetAllPoints()
-    self.Frame.bg:SetTexture(0, 0, 0, 0.85)
+    self.Frame.bg:SetTexture("Interface\\Buttons\\WHITE8X8")
+    self.Frame.bg:SetVertexColor(0, 0, 0, 0.85)
     
     -- Borde
     self.Frame.border = CreateFrame("Frame", nil, self.Frame)
@@ -214,7 +228,8 @@ function DA:CreateAlertButtons()
         btn.bg = btn:CreateTexture(nil, "BACKGROUND")
         btn.bg:SetAllPoints()
         local alertType = self.AlertTypes[btnData.type]
-        btn.bg:SetTexture(alertType.color[1] * 0.3, alertType.color[2] * 0.3, alertType.color[3] * 0.3, 0.8)
+        btn.bg:SetTexture("Interface\\Buttons\\WHITE8X8")
+        btn.bg:SetVertexColor(alertType.color[1] * 0.3, alertType.color[2] * 0.3, alertType.color[3] * 0.3, 0.8)
         
         -- Texto
         btn.text = btn:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
@@ -363,52 +378,44 @@ function DA:SendAlert(alertType)
     local alertData = self.AlertTypes[alertType]
     if not alertData then return end
     
-    local playerName = UnitName("player")
-    local hp = math.floor((UnitHealth("player") / UnitHealthMax("player")) * 100)
-    
-    -- Enviar al grupo
-    local channel = nil
-    if IsInRaid() then
-        channel = "RAID"
-    elseif IsInGroup() then
-        channel = "PARTY"
+    if self:GetOption("showOnlyInCombat") and not UnitAffectingCombat("player") then
+        return
     end
     
-    if channel and self:GetOption("announceChat") then
-        -- Mensaje de chat
+    local now = GetTime()
+    self.lastAlertTimes = self.lastAlertTimes or {}
+    local cd = self:GetOption("alertCooldown") or 10
+    if self.lastAlertTimes[alertType] and (now - self.lastAlertTimes[alertType] < cd) then
+        return
+    end
+    self.lastAlertTimes[alertType] = now
+    
+    local playerName = UnitName("player")
+    local hp = math.floor((UnitHealth("player") / UnitHealthMax("player")) * 100)
+    local channel = self:GetChannel()
+    
+    if channel and self:GetOption("announceToChat") then
         SendChatMessage(string.format("[Sequito] %s (%d%% HP)", alertData.text, hp), channel)
-        
-        -- Mensaje de addon para UI
         if S.SendAddonMessage then
             local message = string.format("%s:%s:%d", alertType, playerName, hp)
             S:SendAddonMessage("SEQDA", message, channel)
         end
     end
     
-    -- Feedback local
     if S.Print then
         S:Print(string.format("|cFF%02x%02x%02x%s|r enviado al grupo.", 
             alertData.color[1] * 255, alertData.color[2] * 255, alertData.color[3] * 255, 
             alertData.text))
     end
     
-    -- Sonido local si está habilitado
     if self:GetOption("playSound") then
         PlaySoundFile(alertData.sound)
     end
 end
 
 function DA:SendDefensiveUsed(spellName)
-    local playerName = UnitName("player")
-    
-    local channel = nil
-    if IsInRaid() then
-        channel = "RAID"
-    elseif IsInGroup() then
-        channel = "PARTY"
-    end
-    
-    if channel then
+    local channel = self:GetChannel()
+    if channel and self:GetOption("announceToChat") then
         SendChatMessage(string.format("[Sequito] Usando: %s", spellName), channel)
     end
 end
@@ -458,7 +465,7 @@ end
 
 function DA:ShowAlert(playerName, alertData, hp)
     -- Verificar si alertas visuales están habilitadas
-    if not self:GetOption("showVisual") then return end
+    if not self:GetOption("showVisualAlert") then return end
     
     -- Configurar display
     self.AlertDisplay.icon:SetTexture(alertData.icon)
@@ -466,7 +473,8 @@ function DA:ShowAlert(playerName, alertData, hp)
     self.AlertDisplay.playerName:SetTextColor(unpack(alertData.color))
     self.AlertDisplay.alertText:SetText(string.format("%s (%d%% HP)", alertData.text, hp))
     self.AlertDisplay.border:SetBackdropBorderColor(unpack(alertData.color))
-    self.AlertDisplay.bg:SetTexture(alertData.color[1] * 0.2, alertData.color[2] * 0.2, alertData.color[3] * 0.2, 0.9)
+    self.AlertDisplay.bg:SetTexture("Interface\\Buttons\\WHITE8X8")
+    self.AlertDisplay.bg:SetVertexColor(alertData.color[1] * 0.2, alertData.color[2] * 0.2, alertData.color[3] * 0.2, 0.9)
     
     -- Duración configurable
     local duration = self:GetOption("alertDuration") or 4

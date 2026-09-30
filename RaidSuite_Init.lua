@@ -102,6 +102,7 @@ S.defaults = {
         RadialEnabled = true, -- Radial Menu
         SummonAssistant = true, -- Coven Summon Queue
         SoulstoneTracker = true,
+        SoulstoneAlerts = true,
         AudioFX = true,
     }
 }

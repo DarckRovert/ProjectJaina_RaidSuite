@@ -115,6 +115,43 @@ function LC:GetPlayerClass(playerName)
 end
 
 -- ============================================================================
+-- RESOLUCIÓN CONTEXTUAL DE CANAL DE RED Y CHAT (WotLK 3.3.5a)
+-- ============================================================================
+function LC:GetGroupChannel()
+    if IsInInstance then
+        local inInstance, instanceType = IsInInstance()
+        if inInstance and instanceType == "pvp" then
+            return "BATTLEGROUND"
+        end
+    end
+    if GetNumRaidMembers and GetNumRaidMembers() > 0 then
+        return "RAID"
+    elseif GetNumPartyMembers and GetNumPartyMembers() > 0 then
+        return "PARTY"
+    end
+    return nil
+end
+
+function LC:SendChat(msg)
+    local channel = self:GetGroupChannel()
+    if channel then
+        SendChatMessage(msg, channel)
+    else
+        local f = DEFAULT_CHAT_FRAME or ChatFrame1
+        if f and f.AddMessage then
+            f:AddMessage(msg)
+        end
+    end
+end
+
+function LC:SendComm(msg)
+    local channel = self:GetGroupChannel()
+    if channel then
+        SendAddonMessage("SeqLC", msg, channel)
+    end
+end
+
+-- ============================================================================
 -- AUDITORÍA DE IDONEIDAD DE ÍTEM / TOKEN
 -- ============================================================================
 function LC:CheckItemSuitability(itemLink, playerClass)
@@ -308,9 +345,9 @@ function LC:OnUpdateTimer()
         if self:IsOfficer(UnitName("player")) then
             local topCand, topVotes, isTie = self:GetTopCandidate()
             if topCand and topVotes > 0 then
-                SendChatMessage(string.format("[Sequito] Tiempo agotado. Ganador sugerido: %s (%d votos)", topCand, topVotes), "RAID")
+                self:SendChat(string.format("[Sequito] Tiempo agotado. Ganador sugerido: %s (%d votos)", topCand, topVotes))
             else
-                SendChatMessage("[Sequito] Tiempo de votación agotado.", "RAID")
+                self:SendChat("[Sequito] Tiempo de votación agotado.")
             end
         end
     end
@@ -321,7 +358,7 @@ end
 -- ============================================================================
 function LC:Respond(response)
     if not currentSession then return end
-    SendAddonMessage("SeqLC", response .. ":" .. currentSession.item, "RAID")
+    self:SendComm(response .. ":" .. currentSession.item)
     self.frame.msBtn:Disable()
     self.frame.osBtn:Disable()
     self.frame.minorBtn:Disable()
@@ -342,7 +379,9 @@ function LC:RegisterEvents()
             LC:OnSystemMessage(...)
         end
     end)
-    RegisterAddonMessagePrefix("SeqLC")
+    if RegisterAddonMessagePrefix then
+        RegisterAddonMessagePrefix("SeqLC")
+    end
 end
 
 function LC:OnSystemMessage(msg)
@@ -383,7 +422,7 @@ function LC:ProcessNextInQueue()
 end
 
 function LC:StartSession(itemLink, slot)
-    if not IsRaidLeader() and not IsRaidOfficer() and not (GetNumPartyMembers() > 0 and UnitIsPartyLeader("player")) then
+    if not self:IsOfficer(UnitName("player")) then
         if S.Print then S:Print(L["LC_ONLY_LEADER"] or "Solo oficiales pueden iniciar Loot Council.") end
         return
     end
@@ -407,7 +446,7 @@ function LC:StartSession(itemLink, slot)
     self.frame.minorBtn:Enable()
     self.frame.passBtn:Enable()
     
-    SendAddonMessage("SeqLC", "START:" .. itemLink .. (slot and (":" .. slot) or ""), "RAID")
+    self:SendComm("START:" .. itemLink .. (slot and (":" .. slot) or ""))
     self:UpdateDisplay()
     self.frame:Show()
 end
@@ -418,7 +457,7 @@ function LC:Vote(playerName, response)
         if S.Print then S:Print("|cFFFF0000[LootCouncil] Solo oficiales verificados pueden emitir votos.|r") end
         return
     end
-    SendAddonMessage("SeqLC", "VOTE:" .. playerName .. ":" .. (response or "VOTE"), "RAID")
+    self:SendComm("VOTE:" .. playerName .. ":" .. (response or "VOTE"))
 end
 
 -- ============================================================================
@@ -449,10 +488,10 @@ end
 
 function LC:EndSession(winner)
     if currentSession then
-        SendAddonMessage("SeqLC", "END:" .. (winner or ""), "RAID")
+        self:SendComm("END:" .. (winner or ""))
         
         if self:GetOption("announceResults") and winner and winner ~= "" then
-            SendChatMessage("[Sequito] " .. string.format(L["LC_WINNER"] or "Ganador de %s: %s", currentSession.item, winner), "RAID")
+            self:SendChat("[Sequito] " .. string.format(L["LC_WINNER"] or "Ganador de %s: %s", currentSession.item, winner))
         end
         
         if S.SendMessage and winner and winner ~= "" then
@@ -504,9 +543,9 @@ function LC:AnnounceStatus()
     local topCand, topVotes, isTie = self:GetTopCandidate()
     if topCand and topVotes > 0 then
         local tieStr = isTie and " (Empate resuelto por dados)" or ""
-        SendChatMessage(string.format("[Sequito] Votación de %s: Líder %s con %d votos%s", currentSession.item, topCand, topVotes, tieStr), "RAID")
+        self:SendChat(string.format("[Sequito] Votación de %s: Líder %s con %d votos%s", currentSession.item, topCand, topVotes, tieStr))
     else
-        SendChatMessage(string.format("[Sequito] Votación en curso para %s", currentSession.item), "RAID")
+        self:SendChat(string.format("[Sequito] Votación en curso para %s", currentSession.item))
     end
 end
 
@@ -521,7 +560,7 @@ function LC:UpdateDisplay()
     self.frame.itemName:SetText(currentSession.item)
     
     local isOfficer = self:IsOfficer(UnitName("player"))
-    local isML = (select(1, GetLootMethod()) == "master" and (IsRaidLeader() or IsRaidOfficer()))
+    local isML = (select(1, GetLootMethod()) == "master" and isOfficer)
     
     -- Ocultar filas previas
     if self.rows then
@@ -613,7 +652,7 @@ end
 -- APERTURA DE BOTÍN
 -- ============================================================================
 function LC:OnLootOpened()
-    if not (IsRaidLeader() or IsRaidOfficer()) then return end
+    if not self:IsOfficer(UnitName("player")) then return end
     if not self:GetOption("enabled") then return end
     
     local numItems = GetNumLootItems()

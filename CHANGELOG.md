@@ -1,7 +1,21 @@
 # WoW Perú RaidSuite Changelog
 
-**Versión Actual:** 11.0.0 (Ecosystem Edition)
+**Versión Actual:** 11.1.0 (Architecture & Network Stabilization)
 **Autor:** DarckRovert (Ingame: Elnazzareno) & WoW Perú Team
+
+---
+
+## v11.1.0 "Architecture & Network Stabilization"
+**Release Date:** 2026-09-30
+
+### 🛡️ 3.3.5a Client & Engine Strict Compliance (Ley II & Ley IV)
+- **Eliminación Total de Texturas Numéricas:** Reemplazados todos los llamados erróneos a `SetTexture(r, g, b, a)` por `SetTexture("Interface\\Buttons\\WHITE8X8")` y `SetVertexColor()` a lo largo de 18 módulos (DungeonTimer, LootCouncil, Assignments, PullGuide, HealerTracker, CCCoordinator, BuildManager, Mounts, FocusFire, Soulstones, etc.).
+- **Canal de Red Unificado 3.3.5a:** Erradicadas llamadas Retail inexistentes (`IsInRaid()`, `IsInGroup()`) reemplazándolas con resolución nativa de canales (`BATTLEGROUND`, `RAID`, `PARTY`).
+- **Presupuesto de Red & Límite 255 Bytes (Ley III):** Protección y troceo a <= 240 bytes en reportes y anuncios de ReadyChecker, WipeAnalyzer, VotingSystem, HealerTracker, VersionSync y CooldownMonitor.
+- **Prevención de Desconexiones:** Cola de transmisión progresiva a 20 paquetes/segundo en `RaidSuite_Connect` con purga de scripts `OnUpdate` al vaciarse la cola.
+- **Desacoplamiento de Heap & Garbage Collection:** Eliminada creación de clausuras dinámicas en bucles `OnUpdate` y ticks de 2s en Soulstones y CooldownMonitor.
+- **Inicialización Idempotente:** Añadidas banderas de guardia `self.initialized` en todos los módulos principales para evitar duplicación de eventos y listeners CLEU.
+- **Seguridad Sandbox:** Ejecución aislada de configuraciones remotas mediante entorno seguro `setfenv` en `RaidSuite_Connect`.
 
 ---
 

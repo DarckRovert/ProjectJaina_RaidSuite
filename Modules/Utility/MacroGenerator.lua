@@ -125,9 +125,12 @@ function S.MacroGen:GetSmartCC(class)
     return nil
 end
 
--- 3. Smart Mount
+-- 3. Smart Mount (Integración real con S.Mounts)
 function S.MacroGen:GetSmartMount()
-    return "#showtooltip\n/dismount [mounted]\n/cast [flyable] Montura Voladora; Montura Terrestre"
+    if S.Mounts and S.Mounts.GenerateMountMacro then
+        return S.Mounts:GenerateMountMacro()
+    end
+    return "#showtooltip\n/dismount [mounted]\n/leavevehicle [vehicleui]"
 end
 
 -- ===========================================================================

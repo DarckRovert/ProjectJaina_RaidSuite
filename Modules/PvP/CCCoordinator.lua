@@ -129,6 +129,19 @@ function CC:GetOption(key)
     return true
 end
 
+-- Helper canónico de canal PvP en 3.3.5a
+function CC:GetChannel()
+    local _, instanceType = IsInInstance()
+    if instanceType == "pvp" then
+        return "BATTLEGROUND"
+    elseif IsInRaid() then
+        return "RAID"
+    elseif (IsInGroup and IsInGroup()) or (GetNumPartyMembers() > 0) then
+        return "PARTY"
+    end
+    return nil
+end
+
 function CC:Initialize()
     if not self:GetOption("enabled") then
         return
@@ -153,7 +166,8 @@ function CC:CreateFrame()
     -- Fondo
     self.Frame.bg = self.Frame:CreateTexture(nil, "BACKGROUND")
     self.Frame.bg:SetAllPoints()
-    self.Frame.bg:SetTexture(0, 0, 0, 0.85)
+    self.Frame.bg:SetTexture("Interface\\Buttons\\WHITE8X8")
+    self.Frame.bg:SetVertexColor(0, 0, 0, 0.85)
     
     -- Borde
     self.Frame.border = CreateFrame("Frame", nil, self.Frame)
@@ -212,9 +226,14 @@ function CC:CreateFrame()
         self.Frame.drRows[i] = row
     end
     
-    -- OnUpdate para timers
+    -- OnUpdate para timers con throttling de 0.1s
+    self.updateTimer = 0
     self.Frame:SetScript("OnUpdate", function(frame, elapsed)
-        self:OnUpdate(elapsed)
+        self.updateTimer = (self.updateTimer or 0) + elapsed
+        if self.updateTimer >= 0.1 then
+            self:OnUpdate(self.updateTimer)
+            self.updateTimer = 0
+        end
     end)
 end
 
@@ -343,13 +362,7 @@ function CC:OnCCBroken(targetGUID, targetName, spellId, spellName, breakerName)
     
     -- Anunciar al grupo si está configurado
     if self:GetOption("announce") then
-        local channel = nil
-        if IsInRaid() then
-            channel = "RAID"
-        elseif IsInGroup() then
-            channel = "PARTY"
-        end
-        
+        local channel = self:GetChannel()
         if channel then
             SendChatMessage(string.format("[Sequito] CC ROTO: %s rompió %s en %s!", 
                 breakerName or "Alguien", spellName, targetName), channel)
@@ -405,7 +418,7 @@ function CC:UpdateDisplay()
     if not self.Frame:IsShown() then return end
     
     -- Actualizar nameplates si está habilitado
-    if self:GetOption("showNameplates") then
+    if self:GetOption("showDROnNameplates") then
         self:UpdateNameplates()
     end
     
@@ -567,13 +580,7 @@ function CC:ClearAssignments()
 end
 
 function CC:SyncAssignment(playerName, targetName, spellName)
-    local channel = nil
-    if IsInRaid() then
-        channel = "RAID"
-    elseif IsInGroup() then
-        channel = "PARTY"
-    end
-    
+    local channel = self:GetChannel()
     if channel and S.SendAddonMessage then
         local message = string.format("ASSIGN:%s:%s:%s", playerName, targetName, spellName or "CC")
         S:SendAddonMessage("SEQCC", message, channel)
@@ -598,13 +605,7 @@ function CC:OnCommReceived(prefix, message, channel, sender)
 end
 
 function CC:AnnounceAssignments()
-    local channel = nil
-    if IsInRaid() then
-        channel = "RAID"
-    elseif IsInGroup() then
-        channel = "PARTY"
-    end
-    
+    local channel = self:GetChannel()
     if not channel then
         if S.Print then
             S:Print("No estás en un grupo.")
@@ -667,23 +668,23 @@ if S.ModuleConfig then
             },
             {
                 type = "checkbox",
-                key = "alertBrokenCC",
+                key = "alerts",
                 label = "Alertar CC Roto",
                 tooltip = "Alerta cuando alguien rompe un CC asignado",
                 default = true,
             },
             {
                 type = "checkbox",
-                key = "showDROnNameplates",
-                label = "Mostrar DR en Nameplates",
-                tooltip = "Muestra iconos de DR en las barras de nombre",
+                key = "announce",
+                label = "Anunciar en Chat",
+                tooltip = "Anuncia al grupo/banda/campo de batalla cuando se rompe un CC",
                 default = false,
             },
             {
                 type = "checkbox",
-                key = "announceAssignments",
-                label = "Anunciar Asignaciones",
-                tooltip = "Anuncia automáticamente las asignaciones de CC",
+                key = "showDROnNameplates",
+                label = "Mostrar DR en Nameplates",
+                tooltip = "Muestra iconos de DR en las barras de nombre",
                 default = false,
             },
             {

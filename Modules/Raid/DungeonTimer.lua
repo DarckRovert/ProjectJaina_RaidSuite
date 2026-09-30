@@ -56,9 +56,11 @@ function DT:GetOption(key)
 end
 
 function DT:Initialize()
+    if self.initialized then return end
     if not self:GetOption("enabled") then
         return
     end
+    self.initialized = true
     
     self:CreateFrame()
     self:RegisterEvents()
@@ -81,7 +83,8 @@ function DT:CreateFrame()
     -- Fondo
     self.Frame.bg = self.Frame:CreateTexture(nil, "BACKGROUND")
     self.Frame.bg:SetAllPoints()
-    self.Frame.bg:SetTexture(0, 0, 0, 0.9)
+    self.Frame.bg:SetTexture("Interface\\Buttons\\WHITE8X8")
+    self.Frame.bg:SetVertexColor(0, 0, 0, 0.9)
     
     -- Borde
     self.Frame.border = CreateFrame("Frame", nil, self.Frame)
@@ -116,7 +119,8 @@ function DT:CreateFrame()
     self.Frame.sep = self.Frame:CreateTexture(nil, "ARTWORK")
     self.Frame.sep:SetSize(250, 1)
     self.Frame.sep:SetPoint("TOPLEFT", self.Frame.dailyStatus, "BOTTOMLEFT", 0, -10)
-    self.Frame.sep:SetTexture(0.5, 0.5, 0.5, 0.5)
+    self.Frame.sep:SetTexture("Interface\\Buttons\\WHITE8X8")
+    self.Frame.sep:SetVertexColor(0.5, 0.5, 0.5, 0.5)
     
     -- Header de dungeons
     self.Frame.dungeonHeader = self.Frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
@@ -163,7 +167,8 @@ function DT:CreateFrame()
     
     resetBtn.bg = resetBtn:CreateTexture(nil, "BACKGROUND")
     resetBtn.bg:SetAllPoints()
-    resetBtn.bg:SetTexture(0.3, 0.3, 0.5, 0.8)
+    resetBtn.bg:SetTexture("Interface\\Buttons\\WHITE8X8")
+    resetBtn.bg:SetVertexColor(0.3, 0.3, 0.5, 0.8)
     
     resetBtn.text = resetBtn:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     resetBtn.text:SetPoint("CENTER")
@@ -232,9 +237,15 @@ function DT:SaveData()
 end
 
 function DT:CalculateResetTime()
-    -- El reset diario es a las 3:00 AM hora del servidor (aproximado)
+    local serverTime = (GetServerTime and GetServerTime()) or time()
+    local resetSec = GetQuestResetTime and GetQuestResetTime()
+    if resetSec and resetSec > 0 then
+        self.DailyReset = serverTime + resetSec
+        return
+    end
+
+    -- El reset diario es a las 3:00 AM hora del servidor (fallback aproximado)
     -- En WotLK privados puede variar
-    local serverTime = GetServerTime()
     local resetHour = 3 -- 3 AM
     
     -- Calcular próximo reset
@@ -341,6 +352,11 @@ function DT:MarkDungeonComplete(dungeonName)
             self:SaveData()
             self:UpdateDisplay()
             
+            self.lastRunCompleted = true
+            if S.EcosystemBridge and S.EcosystemBridge.NotifyDungeonComplete then
+                S.EcosystemBridge:NotifyDungeonComplete()
+            end
+
             if S.Print then
                 S:Print(string.format("|cFF00FF00✓|r %s completada.", dungeon.name))
             end

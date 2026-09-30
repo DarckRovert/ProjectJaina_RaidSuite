@@ -23,10 +23,14 @@ function VSy:Initialize()
     if not self:GetOption("enabled") then
         return
     end
+    if self.initialized then return end
+    self.initialized = true
     
     self:CreateFrame()
     self:RegisterEvents()
-    RegisterAddonMessagePrefix("SeqVer")
+    if RegisterAddonMessagePrefix then
+        RegisterAddonMessagePrefix("SeqVer")
+    end
 end
 
 function VSy:CreateFrame()
@@ -70,7 +74,7 @@ function VSy:CreateFrame()
     f.refreshBtn:SetPoint("BOTTOMLEFT", 15, 15)
     f.refreshBtn:SetText("Actualizar")
     f.refreshBtn:SetScript("OnClick", function()
-        VSy:RequestVersions()
+        VSy:RequestVersions(true)
         S:Print("Solicitando versiones...")
     end)
     
@@ -118,7 +122,8 @@ function VSy:UpdateVersionList()
             
             row.bg = row:CreateTexture(nil, "BACKGROUND")
             row.bg:SetAllPoints()
-            row.bg:SetTexture(1, 1, 1, 0.05)
+            row.bg:SetTexture("Interface\\Buttons\\WHITE8X8")
+            row.bg:SetVertexColor(1, 1, 1, 0.05)
             
             self.versionRows[index] = row
         end
@@ -141,9 +146,9 @@ function VSy:UpdateVersionList()
         row.version:SetText(data.version)
         
         if index % 2 == 0 then
-            row.bg:SetTexture(1, 1, 1, 0.05)
+            row.bg:SetVertexColor(1, 1, 1, 0.05)
         else
-            row.bg:SetTexture(0, 0, 0, 0.1)
+            row.bg:SetVertexColor(0, 0, 0, 0.2)
         end
         
         yOffset = yOffset + 22
@@ -175,24 +180,51 @@ function VSy:RegisterEvents()
     end)
 end
 
-function VSy:RequestVersions()
+function VSy:GetSyncChannel()
+    if IsInInstance then
+        local inInstance, instanceType = IsInInstance()
+        if inInstance and instanceType == "pvp" then
+            return "BATTLEGROUND"
+        end
+    end
+    if GetNumRaidMembers() > 0 then
+        return "RAID"
+    elseif GetNumPartyMembers() > 0 then
+        return "PARTY"
+    elseif IsInGuild() then
+        return "GUILD"
+    end
+    return nil
+end
+
+function VSy:RequestVersions(force)
     -- Verificar si auto-check está habilitado
-    if not self:GetOption("autoCheck") then
+    if not force and not self:GetOption("autoCheck") then
         return
     end
     
-    local channel = IsInRaid() and "RAID" or IsInGroup() and "PARTY" or IsInGuild() and "GUILD" or nil
+    local now = GetTime()
+    if not force and self.lastRequest and (now - self.lastRequest < 15) then
+        return
+    end
+    self.lastRequest = now
+    
+    local channel = self:GetSyncChannel()
     if channel then
         SendAddonMessage("SeqVer", "REQUEST", channel)
     end
 end
 
 function VSy:SendVersion(channel)
-    SendAddonMessage("SeqVer", "VERSION:" .. ADDON_VERSION, channel or "GUILD")
+    local targetChannel = channel or self:GetSyncChannel()
+    if targetChannel then
+        SendAddonMessage("SeqVer", "VERSION:" .. ADDON_VERSION, targetChannel)
+    end
 end
 
 function VSy:OnAddonMessage(prefix, msg, channel, sender)
     if prefix ~= "SeqVer" then return end
+    if sender == UnitName("player") then return end
     
     if msg == "REQUEST" then
         self:SendVersion(channel)

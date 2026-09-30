@@ -18,6 +18,7 @@ if not C_Timer then
     C_Timer = {}
     local timerFrame = CreateFrame("Frame")
     timerFrame.tickers = {}
+    timerFrame:Hide()
     
     timerFrame:SetScript("OnUpdate", function(self, elapsed)
         for i = #self.tickers, 1, -1 do
@@ -47,6 +48,9 @@ if not C_Timer then
                 end
             end
         end
+        if #self.tickers == 0 then
+            self:Hide()
+        end
     end)
 
     function C_Timer.After(duration, callback)
@@ -56,6 +60,7 @@ if not C_Timer then
             duration = duration,
             iterations = nil
         })
+        timerFrame:Show()
     end
     
     function C_Timer.NewTicker(duration, callback, iterations)
@@ -66,6 +71,7 @@ if not C_Timer then
             iterations = iterations 
         }
         table.insert(timerFrame.tickers, ticker)
+        timerFrame:Show()
         return ticker
     end
     
@@ -76,6 +82,33 @@ if not C_Timer then
     end
     
     _G.C_Timer = C_Timer
+end
+
+-- Polyfill universal para Texture:SetTexture(r,g,b,a) y SetColorTexture (Ley II en WotLK 3.3.5a)
+local dummyTex = CreateFrame("Frame"):CreateTexture()
+local texMeta = getmetatable(dummyTex) and getmetatable(dummyTex).__index
+if texMeta and texMeta.SetTexture then
+    local orig_SetTexture = texMeta.SetTexture
+    texMeta.SetTexture = function(self, ...)
+        local arg1 = ...
+        if type(arg1) == "number" then
+            local r, g, b, a = ...
+            orig_SetTexture(self, "Interface\\Buttons\\WHITE8X8")
+            if self.SetVertexColor then
+                self:SetVertexColor(r or 1, g or 1, b or 1, a or 1)
+            end
+        else
+            return orig_SetTexture(self, ...)
+        end
+    end
+    if not texMeta.SetColorTexture then
+        texMeta.SetColorTexture = function(self, r, g, b, a)
+            orig_SetTexture(self, "Interface\\Buttons\\WHITE8X8")
+            if self.SetVertexColor then
+                self:SetVertexColor(r or 1, g or 1, b or 1, a or 1)
+            end
+        end
+    end
 end
 
 -- In WotLK 3.3.5a, COMBAT_LOG_EVENT_UNFILTERED passes args directly to OnEvent(self, event, ...).

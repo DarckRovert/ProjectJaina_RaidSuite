@@ -85,10 +85,11 @@ function FF:CreateFrames()
     self.Frame:SetScript("OnDragStop", function(f) f:StopMovingOrSizing() end)
     self.Frame:Hide()
     
-    -- Fondo
+    -- Fondo (WHITE8X8 conforme a Ley II de 3.3.5a)
     self.Frame.bg = self.Frame:CreateTexture(nil, "BACKGROUND")
     self.Frame.bg:SetAllPoints()
-    self.Frame.bg:SetTexture(0, 0, 0, 0.8)
+    self.Frame.bg:SetTexture("Interface\\Buttons\\WHITE8X8")
+    self.Frame.bg:SetVertexColor(0, 0, 0, 0.8)
     
     -- Borde
     self.Frame.border = CreateFrame("Frame", nil, self.Frame)
@@ -123,7 +124,8 @@ function FF:CreateFrames()
     -- Fondo de barra de vida
     self.Frame.healthBar.bg = self.Frame.healthBar:CreateTexture(nil, "BACKGROUND")
     self.Frame.healthBar.bg:SetAllPoints()
-    self.Frame.healthBar.bg:SetTexture(0.2, 0.2, 0.2, 0.8)
+    self.Frame.healthBar.bg:SetTexture("Interface\\Buttons\\WHITE8X8")
+    self.Frame.healthBar.bg:SetVertexColor(0.2, 0.2, 0.2, 0.8)
     
     -- Texto de vida
     self.Frame.healthText = self.Frame.healthBar:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
@@ -149,7 +151,8 @@ function FF:CreateAlertFrame()
     -- Fondo con gradiente
     self.AlertFrame.bg = self.AlertFrame:CreateTexture(nil, "BACKGROUND")
     self.AlertFrame.bg:SetAllPoints()
-    self.AlertFrame.bg:SetTexture(0.1, 0, 0, 0.9)
+    self.AlertFrame.bg:SetTexture("Interface\\Buttons\\WHITE8X8")
+    self.AlertFrame.bg:SetVertexColor(0.1, 0, 0, 0.9)
     
     -- Borde brillante
     self.AlertFrame.border = CreateFrame("Frame", nil, self.AlertFrame)
@@ -395,15 +398,30 @@ function FF:ShowAlert(name, raidIcon)
     self.AlertFrame:Show()
 end
 
-function FF:BroadcastFocusTarget(name, guid)
-    local channel = nil
-    if IsInRaid() then
-        channel = "RAID"
-    elseif IsInGroup() then
-        channel = "PARTY"
+-- Helper para resolución contextual de canales en 3.3.5a (PvE + PvP Battlegrounds)
+local function GetFocusFireChannel(preferWarning)
+    if IsInInstance then
+        local inInstance, instanceType = IsInInstance()
+        if inInstance and instanceType == "pvp" then
+            return "BATTLEGROUND"
+        end
     end
-    
-    if channel and S.SendAddonMessage then
+
+    if GetNumRaidMembers and GetNumRaidMembers() > 0 then
+        if preferWarning and (IsRaidLeader() or IsRaidOfficer()) then
+            return "RAID_WARNING"
+        end
+        return "RAID"
+    elseif GetNumPartyMembers and GetNumPartyMembers() > 0 then
+        return "PARTY"
+    end
+
+    return "SAY"
+end
+
+function FF:BroadcastFocusTarget(name, guid)
+    local channel = GetFocusFireChannel(false)
+    if channel and channel ~= "SAY" and S.SendAddonMessage then
         local message = string.format("FOCUS:%s:%s", name, guid or "")
         S:SendAddonMessage("SEQFF", message, channel)
     end
@@ -454,29 +472,20 @@ function FF:CallFocus()
     local name = UnitName("target")
     local guid = UnitGUID("target")
     
-    -- Marcar con Skull si tenemos permisos
-    if IsInRaid() then
-        local rank = select(2, GetRaidRosterInfo(UnitInRaid("player") + 1))
-        if rank and rank > 0 then
+    -- Marcar con Skull si tenemos permisos reales en 3.3.5a
+    if GetNumRaidMembers and GetNumRaidMembers() > 0 then
+        if IsRaidLeader() or IsRaidOfficer() then
             SetRaidTarget("target", 8) -- Skull
         end
-    elseif IsInGroup() then
+    elseif GetNumPartyMembers and GetNumPartyMembers() > 0 then
         SetRaidTarget("target", 8)
     end
     
     -- Establecer como focus target
     self:SetFocusTarget(name, guid, 8)
     
-    -- Anunciar (usando canal configurado)
-    local channel = self:GetOption("announceChannel") or "RAID_WARNING"
-    
-    -- Ajustar canal según contexto
-    if not IsInRaid() and channel == "RAID_WARNING" then
-        channel = IsInGroup() and "PARTY" or "SAY"
-    elseif not IsInRaid() and channel == "RAID" then
-        channel = IsInGroup() and "PARTY" or "SAY"
-    end
-    
+    -- Anunciar al canal correspondiente (BG, RAID_WARNING, RAID, PARTY o SAY)
+    local channel = GetFocusFireChannel(self:GetOption("announceChannel") == "RAID_WARNING")
     if channel then
         SendChatMessage(">>> FOCUS FIRE: " .. name .. " <<<", channel)
     end
@@ -487,14 +496,8 @@ function FF:ClearFocus()
     self:ClearFocusTarget()
     
     -- Notificar al grupo
-    local channel = nil
-    if IsInRaid() then
-        channel = "RAID"
-    elseif IsInGroup() then
-        channel = "PARTY"
-    end
-    
-    if channel and S.SendAddonMessage then
+    local channel = GetFocusFireChannel(false)
+    if channel and channel ~= "SAY" and S.SendAddonMessage then
         S:SendAddonMessage("SEQFF", "CLEAR", channel)
     end
 end
@@ -523,13 +526,7 @@ function FF:AnnounceHealth()
         return
     end
     
-    local channel = nil
-    if IsInRaid() then
-        channel = "RAID"
-    elseif IsInGroup() then
-        channel = "PARTY"
-    end
-    
+    local channel = GetFocusFireChannel(false)
     if channel then
         SendChatMessage(string.format("[Sequito] Focus Target: %s - %.1f%% HP", 
             self.CurrentTarget, self.CurrentTargetHP), channel)

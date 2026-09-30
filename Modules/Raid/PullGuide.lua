@@ -90,9 +90,26 @@ function PG:Initialize()
     if not self:GetOption("enabled") then
         return
     end
+    if self.initialized then return end
+    self.initialized = true
     
     self:CreateFrame()
     self:RegisterEvents()
+end
+
+function PG:GetGroupChannel()
+    if IsInInstance then
+        local inInstance, instanceType = IsInInstance()
+        if inInstance and instanceType == "pvp" then
+            return "BATTLEGROUND"
+        end
+    end
+    if GetNumRaidMembers() > 0 then
+        return "RAID"
+    elseif GetNumPartyMembers() > 0 then
+        return "PARTY"
+    end
+    return nil
 end
 
 function PG:CreateFrame()
@@ -110,7 +127,8 @@ function PG:CreateFrame()
     -- Fondo
     self.Frame.bg = self.Frame:CreateTexture(nil, "BACKGROUND")
     self.Frame.bg:SetAllPoints()
-    self.Frame.bg:SetTexture(0, 0, 0, 0.85)
+    self.Frame.bg:SetTexture("Interface\\Buttons\\WHITE8X8")
+    self.Frame.bg:SetVertexColor(0, 0, 0, 0.85)
     
     -- Borde
     self.Frame.border = CreateFrame("Frame", nil, self.Frame)
@@ -164,7 +182,8 @@ function PG:CreateActionButtons()
     
     autoMarkBtn.bg = autoMarkBtn:CreateTexture(nil, "BACKGROUND")
     autoMarkBtn.bg:SetAllPoints()
-    autoMarkBtn.bg:SetTexture(0.2, 0.4, 0.2, 0.8)
+    autoMarkBtn.bg:SetTexture("Interface\\Buttons\\WHITE8X8")
+    autoMarkBtn.bg:SetVertexColor(0.2, 0.4, 0.2, 0.8)
     
     autoMarkBtn.text = autoMarkBtn:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     autoMarkBtn.text:SetPoint("CENTER")
@@ -182,7 +201,8 @@ function PG:CreateActionButtons()
     
     clearBtn.bg = clearBtn:CreateTexture(nil, "BACKGROUND")
     clearBtn.bg:SetAllPoints()
-    clearBtn.bg:SetTexture(0.4, 0.2, 0.2, 0.8)
+    clearBtn.bg:SetTexture("Interface\\Buttons\\WHITE8X8")
+    clearBtn.bg:SetVertexColor(0.4, 0.2, 0.2, 0.8)
     
     clearBtn.text = clearBtn:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     clearBtn.text:SetPoint("CENTER")
@@ -437,22 +457,29 @@ end
 
 function PG:HasCCInGroup()
     -- Verificar si hay clases con CC en el grupo
-    local ccClasses = {"MAGE", "ROGUE", "HUNTER", "WARLOCK", "PRIEST", "SHAMAN", "DRUID"}
+    local ccClasses = {MAGE = true, ROGUE = true, HUNTER = true, WARLOCK = true, PRIEST = true, SHAMAN = true, DRUID = true}
+    local numRaid = GetNumRaidMembers()
+    local numParty = GetNumPartyMembers()
     
-    if IsInGroup() then
-        local numMembers = GetNumRaidMembers()
-        if numMembers == 0 then numMembers = GetNumPartyMembers() + 1 end
-        for i = 1, numMembers do
-            local unit = IsInRaid() and "raid"..i or "party"..i
-            if UnitExists(unit) then
-                local _, class = UnitClass(unit)
-                for _, ccClass in ipairs(ccClasses) do
-                    if class == ccClass then
-                        return true
-                    end
-                end
+    if numRaid > 0 then
+        for i = 1, numRaid do
+            local _, class = UnitClass("raid"..i)
+            if class and ccClasses[class] then
+                return true
             end
         end
+    elseif numParty > 0 then
+        local _, playerClass = UnitClass("player")
+        if playerClass and ccClasses[playerClass] then return true end
+        for i = 1, numParty do
+            local _, class = UnitClass("party"..i)
+            if class and ccClasses[class] then
+                return true
+            end
+        end
+    else
+        local _, playerClass = UnitClass("player")
+        if playerClass and ccClasses[playerClass] then return true end
     end
     
     return false
@@ -491,13 +518,7 @@ function PG:AnnounceMarks()
         return
     end
     
-    local channel = nil
-    if IsInRaid() then
-        channel = "RAID"
-    elseif IsInGroup() then
-        channel = "PARTY"
-    end
-    
+    local channel = self:GetGroupChannel()
     if not channel then return end
     
     SendChatMessage("=== Orden de Kill ===", channel)

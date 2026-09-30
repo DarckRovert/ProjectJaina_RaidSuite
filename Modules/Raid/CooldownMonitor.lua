@@ -110,6 +110,21 @@ function CM:Initialize()
     self:ScanRaid()
 end
 
+function CM:GetGroupChannel()
+    if IsInInstance then
+        local inInstance, instanceType = IsInInstance()
+        if inInstance and instanceType == "pvp" then
+            return "BATTLEGROUND"
+        end
+    end
+    if GetNumRaidMembers() > 0 then
+        return "RAID"
+    elseif GetNumPartyMembers() > 0 then
+        return "PARTY"
+    end
+    return nil
+end
+
 function CM:CreateFrame()
     if self.Frame then return end
     
@@ -121,7 +136,8 @@ function CM:CreateFrame()
     -- Fondo elegante
     local bg = f:CreateTexture(nil, "BACKGROUND")
     bg:SetAllPoints()
-    bg:SetTexture(0, 0, 0, 0.8)
+    bg:SetTexture("Interface\\Buttons\\WHITE8X8")
+    bg:SetVertexColor(0, 0, 0, 0.8)
     f.bg = bg
     
     -- Borde fino
@@ -137,7 +153,8 @@ function CM:CreateFrame()
     local headerBg = f:CreateTexture(nil, "ARTWORK")
     headerBg:SetPoint("TOPLEFT", f, "TOPLEFT", 0, 0)
     headerBg:SetPoint("BOTTOMRIGHT", f, "TOPRIGHT", 0, -24)
-    headerBg:SetTexture(0.1, 0.1, 0.15, 1)
+    headerBg:SetTexture("Interface\\Buttons\\WHITE8X8")
+    headerBg:SetVertexColor(0.1, 0.1, 0.15, 1)
     
     f:EnableMouse(true)
     f:SetMovable(true)
@@ -245,7 +262,8 @@ function CM:CreateCooldownRow(parent, index)
     -- Borde de barra (Backdrop simple)
     local barBg = bar:CreateTexture(nil, "BACKGROUND")
     barBg:SetAllPoints()
-    barBg:SetTexture(0, 0, 0, 0.5)
+    barBg:SetTexture("Interface\\Buttons\\WHITE8X8")
+    barBg:SetVertexColor(0, 0, 0, 0.5)
     
     -- Spark (brillo final)
     local spark = bar:CreateTexture(nil, "OVERLAY")
@@ -326,7 +344,7 @@ function CM:RegisterEvents()
 end
 
 function CM:OnSpellCast(unit, _, _, _, spellId)
-    if not UnitInRaid(unit) and not UnitInParty(unit) then return end
+    if unit ~= "player" and not UnitInRaid(unit) and not UnitInParty(unit) then return end
     
     local playerName = UnitName(unit)
     local class = select(2, UnitClass(unit))
@@ -349,12 +367,14 @@ function CM:OnCombatLog(...)
     if event ~= "SPELL_CAST_SUCCESS" then return end
     if not sourceName then return end
     
-    -- Verificar si está en el raid
+    -- Verificar si está en el raid o grupo
     local inRaid = false
     local class = nil
+    local numRaid = GetNumRaidMembers()
+    local numParty = GetNumPartyMembers()
     
-    if UnitInRaid("player") then
-        for i = 1, GetNumRaidMembers() do
+    if numRaid > 0 then
+        for i = 1, numRaid do
             local name, _, _, _, _, classFile = GetRaidRosterInfo(i)
             if name == sourceName then
                 inRaid = true
@@ -362,14 +382,20 @@ function CM:OnCombatLog(...)
                 break
             end
         end
-    elseif UnitInParty("player") then
-        for i = 1, GetNumPartyMembers() do
-            if UnitName("party"..i) == sourceName then
-                inRaid = true
-                class = select(2, UnitClass("party"..i))
-                break
+    elseif numParty > 0 then
+        if UnitName("player") == sourceName then
+            inRaid = true
+            class = select(2, UnitClass("player"))
+        else
+            for i = 1, numParty do
+                if UnitName("party"..i) == sourceName then
+                    inRaid = true
+                    class = select(2, UnitClass("party"..i))
+                    break
+                end
             end
         end
+    else
         if UnitName("player") == sourceName then
             inRaid = true
             class = select(2, UnitClass("player"))
@@ -414,9 +440,10 @@ function CM:StartCooldown(playerName, class, cdInfo)
     
     -- Anunciar en raid si es importante
     if cdInfo.type == "bres" or cdInfo.type == "lust" then
-        if IsInRaid() then
+        local channel = self:GetGroupChannel()
+        if channel then
             SendChatMessage(string.format("[Sequito] %s usó %s - CD: %s", 
-                playerName, cdInfo.name, self:FormatTime(cdInfo.duration)), "RAID")
+                playerName, cdInfo.name, self:FormatTime(cdInfo.duration)), channel)
         end
     end
     
@@ -426,17 +453,19 @@ end
 function CM:ScanRaid()
     -- Limpiar CDs de jugadores que ya no están
     local currentMembers = {}
+    local numRaid = GetNumRaidMembers()
+    local numParty = GetNumPartyMembers()
     
-    if UnitInRaid("player") then
-        for i = 1, GetNumRaidMembers() do
+    if numRaid > 0 then
+        for i = 1, numRaid do
             local name = GetRaidRosterInfo(i)
             if name then
                 currentMembers[name] = true
             end
         end
-    elseif UnitInParty("player") then
+    elseif numParty > 0 then
         currentMembers[UnitName("player")] = true
-        for i = 1, GetNumPartyMembers() do
+        for i = 1, numParty do
             local name = UnitName("party"..i)
             if name then
                 currentMembers[name] = true
@@ -465,23 +494,27 @@ function CM:AddPlayerCooldowns(playerName)
     local class = nil
     
     -- Obtener clase
-    if UnitInRaid("player") then
-        for i = 1, GetNumRaidMembers() do
+    local numRaid = GetNumRaidMembers()
+    local numParty = GetNumPartyMembers()
+    
+    if numRaid > 0 then
+        for i = 1, numRaid do
             local name, _, _, _, _, classFile = GetRaidRosterInfo(i)
             if name == playerName then
                 class = classFile
                 break
             end
         end
-    elseif UnitInParty("player") then
-        for i = 1, GetNumPartyMembers() do
-            if UnitName("party"..i) == playerName then
-                class = select(2, UnitClass("party"..i))
-                break
-            end
-        end
+    elseif numParty > 0 then
         if UnitName("player") == playerName then
             class = select(2, UnitClass("player"))
+        else
+            for i = 1, numParty do
+                if UnitName("party"..i) == playerName then
+                    class = select(2, UnitClass("party"..i))
+                    break
+                end
+            end
         end
     else
         if UnitName("player") == playerName then
@@ -538,10 +571,9 @@ function CM:UpdateTimers()
             
             -- Anunciar BRes listos en raid (si está habilitado)
             if cd.type == "bres" and self:GetOption("announceReady") then
-                if IsInRaid() then
-                    SendChatMessage(string.format("[Sequito] %s: %s disponible!", cd.player, cd.spell), "RAID")
-                elseif IsInGroup() then
-                    SendChatMessage(string.format("[Sequito] %s: %s disponible!", cd.player, cd.spell), "PARTY")
+                local channel = self:GetGroupChannel()
+                if channel then
+                    SendChatMessage(string.format("[Sequito] %s: %s disponible!", cd.player, cd.spell), channel)
                 end
             end
         end
@@ -706,10 +738,12 @@ function CM:AnnounceAvailable(cdType)
     
     if #available > 0 then
         local msg = "[Sequito] " .. cdType:upper() .. " disponibles: " .. table.concat(available, ", ")
-        if IsInRaid() then
-            SendChatMessage(msg, "RAID")
-        elseif IsInGroup() then
-            SendChatMessage(msg, "PARTY")
+        local channel = self:GetGroupChannel()
+        if channel then
+            if #msg > 250 then
+                msg = msg:sub(1, 247) .. "..."
+            end
+            SendChatMessage(msg, channel)
         else
             print(msg)
         end

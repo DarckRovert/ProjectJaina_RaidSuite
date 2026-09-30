@@ -98,16 +98,16 @@ local bridgeFrame = CreateFrame("Frame", "WPRaidSuite_BridgeFrame")
 Bridge.frame = bridgeFrame
 
 bridgeFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+bridgeFrame:RegisterEvent("LFG_COMPLETION_REWARD")
 bridgeFrame:RegisterEvent("CHAT_MSG_COMBAT_HOSTILE_DEATH")
-bridgeFrame:RegisterEvent("CHAT_MSG_ADDON")
 
 bridgeFrame:SetScript("OnEvent", function(_, event, ...)
     if event == "PLAYER_ENTERING_WORLD" then
         Bridge:OnEnteringWorld()
+    elseif event == "LFG_COMPLETION_REWARD" then
+        Bridge:NotifyDungeonComplete()
     elseif event == "CHAT_MSG_COMBAT_HOSTILE_DEATH" then
         Bridge:OnCombatDeath(...)
-    elseif event == "CHAT_MSG_ADDON" then
-        Bridge:OnAddonMessage(...)
     end
 end)
 
@@ -145,13 +145,6 @@ function Bridge:OnCombatDeath(msg)
             self:ReportQuestProgress(BP_QUEST.DUNGEON_DAILY, 1, "Dungeon complete")
             self:ReportQuestProgress(BP_QUEST.ECO_DUNGEON_3, 1, "Weekly Dungeon +1")
         end
-    end
-end
-
-function Bridge:OnAddonMessage(prefix, message, channel, sender)
-    if prefix ~= "WP_BP" then return end
-    if WoWPeru_BattlePass and WoWPeru_BattlePass.OnAddonMessage then
-        WoWPeru_BattlePass:OnAddonMessage(prefix, message, channel, sender)
     end
 end
 

@@ -23,7 +23,9 @@ function BM:Initialize()
         return
     end
     
-    RegisterAddonMessagePrefix("SeqBuild")
+    if RegisterAddonMessagePrefix then
+        RegisterAddonMessagePrefix("SeqBuild")
+    end
     self.frame = self:CreateFrame()
 end
 
@@ -123,7 +125,8 @@ function BM:UpdateBuildList()
             
             row.bg = row:CreateTexture(nil, "BACKGROUND")
             row.bg:SetAllPoints()
-            row.bg:SetTexture(0.1, 0.1, 0.1, 0.5)
+            row.bg:SetTexture("Interface\\Buttons\\WHITE8X8")
+            row.bg:SetVertexColor(0.1, 0.1, 0.1, 0.5)
             
             row.icon = row:CreateTexture(nil, "ARTWORK")
             row.icon:SetSize(20, 20)
@@ -170,9 +173,11 @@ function BM:UpdateBuildList()
         
         -- Highlight if same class
         if data.class == playerClass then
-            row.bg:SetTexture(0.2, 0.4, 0.2, 0.5)
+            row.bg:SetTexture("Interface\\Buttons\\WHITE8X8")
+            row.bg:SetVertexColor(0.2, 0.4, 0.2, 0.5)
         else
-            row.bg:SetTexture(0.1, 0.1, 0.1, 0.5)
+            row.bg:SetTexture("Interface\\Buttons\\WHITE8X8")
+            row.bg:SetVertexColor(0.1, 0.1, 0.1, 0.5)
         end
         
         local buildName = name
@@ -260,10 +265,62 @@ end
 
 function BM:ShareBuild(name, target)
     local build = SequitoBuildDB[name]
-    if build then
-        local encoded = name .. ":" .. build.class
-        SendAddonMessage("SeqBuild", encoded, "WHISPER", target)
-        S:Print("Build compartido con " .. target)
+    if not build then
+        S:Print("Build no encontrado: " .. tostring(name))
+        return
+    end
+    if not target or target == "" then
+        S:Print("Uso: /sequito build share <nombre> <jugador>")
+        return
+    end
+
+    local tStr = {}
+    for tab = 1, 3 do
+        local tabT = (build.talents and build.talents[tab]) or {}
+        local s = ""
+        for i = 1, 35 do
+            s = s .. tostring(tabT[i] or 0)
+        end
+        s = s:gsub("0+$", "")
+        table.insert(tStr, (s ~= "") and s or "0")
+    end
+    local gStr = table.concat(build.glyphs or {0, 0, 0, 0, 0, 0}, ",")
+    local payload = string.format("BUILD:%s:%s:%s:%s:%s:%s", name, build.class or "UNKNOWN", tStr[1], tStr[2], tStr[3], gStr)
+
+    if #payload <= 245 then
+        SendAddonMessage("SeqBuild", payload, "WHISPER", target)
+        S:Print(string.format("Build '%s' compartido exitosamente con %s.", name, target))
+    else
+        S:Print("Error: El payload del build excede el límite de red (255 bytes).")
+    end
+end
+
+function BM:OnAddonMessage(prefix, message, channel, sender)
+    if prefix ~= "SeqBuild" or not message then return end
+
+    local op, rName, rClass, t1, t2, t3, gStr = strsplit(":", message, 7)
+    if op == "BUILD" and rName and rClass then
+        local recTalents = { [1] = {}, [2] = {}, [3] = {} }
+        local tTabs = { t1 or "0", t2 or "0", t3 or "0" }
+        for tab = 1, 3 do
+            local s = tTabs[tab]
+            for i = 1, #s do
+                recTalents[tab][i] = tonumber(s:sub(i, i)) or 0
+            end
+        end
+        local recGlyphs = {}
+        for gId in string.gmatch(gStr or "", "%d+") do
+            table.insert(recGlyphs, tonumber(gId))
+        end
+
+        local cleanSender = sender and sender:match("^[^-]+") or "Aliado"
+        local saveName = string.format("%s (%s)", rName, cleanSender)
+        SequitoBuildDB = SequitoBuildDB or {}
+        SequitoBuildDB[saveName] = { talents = recTalents, glyphs = recGlyphs, class = rClass }
+        S:Print(string.format("Build '%s' recibido de %s y guardado en tu gestor.", rName, cleanSender))
+        if self.frame and self.frame:IsShown() then
+            self:UpdateBuildList()
+        end
     end
 end
 
@@ -334,4 +391,11 @@ end
 
 local loader = CreateFrame("Frame")
 loader:RegisterEvent("PLAYER_LOGIN")
-loader:SetScript("OnEvent", function() BM:Initialize() end)
+loader:RegisterEvent("CHAT_MSG_ADDON")
+loader:SetScript("OnEvent", function(self, event, ...)
+    if event == "PLAYER_LOGIN" then
+        BM:Initialize()
+    elseif event == "CHAT_MSG_ADDON" then
+        BM:OnAddonMessage(...)
+    end
+end)

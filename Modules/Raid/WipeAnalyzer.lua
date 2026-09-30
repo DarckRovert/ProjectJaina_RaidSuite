@@ -120,9 +120,11 @@ function WA:GetOption(key)
 end
 
 function WA:Initialize()
+    if self.initialized then return end
     if not self:GetOption("enabled") then
         return
     end
+    self.initialized = true
     
     self:CreateFrame()
     self:RegisterEvents()
@@ -139,7 +141,8 @@ function WA:CreateFrame()
     -- Fondo elegante
     local bg = f:CreateTexture(nil, "BACKGROUND")
     bg:SetAllPoints()
-    bg:SetTexture(0, 0, 0, 0.85)
+    bg:SetTexture("Interface\\Buttons\\WHITE8X8")
+    bg:SetVertexColor(0, 0, 0, 0.85)
     f.bg = bg
     
     -- Borde fino
@@ -155,7 +158,8 @@ function WA:CreateFrame()
     local headerBg = f:CreateTexture(nil, "ARTWORK")
     headerBg:SetPoint("TOPLEFT", f, "TOPLEFT", 0, 0)
     headerBg:SetPoint("BOTTOMRIGHT", f, "TOPRIGHT", 0, -24)
-    headerBg:SetTexture(0.3, 0.1, 0.1, 1) -- Header rojo oscuro
+    headerBg:SetTexture("Interface\\Buttons\\WHITE8X8")
+    headerBg:SetVertexColor(0.3, 0.1, 0.1, 1) -- Header rojo oscuro
     
     f:EnableMouse(true)
     f:SetMovable(true)
@@ -254,6 +258,36 @@ function WA:RegisterEvents()
     WA:UpdateRoster()
 end
 
+function WA:DetectBossEncounter()
+    if self.CurrentFight.isBossEncounter and self.CurrentFight.bossGUID then return end
+    
+    local unitsToCheck = { "target", "focus", "boss1", "boss2", "boss3", "boss4" }
+    local numRaid = GetNumRaidMembers()
+    if numRaid > 0 then
+        for i = 1, numRaid do
+            table.insert(unitsToCheck, "raid" .. i .. "target")
+        end
+    else
+        local numParty = GetNumPartyMembers()
+        for i = 1, numParty do
+            table.insert(unitsToCheck, "party" .. i .. "target")
+        end
+    end
+    
+    for _, unit in ipairs(unitsToCheck) do
+        if UnitExists(unit) and not UnitIsFriend("player", unit) then
+            local classification = UnitClassification(unit)
+            local level = UnitLevel(unit)
+            if classification == "worldboss" or level == -1 then
+                self.CurrentFight.isBossEncounter = true
+                self.CurrentFight.encounterName = UnitName(unit)
+                self.CurrentFight.bossGUID = UnitGUID(unit)
+                return
+            end
+        end
+    end
+end
+
 function WA:OnCombatStart()
     self.CurrentFight = {
         inCombat = true,
@@ -265,8 +299,14 @@ function WA:OnCombatStart()
         },
         consumables = {},
         damage = {},
-        healing = {}
+        healing = {},
+        isBossEncounter = false,
+        encounterName = nil,
+        bossGUID = nil,
+        bossKilled = false,
+        success = false
     }
+    self:DetectBossEncounter()
 end
 
 function WA:OnCombatEnd()
@@ -276,31 +316,39 @@ function WA:OnCombatEnd()
     self.CurrentFight.endTime = GetTime()
     self.CurrentFight.duration = self.CurrentFight.endTime - self.CurrentFight.startTime
     
-    -- Verificar si fue un wipe (más del 50% del raid murió y NO fue success)
     local raidSize = GetNumRaidMembers()
     if raidSize == 0 then raidSize = GetNumPartyMembers() + 1 end
-    
     local deathCount = #self.CurrentFight.deaths
-    local isWipe = (deathCount >= (raidSize * 0.5)) and (not self.CurrentFight.success)
+    local inInstance, instanceType = IsInInstance()
     
-    if isWipe and deathCount > 0 then
-        self.CurrentFight.isWipe = true
-        table.insert(self.FightHistory, self.CurrentFight)
+    -- CASO 1: VICTORIA CONTRA BOSS (El jefe fue abatido)
+    if self.CurrentFight.bossKilled or self.CurrentFight.success then
+        self.CurrentFight.isWipe = false
+        self.lastEncounterWon = true
         
-        -- Analizar wipe
-        self:AnalyzeWipe()
-        
-        -- Mostrar análisis automáticamente si está habilitado
-        if self:GetOption("autoShow") then
-            self:Show()
+        if inInstance and (instanceType == "raid" or instanceType == "party") then
+            if S.EcosystemBridge and S.EcosystemBridge.NotifyBossKill then
+                local encounterName = self.CurrentFight.encounterName or "Jefe de Banda"
+                S.EcosystemBridge:NotifyBossKill(encounterName)
+            end
         end
+    else
+        -- CASO 2: DERROTA / WIPE (Solo si hubo más del 50% de bajas y estábamos en boss o instancia)
+        local isWipe = (deathCount >= (raidSize * 0.5)) and (deathCount > 0) and (self.CurrentFight.isBossEncounter or inInstance)
         
-        -- Anunciar resultados si está habilitado
-        if self:GetOption("announceResults") then
-            self:AnnounceAnalysis()
+        if isWipe then
+            self.CurrentFight.isWipe = true
+            table.insert(self.FightHistory, self.CurrentFight)
+            self:AnalyzeWipe()
+            
+            if self:GetOption("autoShow") then
+                self:Show()
+            end
+            if self:GetOption("announceResults") then
+                self:AnnounceAnalysis()
+            end
+            print("|cffff0000[Sequito]|r ¡Wipe detectado! Usa /sequito analyze para ver el análisis")
         end
-        
-        print("|cffff0000[Sequito]|r ¡Wipe detectado! Usa /sequito analyze para ver el análisis")
     end
 end
 
@@ -308,10 +356,14 @@ function WA:OnEncounterStart(encounterID, encounterName, difficultyID, raidSize)
     self.CurrentFight.encounterName = encounterName
     self.CurrentFight.encounterID = encounterID
     self.CurrentFight.difficulty = difficultyID
+    self.CurrentFight.isBossEncounter = true
 end
 
 function WA:OnEncounterEnd(encounterID, encounterName, difficultyID, raidSize, success)
     self.CurrentFight.success = success
+    if success then
+        self.CurrentFight.bossKilled = true
+    end
 end
 
 function WA:OnCombatLog(...)
@@ -333,6 +385,26 @@ function WA:OnCombatLog(...)
     if event == "UNIT_DIED" then
         if destName and self:IsRaidMember(destGUID) then
             self:RecordDeath(destName, destGUID)
+        elseif destGUID and not self:IsRaidMember(destGUID) then
+            local wasBoss = false
+            if self.CurrentFight.bossGUID and destGUID == self.CurrentFight.bossGUID then
+                wasBoss = true
+            elseif self.CurrentFight.encounterName and destName == self.CurrentFight.encounterName then
+                wasBoss = true
+            elseif UnitExists("target") and UnitGUID("target") == destGUID and (UnitClassification("target") == "worldboss" or UnitLevel("target") == -1) then
+                wasBoss = true
+                self.CurrentFight.encounterName = destName
+            elseif UnitExists("focus") and UnitGUID("focus") == destGUID and (UnitClassification("focus") == "worldboss" or UnitLevel("focus") == -1) then
+                wasBoss = true
+                self.CurrentFight.encounterName = destName
+            end
+            
+            if wasBoss then
+                self.CurrentFight.bossKilled = true
+                self.CurrentFight.success = true
+                self.CurrentFight.isBossEncounter = true
+                self.CurrentFight.encounterName = self.CurrentFight.encounterName or destName
+            end
         end
     end
     
@@ -645,7 +717,8 @@ function WA:UpdateDisplay()
         if not fdFrame.bg then
             fdFrame.bg = fdFrame:CreateTexture(nil, "BACKGROUND")
             fdFrame.bg:SetAllPoints()
-            fdFrame.bg:SetTexture(0.3, 0.1, 0.1, 0.4)
+            fdFrame.bg:SetTexture("Interface\\Buttons\\WHITE8X8")
+            fdFrame.bg:SetVertexColor(0.3, 0.1, 0.1, 0.4)
         end
         
         -- Textos internos (no manageados por pool principal para simplificar, hijos de fdFrame)
@@ -754,20 +827,38 @@ function WA:CreateTextLine(text)
     return line
 end
 
+function WA:GetAnnouncementChannel()
+    local zoneType = select(2, IsInInstance())
+    if zoneType == "pvp" or zoneType == "arena" then
+        return "BATTLEGROUND"
+    elseif GetNumRaidMembers() > 0 then
+        return "RAID"
+    elseif GetNumPartyMembers() > 0 then
+        return "PARTY"
+    end
+    return nil
+end
+
 function WA:AnnounceAnalysis()
     if not self.LastAnalysis then
-        print("|cffff0000[Sequito]|r No hay análisis disponible")
+        if S.Print then
+            S:Print("|cffff0000[Sequito]|r No hay análisis disponible")
+        else
+            print("|cffff0000[Sequito]|r No hay análisis disponible")
+        end
         return
     end
     
     local analysis = self.LastAnalysis
-    local channel = IsInRaid() and "RAID" or (IsInGroup() and "PARTY" or nil)
+    local channel = self:GetAnnouncementChannel()
     
     local function send(msg)
+        if not msg or msg == "" then return end
+        if #msg > 240 then msg = msg:sub(1, 237) .. "..." end
         if channel then
             SendChatMessage(msg, channel)
         else
-            print(msg)
+            if S.Print then S:Print(msg) else print(msg) end
         end
     end
     
@@ -775,27 +866,42 @@ function WA:AnnounceAnalysis()
     
     if analysis.firstDeath then
         send(string.format("Primera muerte: %s (%.1fs) - %s de %s",
-            analysis.firstDeath.name,
-            analysis.firstDeath.time,
-            analysis.firstDeath.lastSpell,
-            analysis.firstDeath.killedBy))
+            analysis.firstDeath.name or "Desconocido",
+            analysis.firstDeath.time or 0,
+            analysis.firstDeath.lastSpell or "Desconocido",
+            analysis.firstDeath.killedBy or "Desconocido"))
     end
     
-    if #analysis.noConsumables > 0 then
-        send("Sin poción/healthstone: " .. table.concat(analysis.noConsumables, ", "))
+    if analysis.noConsumables and #analysis.noConsumables > 0 then
+        local line = "Sin poción/healthstone: "
+        for _, name in ipairs(analysis.noConsumables) do
+            if #line + #name + 2 > 230 then
+                send(line)
+                line = "  " .. name
+            else
+                if line == "Sin poción/healthstone: " or line == "  " then
+                    line = line .. name
+                else
+                    line = line .. ", " .. name
+                end
+            end
+        end
+        if line ~= "Sin poción/healthstone: " and line ~= "  " then
+            send(line)
+        end
     end
     
     -- Top Causas
-    if #analysis.causes > 0 then
+    if analysis.causes and #analysis.causes > 0 then
         local top = {}
         for i = 1, math.min(3, #analysis.causes) do
-            table.insert(top, string.format("%s (%d)", analysis.causes[i].name, analysis.causes[i].count))
+            table.insert(top, string.format("%s (%d)", analysis.causes[i].name or "?", analysis.causes[i].count or 0))
         end
         send("Top Causas de Muerte: " .. table.concat(top, ", "))
     end
     
     send(string.format("Total muertes: %d - Interrupts: %d", 
-        analysis.totalDeaths, analysis.interruptsSuccessful))
+        analysis.totalDeaths or 0, analysis.interruptsSuccessful or 0))
 end
 
 function WA:ClearCurrent()

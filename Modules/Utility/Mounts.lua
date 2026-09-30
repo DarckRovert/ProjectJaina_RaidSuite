@@ -16,12 +16,14 @@ function S.Mounts:GetOption(key)
 end
 
 function S.Mounts:Initialize()
+    if self.initialized then return end
     if not self:GetOption("enabled") then
         return
     end
+    self.initialized = true
     
     -- Inicializar configuración de monturas en DB
-    if not S.db.profile.Mounts then
+    if S.db and S.db.profile and not S.db.profile.Mounts then
         S.db.profile.Mounts = {
             FlyingMount = nil,  -- Nombre de montura voladora favorita
             GroundMount = nil,  -- Nombre de montura terrestre favorita
@@ -223,12 +225,12 @@ function S.Mounts:MountUp()
     
     -- Fallback de hechizo de clase
     local _, class = UnitClass("player")
-    if class == "PALADIN" and IsSpellKnown(23214) then
-        CastSpellByID(23214)
-    elseif class == "WARLOCK" and IsSpellKnown(23161) then
-        CastSpellByID(23161)
-    elseif class == "DEATHKNIGHT" and IsSpellKnown(48778) then
-        CastSpellByID(48778)
+    local spellID = (class == "PALADIN" and 23214) or (class == "WARLOCK" and 23161) or (class == "DEATHKNIGHT" and 48778)
+    if spellID and IsSpellKnown(spellID) then
+        local spellName = GetSpellInfo(spellID)
+        if spellName and CastSpellByName then
+            CastSpellByName(spellName)
+        end
     end
 end
 

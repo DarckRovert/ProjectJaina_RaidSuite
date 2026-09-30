@@ -310,6 +310,17 @@ if not UnitIsRaidOfficer then
     _G.UnitIsRaidOfficer = UnitIsRaidOfficer
 end
 
+-- Polyfill for CastSpellByID (introduced in 4.0.1, missing in 3.3.5a)
+if not CastSpellByID then
+    function CastSpellByID(spellID)
+        if not spellID then return end
+        local spellName = GetSpellInfo(spellID)
+        if spellName and CastSpellByName then
+            CastSpellByName(spellName)
+        end
+    end
+    _G.CastSpellByID = CastSpellByID
+end
 
 -- Spell Name/ID Cache and Helpers
 S.SpellCache = {}

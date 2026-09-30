@@ -17,9 +17,11 @@ function EC:GetOption(key)
 end
 
 function EC:Initialize()
+    if self.initialized then return end
     if not self:GetOption("enabled") then
         return
     end
+    self.initialized = true
     
     self.frame = self:CreateFrame()
     self:RegisterEvents()
@@ -27,14 +29,24 @@ end
 
 function EC:CreateFrame()
     local f = CreateFrame("Frame", "SequitoEventCalendarFrame", UIParent)
+    self.frame = f
     f:SetSize(350, 300)
     f:SetPoint("CENTER")
-    f:SetBackdrop({bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background", edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border", edgeSize = 16, insets = {left = 4, right = 4, top = 4, bottom = 4}})
+    if S.Theme and S.Theme.ApplyPanelBackdrop then
+        S.Theme:ApplyPanelBackdrop(f)
+    else
+        f:SetBackdrop({bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background", edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border", edgeSize = 16, insets = {left = 4, right = 4, top = 4, bottom = 4}})
+    end
     f:SetMovable(true)
     f:EnableMouse(true)
     f:RegisterForDrag("LeftButton")
     f:SetScript("OnDragStart", f.StartMoving)
-    f:SetScript("OnDragStop", f.StopMovingOrSizing)
+    f:SetScript("OnDragStop", function(self)
+        self:StopMovingOrSizing()
+        if S.SmartDefaults then
+            S.SmartDefaults:SavePosition("EventCalendar", self)
+        end
+    end)
     f:Hide()
     
     f.title = f:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
@@ -51,6 +63,11 @@ function EC:CreateFrame()
     
     f.close = CreateFrame("Button", nil, f, "UIPanelCloseButton")
     f.close:SetPoint("TOPRIGHT", -5, -5)
+    f.close:SetScript("OnClick", function() f:Hide() end)
+    
+    if S.SmartDefaults then
+        S.SmartDefaults:RestorePosition("EventCalendar")
+    end
     
     return f
 end
@@ -62,16 +79,17 @@ function EC:RegisterEvents()
 end
 
 function EC:UpdateEvents()
-    -- WotLK API: CalendarGetDate() returns weekday, month, day, year
+    if not CalendarGetDate then return end
     local weekday, month, day, year = CalendarGetDate()
+    if not day or day < 1 then
+        local dt = date("*t")
+        day = dt and dt.day or 1
+    end
     
-    -- WotLK API: CalendarGetNumDayEvents(offset, day)
-    -- offset 0 = current month
-    local numEvents = CalendarGetNumDayEvents(0, day)
+    local numEvents = CalendarGetNumDayEvents and CalendarGetNumDayEvents(0, day) or 0
     
     self.events = {}
     for i = 1, numEvents do
-        -- WotLK API: CalendarGetDayEvent(offset, day, index)
         local title, hour, minute, calendarType, sequenceType, eventType, texture, modStatus, inviteStatus, invitedBy, difficulty, inviteType = CalendarGetDayEvent(0, day, i)
         
         if title then
@@ -92,14 +110,37 @@ function EC:RefreshDisplay()
     
     for i, row in ipairs(self.eventRows) do row:Hide() end
     
+    if not self.emptyText and self.frame and self.frame.content then
+        self.emptyText = self.frame.content:CreateFontString(nil, "OVERLAY", "GameFontDisable")
+        self.emptyText:SetPoint("CENTER", self.frame, "CENTER", 0, -20)
+        self.emptyText:SetText("No hay eventos programados para hoy.")
+    end
+    
+    if not self.events or #self.events == 0 then
+        if self.emptyText then self.emptyText:Show() end
+        if self.frame and self.frame.content then
+            self.frame.content:SetHeight(250)
+        end
+        return
+    else
+        if self.emptyText then self.emptyText:Hide() end
+    end
+    
     local yOffset = 0
-    for i, event in ipairs(self.events or {}) do
+    for i, event in ipairs(self.events) do
         local row = self.eventRows[i] or self:CreateEventRow(i)
         row.title:SetText(event.title or "Evento")
-        row.time:SetText(event.startTime and (event.startTime.hour .. ":" .. event.startTime.minute) or "")
+        local timeStr = ""
+        if event.startTime and event.startTime.hour and event.startTime.minute then
+            timeStr = string.format("%02d:%02d", event.startTime.hour, event.startTime.minute)
+        end
+        row.time:SetText(timeStr)
         row:SetPoint("TOPLEFT", self.frame.content, "TOPLEFT", 0, -yOffset)
         row:Show()
         yOffset = yOffset + 30
+    end
+    if self.frame and self.frame.content then
+        self.frame.content:SetHeight(math.max(yOffset + 10, 250))
     end
 end
 
@@ -179,6 +220,12 @@ if S.ModuleConfig then
             },
         },
     })
+end
+
+SLASH_EVENTCALENDAR1 = "/ec"
+SLASH_EVENTCALENDAR2 = "/eventcalendar"
+SlashCmdList["EVENTCALENDAR"] = function(msg)
+    EC:SlashCommand(msg)
 end
 
 local loader = CreateFrame("Frame")

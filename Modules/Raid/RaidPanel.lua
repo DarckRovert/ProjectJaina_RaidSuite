@@ -84,7 +84,8 @@ local function CreateMainFrame()
     -- Fondo
     mainFrame.bg = mainFrame:CreateTexture(nil, "BACKGROUND")
     mainFrame.bg:SetAllPoints()
-    mainFrame.bg:SetTexture(0.05, 0.05, 0.1, 0.9)
+    mainFrame.bg:SetTexture("Interface\\Buttons\\WHITE8X8")
+    mainFrame.bg:SetVertexColor(0.05, 0.05, 0.1, 0.9)
     
     -- Borde
     mainFrame.border = CreateFrame("Frame", nil, mainFrame)
@@ -135,7 +136,8 @@ local function CreateMainFrame()
         if not mainFrame.headerBg then
             mainFrame.headerBg = mainFrame.header:CreateTexture(nil, "BACKGROUND")
             mainFrame.headerBg:SetAllPoints()
-            mainFrame.headerBg:SetTexture(0.1, 0.1, 0.1, 0.5)
+            mainFrame.headerBg:SetTexture("Interface\\Buttons\\WHITE8X8")
+            mainFrame.headerBg:SetVertexColor(0.1, 0.1, 0.1, 0.5)
         end
         mainFrame.header:SetWidth(effectiveWidth)
         
@@ -186,7 +188,8 @@ local function CreateMainFrame()
     mainFrame.separator = mainFrame:CreateTexture(nil, "ARTWORK")
     mainFrame.separator:SetSize(PANEL_CONFIG.width - 20, 1)
     mainFrame.separator:SetPoint("TOPLEFT", mainFrame.header, "BOTTOMLEFT", 0, -2)
-    mainFrame.separator:SetTexture(0.5, 0.5, 0.5, 0.5)
+    mainFrame.separator:SetTexture("Interface\\Buttons\\WHITE8X8")
+    mainFrame.separator:SetVertexColor(0.5, 0.5, 0.5, 0.5)
     
     -- ScrollFrame para la lista de miembros
     mainFrame.scrollFrame = CreateFrame("ScrollFrame", "SequitoRaidPanelScroll", mainFrame, "UIPanelScrollFrameTemplate")
@@ -286,7 +289,8 @@ function CreateMemberRow(parent, index)
     -- Background for Bar
     row.bg = row.hpBar:CreateTexture(nil, "BACKGROUND")
     row.bg:SetAllPoints()
-    row.bg:SetTexture(0, 0, 0, 0.8) -- Darker background
+    row.bg:SetTexture("Interface\\Buttons\\WHITE8X8")
+    row.bg:SetVertexColor(0, 0, 0, 0.8) -- Darker background
 
     -- Highlight logic
     row:SetScript("OnEnter", function(self) 
@@ -426,7 +430,9 @@ function RaidPanel:UpdateMembers()
         if member then
             -- Configurar fila
             row.unit = member.unit
-            row:SetAttribute("unit", member.unit)
+            if not InCombatLockdown() then
+                row:SetAttribute("unit", member.unit)
+            end
             
             -- Debug Prints REMOVED
             
@@ -538,10 +544,12 @@ end
 -- INICIALIZACIÓN
 -- ===========================================================================
 function RaidPanel:Initialize()
+    if self.initialized then return end
     if not self:GetOption("enabled") then 
         print("|cFFFF9900Sequito|r: [RaidPanel] Deshabilitado por configuración.")
         return 
     end
+    self.initialized = true
     
     self.frame = CreateMainFrame()
     

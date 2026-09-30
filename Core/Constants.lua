@@ -279,12 +279,37 @@ if not UnitIsGroupLeader then
                 end
             end
         else
-            return IsPartyLeader()
+            if UnitIsUnit(unit, "player") then
+                return IsPartyLeader()
+            end
+            return UnitIsPartyLeader(unit) or false
         end
         return false
     end
     _G.UnitIsGroupLeader = UnitIsGroupLeader
 end
+
+-- Polyfill for UnitIsRaidOfficer (doesn't exist in 3.3.5)
+if not UnitIsRaidOfficer then
+    function UnitIsRaidOfficer(unit)
+        if not unit then return false end
+        if UnitIsUnit(unit, "player") then
+            return (IsRaidOfficer and IsRaidOfficer()) or false
+        end
+        local numRaid = GetNumRaidMembers()
+        if numRaid > 0 then
+            for i = 1, numRaid do
+                local name, rank = GetRaidRosterInfo(i)
+                if UnitIsUnit(unit, "raid"..i) then
+                    return rank == 1
+                end
+            end
+        end
+        return false
+    end
+    _G.UnitIsRaidOfficer = UnitIsRaidOfficer
+end
+
 
 -- Spell Name/ID Cache and Helpers
 S.SpellCache = {}

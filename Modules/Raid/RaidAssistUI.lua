@@ -40,7 +40,11 @@ function RAUI:Initialize()
         eventFrame:RegisterEvent("RAID_ROSTER_UPDATE")
         eventFrame:SetScript("OnEvent", function(self, event)
             if (GetNumRaidMembers() > 0) and RAUI.mainFrame then
-                RAUI.mainFrame:Show()
+                local onlyLeader = RAUI:GetOption("showOnlyLeader")
+                local isLeader = (IsRaidLeader and IsRaidLeader()) or (IsRaidOfficer and IsRaidOfficer())
+                if not onlyLeader or isLeader then
+                    RAUI.mainFrame:Show()
+                end
             end
         end)
     end
@@ -452,9 +456,12 @@ function RAUI:ShowLeaderPanel()
     
     if numRaid > 0 then
         -- In raid: check if leader or assistant
-        isLeader = (UnitIsRaidOfficer("player") or IsRaidLeader())
+        isLeader = (IsRaidLeader and IsRaidLeader()) or (IsRaidOfficer and IsRaidOfficer())
+    elseif GetNumPartyMembers() > 0 then
+        -- In party: check if party leader
+        isLeader = IsPartyLeader and IsPartyLeader()
     else
-        -- Not in raid: allow opening for testing
+        -- Solo o fuera de grupo: permitir apertura para pruebas/configuración
         isLeader = true
     end
     

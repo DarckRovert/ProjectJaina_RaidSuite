@@ -19,24 +19,37 @@ function PN:GetOption(key)
 end
 
 function PN:Initialize()
+    if self.initialized then return end
     if not self:GetOption("enabled") then
         return
     end
+    self.initialized = true
     
     self.frame = self:CreateFrame()
     self:RegisterEvents()
+    self:HookTooltip()
 end
 
 function PN:CreateFrame()
     local f = CreateFrame("Frame", "SequitoPlayerNotesFrame", UIParent)
+    self.frame = f
     f:SetSize(350, 250)
     f:SetPoint("CENTER")
-    f:SetBackdrop({bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background", edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border", edgeSize = 16, insets = {left = 4, right = 4, top = 4, bottom = 4}})
+    if S.Theme and S.Theme.ApplyPanelBackdrop then
+        S.Theme:ApplyPanelBackdrop(f)
+    else
+        f:SetBackdrop({bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background", edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border", edgeSize = 16, insets = {left = 4, right = 4, top = 4, bottom = 4}})
+    end
     f:SetMovable(true)
     f:EnableMouse(true)
     f:RegisterForDrag("LeftButton")
     f:SetScript("OnDragStart", f.StartMoving)
-    f:SetScript("OnDragStop", f.StopMovingOrSizing)
+    f:SetScript("OnDragStop", function(self)
+        self:StopMovingOrSizing()
+        if S.SmartDefaults then
+            S.SmartDefaults:SavePosition("PlayerNotes", self)
+        end
+    end)
     f:Hide()
     
     f.title = f:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
@@ -63,6 +76,11 @@ function PN:CreateFrame()
     
     f.close = CreateFrame("Button", nil, f, "UIPanelCloseButton")
     f.close:SetPoint("TOPRIGHT", -5, -5)
+    f.close:SetScript("OnClick", function() f:Hide() end)
+    
+    if S.SmartDefaults then
+        S.SmartDefaults:RestorePosition("PlayerNotes")
+    end
     
     return f
 end
@@ -74,8 +92,17 @@ function PN:RegisterEvents()
 end
 
 function PN:SetNote(playerName, note)
-    SequitoPlayerNotesDB[playerName] = note
-    S:Print("Nota guardada para " .. playerName)
+    if not playerName then return end
+    if note and note:match("%S") then
+        SequitoPlayerNotesDB[playerName] = note
+        if S.Print then
+            S:Print("Nota guardada para " .. playerName)
+        else
+            print("|cFFFF9900[Sequito]|r Nota guardada para " .. playerName)
+        end
+    else
+        self:DeleteNote(playerName)
+    end
 end
 
 function PN:AddNote(playerName, note)
@@ -85,8 +112,12 @@ end
 function PN:DeleteNote(playerName)
     if SequitoPlayerNotesDB and playerName then
         SequitoPlayerNotesDB[playerName] = nil
-        S:Print("Nota eliminada para " .. playerName)
-        if self.currentPlayer == playerName and self.frame and self.frame:IsShown() then
+        if S.Print then
+            S:Print("Nota eliminada para " .. playerName)
+        else
+            print("|cFFFF9900[Sequito]|r Nota eliminada para " .. playerName)
+        end
+        if self.currentPlayer == playerName and self.frame and self.frame:IsShown() and self.frame.editBox then
             self.frame.editBox:SetText("")
         end
     end
@@ -98,29 +129,49 @@ end
 
 function PN:ShowNote(playerName)
     self.currentPlayer = playerName
-    self.frame.playerName:SetText(playerName)
-    self.frame.editBox:SetText(self:GetNote(playerName) or "")
-    self.frame:Show()
-end
-
-function PN:SaveNote()
-    if self.currentPlayer then
-        local noteText = self.frame.editBox:GetText()
-        self:SetNote(self.currentPlayer, noteText)
-        
-        -- Auto-save si está habilitado
-        if self:GetOption("autoSave") then
-            -- Ya se guarda automáticamente en SetNote
-        end
+    if self.frame then
+        if self.frame.playerName then self.frame.playerName:SetText(playerName) end
+        if self.frame.editBox then self.frame.editBox:SetText(self:GetNote(playerName) or "") end
+        self.frame:Show()
     end
 end
 
+function PN:SaveNote()
+    if self.currentPlayer and self.frame and self.frame.editBox then
+        local noteText = self.frame.editBox:GetText()
+        self:SetNote(self.currentPlayer, noteText)
+    end
+end
+
+function PN:HookTooltip()
+    if self.tooltipHooked then return end
+    self.tooltipHooked = true
+    GameTooltip:HookScript("OnTooltipSetUnit", function(tip)
+        if not PN:GetOption("enabled") or not PN:GetOption("showInTooltip") then return end
+        local _, unit = tip:GetUnit()
+        if unit and UnitIsPlayer(unit) then
+            local name = UnitName(unit)
+            local note = PN:GetNote(name)
+            if note and note ~= "" then
+                tip:AddLine(" ")
+                tip:AddDoubleLine("|cFFFFD100Nota Sequito:|r", note, 1, 0.82, 0, 1, 1, 1, 1)
+                tip:Show()
+            end
+        end
+    end)
+end
+
 function PN:OnTargetChanged()
+    if not self:GetOption("enabled") then return end
     if UnitIsPlayer("target") then
         local name = UnitName("target")
         local note = self:GetNote(name)
         if note and note ~= "" then
-            S:Print(name .. ": " .. note)
+            if S.Print then
+                S:Print(name .. ": " .. note)
+            else
+                print("|cFFFF9900[Sequito]|r " .. name .. ": " .. note)
+            end
         end
     end
 end
@@ -186,6 +237,12 @@ if S.ModuleConfig then
             },
         },
     })
+end
+
+SLASH_PLAYERNOTES1 = "/pn"
+SLASH_PLAYERNOTES2 = "/playernotes"
+SlashCmdList["PLAYERNOTES"] = function(msg)
+    PN:SlashCommand(msg)
 end
 
 local loader = CreateFrame("Frame")

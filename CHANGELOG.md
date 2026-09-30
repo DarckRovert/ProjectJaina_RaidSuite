@@ -1,7 +1,39 @@
 # WoW Perú RaidSuite Changelog
 
-**Versión Actual:** 11.1.0 (Architecture & Network Stabilization)
+**Versión Actual:** 11.2.0 (Full 3.3.5a Animation Engine Audit)
 **Autor:** DarckRovert (Ingame: Elnazzareno) & WoW Perú Team
+
+---
+
+## v11.2.0 "Full 3.3.5a Animation Engine Audit"
+**Release Date:** 2026-09-30
+
+### 🔴 Correcciones Críticas de Compatibilidad (Ley II — WoW 3.3.5a Build 12340)
+
+#### Erradicación Total de `AnimationGroup` con `BOUNCE`
+`SetLooping("BOUNCE")` no existe en WotLK 3.3.5a y causa crash silencioso del cliente. Todos los usos fueron reemplazados por osciladores `OnUpdate` nativos basados en `math.sin`:
+
+- **`Core/AlertHub.lua`** — Motor fade-in/hold/fade-out de 3 fases con `holdDuration` dinámico configurable por tipo de alerta. `FlashScreen` reescrito con ticker propio sin `AnimationGroup`.
+- **`Core/GUI.lua`** — `BuffMonitor` BOUNCE eliminado; oscilador `math.sin` incrustado en el icono de textura con flag `flashing`, purga de `anim:IsPlaying()` huérfana.
+- **`Modules/Raid/RaidSync.lua`** — Alerta táctica `ShowFocusAlert` reescrita con oscilador de parpadeo + ticker auto-hide de 6s nativo, sin `C_Timer.After` redundante ni `ag:Stop()`.
+- **`Modules/Raid/RaidSuite_Achievements.lua`** — Toast de logros reescrito con motor 3-fases: fade-in 0.4s → hold 3.5s → fade-out 0.8s, `OnUpdate` limpiado al completarse.
+
+#### Corrección de Rutas de Textura (Cuádruple Slash)
+Iconos en tablas `RegisterModule` tenían `\\\\` (4 barras) en lugar de `\\` (2 barras), causando que los iconos no cargasen:
+- `Modules/Utility/Runes.lua`, `Modules/PvP/SpecWatcher.lua`, `Modules/Raid/CombatTracker.lua`, `Modules/Raid/RaidIntel.lua`, `Modules/Raid/RaidSync.lua`
+
+#### Normalización de Claves de Opciones en `ModuleConfig`
+`Modules/Utility/Runes.lua` usaba `name`/`description` en lugar de `label`/`tooltip` — los controles de la UI de opciones no renderizaban el texto correcto.
+
+#### Módulos con `Visuals.lua` (Bug #22)
+- Oscilador proc overlay completo con `math.sin` reemplazando `AnimationGroup:BOUNCE`.
+- `SoulSiphon` restringido exclusivamente a clase `WARLOCK`.
+- Opciones normalizadas a `label`/`tooltip`.
+- Comandos slash: `/visuals`, `/fx`, `/seqvisuals`.
+
+### ✅ Infraestructura de Validación
+- Auditoría `deep_audit.py` ejecutada sobre los 79 archivos del addon, clasificando 61 falsos positivos cubiertos por polyfills de `Constants.lua` vs. bugs reales corregidos.
+- Suite `validate_suite.py`: 100% PASS — 79 refs TOC, 78 Lua sintaxis, 0 APIs Retail prohibidas, localización íntegra.
 
 ---
 

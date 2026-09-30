@@ -38,12 +38,16 @@ function RA:GetOption(key)
 end
 
 function RA:Initialize()
+    if self.initialized then return end
     if not self:GetOption("enabled") then
         return
     end
+    self.initialized = true
     
     -- Register addon communication
-    RegisterAddonMessagePrefix(ADDON_PREFIX)
+    if RegisterAddonMessagePrefix then
+        RegisterAddonMessagePrefix(ADDON_PREFIX)
+    end
     
     -- Initialize data tables from SpellData
     self.requiredBuffs = {}
@@ -156,16 +160,27 @@ end
 -- COMMUNICATION SYSTEM
 -- ============================================
 
-function RA:SendMessage(msgType, data)
-    local channel = "RAID"
-    if GetNumRaidMembers() == 0 then
-        channel = "PARTY"
-        if GetNumPartyMembers() == 0 then
-            return -- Solo, no enviar
-        end
+function RA:GetGroupChannel()
+    local inInstance, instanceType = IsInInstance()
+    if inInstance and (instanceType == "pvp" or instanceType == "arena") then
+        return "BATTLEGROUND"
+    elseif GetNumRaidMembers() > 0 then
+        return "RAID"
+    elseif GetNumPartyMembers() > 0 then
+        return "PARTY"
     end
+    return nil
+end
+
+function RA:SendMessage(msgType, data)
+    local channel = self:GetGroupChannel()
+    if not channel then return end
     
     local payload = msgType .. ":" .. (data or "")
+    if #payload > 240 then payload = payload:sub(1, 240) end
+    if RegisterAddonMessagePrefix then
+        RegisterAddonMessagePrefix(ADDON_PREFIX)
+    end
     SendAddonMessage(ADDON_PREFIX, payload, channel)
 end
 
@@ -810,7 +825,8 @@ function RA:CreateAlertFrame()
     -- Fondo semi-transparente
     frame.bg = frame:CreateTexture(nil, "BACKGROUND")
     frame.bg:SetAllPoints()
-    frame.bg:SetTexture(0, 0, 0, 0.7)
+    frame.bg:SetTexture("Interface\\Buttons\\WHITE8X8")
+    frame.bg:SetVertexColor(0, 0, 0, 0.7)
     
     -- Texto
     frame.text = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge")
@@ -820,7 +836,8 @@ function RA:CreateAlertFrame()
     -- Textura para flash
     frame.flashTexture = frame:CreateTexture(nil, "OVERLAY")
     frame.flashTexture:SetAllPoints()
-    frame.flashTexture:SetTexture(1, 0, 0, 0.3)
+    frame.flashTexture:SetTexture("Interface\\Buttons\\WHITE8X8")
+    frame.flashTexture:SetVertexColor(1, 0, 0, 0.3)
     frame.flashTexture:Hide()
     
     -- OnUpdate para fade out

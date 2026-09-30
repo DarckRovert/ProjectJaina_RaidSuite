@@ -16,9 +16,11 @@ function RAUI:GetOption(key)
 end
 
 function RAUI:Initialize()
+    if self.initialized then return end
     if not self:GetOption("enabled") then
         return
     end
+    self.initialized = true
     
     self:CreateMainWindow()
     self:CreateLeaderPanel()
@@ -37,7 +39,7 @@ function RAUI:Initialize()
         eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
         eventFrame:RegisterEvent("RAID_ROSTER_UPDATE")
         eventFrame:SetScript("OnEvent", function(self, event)
-            if IsInRaid() and RAUI.mainFrame then
+            if (GetNumRaidMembers() > 0) and RAUI.mainFrame then
                 RAUI.mainFrame:Show()
             end
         end)

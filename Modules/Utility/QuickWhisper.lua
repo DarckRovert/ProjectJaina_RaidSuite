@@ -41,12 +41,21 @@ function QW:CreateFrame()
     self.frame = f -- Asignación temprana para evitar error en UpdateButtons
     f:SetSize(200, 180)
     f:SetPoint("CENTER")
-    f:SetBackdrop({bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background", edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border", edgeSize = 16, insets = {left = 4, right = 4, top = 4, bottom = 4}})
+    if S.Theme and S.Theme.ApplyPanelBackdrop then
+        S.Theme:ApplyPanelBackdrop(f)
+    else
+        f:SetBackdrop({bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background", edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border", edgeSize = 16, insets = {left = 4, right = 4, top = 4, bottom = 4}})
+    end
     f:SetMovable(true)
     f:EnableMouse(true)
     f:RegisterForDrag("LeftButton")
     f:SetScript("OnDragStart", f.StartMoving)
-    f:SetScript("OnDragStop", f.StopMovingOrSizing)
+    f:SetScript("OnDragStop", function(self)
+        self:StopMovingOrSizing()
+        if S.SmartDefaults then
+            S.SmartDefaults:SavePosition("QuickWhisper", self)
+        end
+    end)
     f:Hide()
     
     f.title = f:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
@@ -64,15 +73,27 @@ function QW:CreateFrame()
     
     f.close = CreateFrame("Button", nil, f, "UIPanelCloseButton")
     f.close:SetPoint("TOPRIGHT", -5, -5)
+    f.close:SetScript("OnClick", function() f:Hide() end)
+    
+    if S.SmartDefaults then
+        S.SmartDefaults:RestorePosition("QuickWhisper")
+    end
     
     self:UpdateButtons()
     return f
 end
 
 function QW:UpdateButtons()
+    if not self.frame or not self.frame.buttons then return end
     for i, template in ipairs(SequitoQuickWhisperDB.templates) do
         if self.frame.buttons[i] then
             self.frame.buttons[i]:SetText(template.name)
+            self.frame.buttons[i]:Show()
+        end
+    end
+    for i = #SequitoQuickWhisperDB.templates + 1, #self.frame.buttons do
+        if self.frame.buttons[i] then
+            self.frame.buttons[i]:Hide()
         end
     end
 end
@@ -115,7 +136,11 @@ end
 function QW:AddTemplate(name, text)
     table.insert(SequitoQuickWhisperDB.templates, {name = name, text = text})
     self:UpdateButtons()
-    S:Print("Template '" .. name .. "' agregado")
+    if S.Print then
+        S:Print("Template '" .. name .. "' agregado")
+    else
+        print("|cFFFF9900[Sequito]|r Template '" .. name .. "' agregado")
+    end
 end
 
 function QW:Toggle()
@@ -185,6 +210,11 @@ if S.ModuleConfig then
             }
         }
     })
+end
+
+SLASH_QUICKWHISPER1 = "/qw"
+SlashCmdList["QUICKWHISPER"] = function(msg)
+    QW:SlashCommand(msg)
 end
 
 local loader = CreateFrame("Frame")

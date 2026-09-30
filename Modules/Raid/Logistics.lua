@@ -1,6 +1,7 @@
 --[[
     SEQUITO - Logistics Module (The Butler)
-    Manejo de inventario, reparaciones y comercio.
+    Manejo Seguro de Inventario, Reparaciones y Fragmentos de Alma
+    Version: 8.0.0 (WotLK 3.3.5a Build 12340)
 ]]--
 
 local addonName, S = ...
@@ -12,6 +13,11 @@ function S.Logistics:GetOption(key)
     if S.ModuleConfig then
         return S.ModuleConfig:GetValue("Logistics", key)
     end
+    if key == "enabled" then return true end
+    if key == "autoSell" then return true end
+    if key == "autoRepair" then return true end
+    if key == "autoTrade" then return false end
+    if key == "shardLimit" then return 28 end
     return true
 end
 
@@ -24,40 +30,62 @@ function S.Logistics:Initialize()
         return
     end
     self.initialized = true
-    
-    local f = CreateFrame("Frame")
+
+    local f = CreateFrame("Frame", "SequitoLogisticsFrame", UIParent)
+    self.eventFrame = f
     f:RegisterEvent("MERCHANT_SHOW")
     f:RegisterEvent("TRADE_SHOW")
-    
-    -- Solo registrar eventos de bolsa si somos Brujos (optimización)
+
+    -- Solo registrar eventos de bolsa si somos Brujos (optimización de CPU)
     local _, class = UnitClass("player")
     if class == "WARLOCK" then
         f:RegisterEvent("BAG_UPDATE")
+        self:InitBagTicker()
     end
-    
+
     f:SetScript("OnEvent", function(self, event, ...)
         if event == "MERCHANT_SHOW" then
             S.Logistics:OnMerchantShow()
         elseif event == "TRADE_SHOW" then
             S.Logistics:OnTradeShow()
         elseif event == "BAG_UPDATE" then
-            -- Throttle para no spammear CPU al mover items
-            if not self.bagTimer then
-                self.bagTimer = C_Timer.After(1, function()
-                    S.Logistics:ManageShards()
-                    self.bagTimer = nil
-                end)
+            -- Banderola para procesar mediante ticker OnUpdate sin C_Timer (Ley II & IV)
+            if S.Logistics.bagTicker then
+                S.Logistics.bagTicker.pending = true
             end
         end
     end)
-    
+end
 
+-- ===========================================================================
+-- TICKER ONUPDATE SEGURO PARA BOLSAS (WARLOCK)
+-- ===========================================================================
+function S.Logistics:InitBagTicker()
+    if self.bagTicker then return end
+
+    local ticker = CreateFrame("Frame")
+    ticker.elapsed = 0
+    ticker.pending = false
+
+    ticker:SetScript("OnUpdate", function(f, elapsed)
+        if not f.pending then return end
+        f.elapsed = f.elapsed + elapsed
+        if f.elapsed >= 1.0 then -- Throttle de 1 segundo para agrupar ráfagas de BAG_UPDATE
+            f.elapsed = 0
+            f.pending = false
+            S.Logistics:ManageShards()
+        end
+    end)
+
+    self.bagTicker = ticker
 end
 
 -- ===========================================================================
 -- MERCADER (VENTA Y REPARACIÓN)
 -- ===========================================================================
 function S.Logistics:OnMerchantShow()
+    if not MerchantFrame or not MerchantFrame:IsShown() then return end
+
     if self:GetOption("autoSell") then
         self:SellJunk()
     end
@@ -67,85 +95,88 @@ function S.Logistics:OnMerchantShow()
 end
 
 function S.Logistics:SellJunk()
+    if not MerchantFrame or not MerchantFrame:IsShown() then return end
+
     local profit = 0
     local countSold = 0
-    
+
     for bag = 0, 4 do
         for slot = 1, GetContainerNumSlots(bag) do
             local texture, count, locked, quality, readable = GetContainerItemInfo(bag, slot)
-            -- Retrieve Link explicitly (WotLK API compatibility)
             local link = GetContainerItemLink(bag, slot)
-            
-            -- Quality 0 = Poor (Gris)
-            if quality == 0 and link and not locked then 
+
+            -- Calidad 0 = Gris (Poor)
+            if quality == 0 and link and not locked then
                 local _, _, _, _, _, _, _, _, _, _, itemSellPrice = GetItemInfo(link)
                 if itemSellPrice and itemSellPrice > 0 then
-                    profit = profit + (itemSellPrice * count)
+                    profit = profit + (itemSellPrice * (count or 1))
                     countSold = countSold + 1
                     UseContainerItem(bag, slot)
                 end
             end
         end
     end
-    
+
     if profit > 0 then
-        -- Usar GetCoinTextureString para formatear oro/plata/cobre
-        print("|cFF00FF00Sequito|r: Basura vendida (" .. countSold .. " items) por: " .. GetCoinTextureString(profit))
+        local coinStr = GetCoinTextureString and GetCoinTextureString(profit) or (profit .. " cobre")
+        print("|cFF00FF00[Sequito]|r Basura vendida (" .. countSold .. " objetos) por: " .. coinStr)
     end
 end
 
 function S.Logistics:Repair()
-    if CanMerchantRepair() then
-        local cost, canRepair = GetRepairAllCost()
-        if canRepair and cost > 0 then
-            local money = GetMoney()
-            if money >= cost then
-                RepairAllItems()
-                print("|cFF00FF00Sequito|r: Equipo reparado por: " .. GetCoinTextureString(cost))
-            else
-                print("|cFFFF0000Sequito|r: Fondos insuficientes para reparar (" .. GetCoinTextureString(cost) .. " necesarios).")
-            end
+    if not CanMerchantRepair or not CanMerchantRepair() then return end
+
+    local cost, canRepair = GetRepairAllCost()
+    if canRepair and cost > 0 then
+        local money = GetMoney()
+        if money >= cost then
+            RepairAllItems()
+            local coinStr = GetCoinTextureString and GetCoinTextureString(cost) or (cost .. " cobre")
+            print("|cFF00FF00[Sequito]|r Equipo reparado por: " .. coinStr)
+        else
+            local coinStr = GetCoinTextureString and GetCoinTextureString(cost) or (cost .. " cobre")
+            print("|cFFFF0000[Sequito]|r Fondos insuficientes para reparar (" .. coinStr .. " necesarios).")
         end
     end
 end
 
 -- ===========================================================================
--- COMERCIO (AUTO-TRADE)
+-- COMERCIO SEGURO (AUTO-TRADE)
 -- ===========================================================================
 function S.Logistics:OnTradeShow()
     if not self:GetOption("autoTrade") then return end
-    
-    -- Identificar destinatario de comercio legítimo
+    if InCombatLockdown() or CursorHasItem() then return end
+
     local tradePartner = (TradeFrameRecipientNameText and TradeFrameRecipientNameText:GetText()) or (UnitExists("target") and UnitIsPlayer("target") and UnitName("target"))
     if not tradePartner or tradePartner == "" or tradePartner == UnitName("player") then return end
-    
-    if tradePartner then
-        -- Warlock: Healthstone
-        -- Mage: Water/Food
-        local _, class = UnitClass("player")
-        local itemID = nil
-        
-        if class == "WARLOCK" then
-            -- Prioridad de Piedras (Nivel 80 -> Bajas)
-            local stones = {36892, 36893, 36894, 22103, 22104, 22105} -- IDs aproximados WotLK
-            itemID = self:FindItemAny(stones)
-        elseif class == "MAGE" then
-            -- Prioridad Agua (Maná Strudel o Glacial Water)
-            local water = {43523, 65500, 65499} 
-            itemID = self:FindItemAny(water)
-        end
-        
-        if itemID then
-             -- Slot 1 de trade
-             local name, _, _, _, _, _, _ = GetTradePlayerItemInfo(1)
-             if not name then
-                 local bag, slot = self:FindItemLocation(itemID)
-                 if bag and slot then
-                     PickupContainerItem(bag, slot)
-                     ClickTradeButton(1)
-                     print("|cFF00FFFFSequito|r: Auto-Trade -> " .. (GetItemInfo(itemID) or "Item"))
-                 end
-             end
+
+    local _, class = UnitClass("player")
+    local itemID = nil
+
+    if class == "WARLOCK" then
+        -- Healthstones WotLK (Prioridad de nivel 80 hacia abajo)
+        local stones = { 36892, 36893, 36894, 22103, 22104, 22105, 5512, 5511 }
+        itemID = self:FindItemAny(stones)
+    elseif class == "MAGE" then
+        -- Agua y comida de mago (Mana Strudel / Glacial Water)
+        local water = { 43523, 65500, 65499 }
+        itemID = self:FindItemAny(water)
+    end
+
+    if itemID then
+        local name = GetTradePlayerItemInfo(1)
+        if not name then
+            local bag, slot = self:FindItemLocation(itemID)
+            if bag and slot then
+                ClearCursor()
+                PickupContainerItem(bag, slot)
+                if CursorHasItem() then
+                    ClickTradeButton(1)
+                    ClearCursor()
+                    local itemName = GetItemInfo(itemID) or "Objeto"
+                    print("|cFF00FFFF[Sequito]|r Auto-Trade colocado: " .. itemName)
+                end
+            end
         end
     end
 end
@@ -160,69 +191,109 @@ end
 function S.Logistics:FindItemLocation(itemID)
     for bag = 0, 4 do
         for slot = 1, GetContainerNumSlots(bag) do
-             local id = GetContainerItemID(bag, slot)
-             if id == itemID then return bag, slot end
+            local id = GetContainerItemID(bag, slot)
+            if id == itemID then return bag, slot end
         end
     end
     return nil, nil
 end
 
 -- ===========================================================================
--- GESTIÓN DE FRAGMENTOS (WARLOCK)
+-- GESTIÓN SEGURA DE FRAGMENTOS DE ALMA (WARLOCK)
 -- ===========================================================================
 function S.Logistics:ManageShards()
+    local _, class = UnitClass("player")
+    if class ~= "WARLOCK" then return end
+
+    -- Guardias de seguridad absoluta (Zero Data Loss)
+    if InCombatLockdown() or CursorHasItem() then return end
+
     local shardID = 6265 -- Soul Shard
     local count = GetItemCount(shardID)
-    local limit = self:GetOption("shardLimit") or 28
-    
-    -- Detectar ganancia/pérdida para sonido
-    if not self.lastShardCount then self.lastShardCount = count end
-    
+    local limit = tonumber(self:GetOption("shardLimit")) or 28
+
+    if not self.lastShardCount then
+        self.lastShardCount = count
+    end
+
     if count > self.lastShardCount then
-        -- ¡Ganamos un fragmento! (Necrosis sound)
+        -- Ganancia de fragmento
         PlaySoundFile("Sound\\Spells\\SoulDrain.wav")
-    elseif count < self.lastShardCount then
-        -- Perdimos/Usamos un fragmento
-        -- PlaySoundFile("Sound\\Spells\\DrainSoulLoop.wav") -- Opcional
     end
     self.lastShardCount = count
 
     if count > limit then
-        if InCombatLockdown() or CursorHasItem() then return end
         local toDelete = count - limit
         local deleted = 0
-        
+
         for bag = 4, 0, -1 do
             for slot = GetContainerNumSlots(bag), 1, -1 do
                 if deleted >= toDelete then break end
-                if CursorHasItem() then break end
-                
+                if InCombatLockdown() or CursorHasItem() then break end
+
+                -- Doble verificación atómica de ID antes de tocar el slot
                 local id = GetContainerItemID(bag, slot)
                 if id == shardID then
+                    ClearCursor()
                     PickupContainerItem(bag, slot)
+
+                    -- Solo borrar si el cursor sostiene exactamente el fragmento levantado
                     if CursorHasItem() then
                         DeleteCursorItem()
+                        ClearCursor()
                         deleted = deleted + 1
                     end
                 end
             end
         end
-        
+
         if deleted > 0 then
-            print("|cFF888888Sequito: " .. deleted .. " Fragmentos de Alma purgados (Límite: " .. limit .. ")|r")
-            PlaySoundFile("Sound\\Spells\\SoulShatter.wav") -- Sonido de destrucción
-            self.lastShardCount = limit -- Reset para evitar falsas detecciones en la siguiente bolsa
+            print("|cFF888888[Sequito] " .. deleted .. " Fragmentos de Alma purgados (Límite: " .. limit .. ")|r")
+            PlaySoundFile("Sound\\Spells\\SoulShatter.wav")
+            self.lastShardCount = limit
         end
     end
 end
 
--- Registrar módulo en ModuleConfig
+-- ===========================================================================
+-- COMANDOS SLASH
+-- ===========================================================================
+function S.Logistics:SlashCommand(msg)
+    msg = msg and msg:lower():gsub("^%s*(.-)%s*$", "%1") or ""
+
+    if msg == "sell" then
+        self:SellJunk()
+    elseif msg == "repair" then
+        self:Repair()
+    elseif msg == "shards" or msg == "purge" then
+        self:ManageShards()
+    elseif msg == "config" or msg == "options" then
+        if S.ModuleConfig then
+            S.ModuleConfig:OpenCategory("Logistics")
+        end
+    else
+        print("|cFF00FFFF[Sequito Logistics]|r Comandos:")
+        print("  |cFFFFFFFF/logistics sell|r - Vender objetos basura manualmente")
+        print("  |cFFFFFFFF/logistics repair|r - Reparar equipo manualmente")
+        print("  |cFFFFFFFF/logistics shards|r - Purgar fragmentos de alma sobrantes (Brujo)")
+        print("  |cFFFFFFFF/logistics config|r - Abrir panel de configuración")
+    end
+end
+
+SLASH_LOGISTICS1 = "/logistics"
+SLASH_LOGISTICS2 = "/butler"
+SLASH_LOGISTICS3 = "/seqlogistics"
+SlashCmdList["LOGISTICS"] = function(msg)
+    S.Logistics:SlashCommand(msg)
+end
+
+-- Registro dinámico en ModuleConfig
 if S.ModuleConfig then
     S.ModuleConfig:RegisterModule("Logistics", {
         name = "Logistics",
         description = "Gestión automática de inventario, reparaciones y comercio",
         category = "utility",
-        icon = "Interface\\\\Icons\\\\INV_Misc_Bag_08",
+        icon = "Interface\\Icons\\INV_Misc_Bag_08",
         options = {
             {key = "enabled", type = "checkbox", label = "Habilitar Logistics", default = true},
             {key = "autoSell", type = "checkbox", label = "Vender basura automáticamente", default = true},
@@ -233,3 +304,8 @@ if S.ModuleConfig then
     })
 end
 
+local loader = CreateFrame("Frame")
+loader:RegisterEvent("PLAYER_LOGIN")
+loader:SetScript("OnEvent", function()
+    S.Logistics:Initialize()
+end)

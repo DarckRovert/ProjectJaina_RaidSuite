@@ -911,6 +911,20 @@ function MC:RegisterAllModules()
         }
     })
     
+    self:RegisterModule("Logistics", {
+        name = "Logistics",
+        category = "utility",
+        description = "Gestión automática de inventario, reparaciones y fragmentos de alma.",
+        icon = "Interface\\Icons\\INV_Misc_Bag_08",
+        options = {
+            {type = "checkbox", key = "enabled", label = "Habilitado", default = true, tooltip = "Activa el módulo de logística"},
+            {type = "checkbox", key = "autoSell", label = "Vender Basura", default = true, tooltip = "Vende automáticamente objetos de calidad gris en los mercaderes"},
+            {type = "checkbox", key = "autoRepair", label = "Reparación Automática", default = true, tooltip = "Repara tu equipo automáticamente al abrir un mercader"},
+            {type = "checkbox", key = "autoTrade", label = "Auto-Trade", default = false, tooltip = "Entrega automáticamente Piedras de Salud o Agua de Maná a compañeros"},
+            {type = "slider", key = "shardLimit", label = "Límite de Soul Shards", min = 10, max = 32, step = 1, default = 28, tooltip = "Cantidad máxima de fragmentos de alma antes de purgar los sobrantes (Brujo)"},
+        }
+    })
+    
     self:RegisterModule("PerformanceStats", {
         name = "Performance Stats",
         category = "utility",

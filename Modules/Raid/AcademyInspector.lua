@@ -19,6 +19,10 @@ SlashCmdList["SEQUITOINSPECT"] = function(msg)
     AI:InspectUnit(target)
 end
 
+function AI:InspectTarget()
+    self:InspectUnit("target")
+end
+
 -- Factores de Slot para GearScore 3.3.5a
 local GS_SLOT_WEIGHTS = {
     [1]  = 1.0000, -- Head
@@ -56,6 +60,8 @@ local ENCHANTABLE_SLOTS = {
 -- INICIALIZACIÓN Y EVENTOS
 -- ===========================================================================
 function AI:Initialize()
+    if self.initialized then return end
+    self.initialized = true
     self.frame = self:CreateInspectorFrame()
     self:RegisterEvents()
     print("|cFFFF00FFSequito|r: [Academy] Inspector de Academia iniciado.")
@@ -92,13 +98,16 @@ function AI:InspectUnit(unit)
     self.currentUnit = unit
     self.currentName = UnitName(unit)
     self.inspectedClass = select(2, UnitClass(unit))
+    self.inspectSession = (self.inspectSession or 0) + 1
+    self.inspectionProcessed = false
+    local currentSession = self.inspectSession
     
     -- Solicitar inspección nativa
     NotifyInspect(unit)
     
     -- Fallback de seguridad por si el evento INSPECT_TALENT_READY se pierde
     C_Timer.After(1.2, function()
-        if AI.currentUnit == unit and AI.frame and not AI.frame:IsShown() then
+        if AI.currentUnit == unit and AI.inspectSession == currentSession and not AI.inspectionProcessed then
             AI:ProcessInspection()
         end
     end)
@@ -106,10 +115,11 @@ end
 
 function AI:ProcessInspection()
     if not self.currentUnit or not UnitExists(self.currentUnit) then return end
+    self.inspectionProcessed = true
     local unit = self.currentUnit
     
     -- 1. TALENTOS
-    local activeGroup = GetActiveTalentGroup(true, true) or 1
+    local activeGroup = (GetActiveTalentGroup and GetActiveTalentGroup(true)) or 1
     local t1 = 0
     local t2 = 0
     local t3 = 0
@@ -188,7 +198,13 @@ function AI:ProcessInspection()
                     local enchantId = tonumber(parts[3]) or 0
                     
                     -- Verificar encantamiento faltante
-                    if ENCHANTABLE_SLOTS[slot] and enchantId == 0 and quality and quality >= 3 then
+                    local isEnchantable = ENCHANTABLE_SLOTS[slot]
+                    if slot == 17 and (equipSlot == "INVTYPE_SHIELD" or equipSlot == "INVTYPE_WEAPON" or equipSlot == "INVTYPE_WEAPONOFFHAND" or equipSlot == "INVTYPE_2HWEAPON") then
+                        isEnchantable = true
+                    elseif isHunter and slot == 18 and (equipSlot == "INVTYPE_RANGED" or equipSlot == "INVTYPE_RANGEDRIGHT") then
+                        isEnchantable = true
+                    end
+                    if isEnchantable and enchantId == 0 and quality and quality >= 3 then
                         missingEnchants = missingEnchants + 1
                     end
                     

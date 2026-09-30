@@ -8,6 +8,25 @@ local addonName, S = ...
 S.BuildManager = {}
 local BM = S.BuildManager
 
+StaticPopupDialogs["SEQUITO_CONFIRM_DELETE_ALL_BUILDS"] = {
+    text = "¿Estás seguro de que deseas eliminar TODOS los builds guardados?",
+    button1 = YES or "Sí",
+    button2 = NO or "No",
+    OnAccept = function()
+        wipe(SequitoBuildDB)
+        BM:UpdateBuildList()
+        if S.Print then
+            S:Print("Todos los builds han sido eliminados.")
+        else
+            print("|cFFFF9900[Sequito]|r Todos los builds han sido eliminados.")
+        end
+    end,
+    timeout = 0,
+    whileDead = true,
+    hideOnEscape = true,
+    preferredIndex = 3,
+}
+
 SequitoBuildDB = SequitoBuildDB or {}
 
 -- Helper para obtener configuración
@@ -19,9 +38,11 @@ function BM:GetOption(key)
 end
 
 function BM:Initialize()
+    if self.initialized then return end
     if not self:GetOption("enabled") then
         return
     end
+    self.initialized = true
     
     if RegisterAddonMessagePrefix then
         RegisterAddonMessagePrefix("SeqBuild")
@@ -31,19 +52,29 @@ end
 
 function BM:CreateFrame()
     local f = CreateFrame("Frame", "SequitoBuildManagerFrame", UIParent)
+    self.frame = f
     f:SetSize(350, 350)
     f:SetPoint("CENTER")
-    f:SetBackdrop({
-        bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-        edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
-        edgeSize = 16,
-        insets = {left = 4, right = 4, top = 4, bottom = 4}
-    })
+    if S.Theme and S.Theme.ApplyPanelBackdrop then
+        S.Theme:ApplyPanelBackdrop(f)
+    else
+        f:SetBackdrop({
+            bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+            edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
+            edgeSize = 16,
+            insets = {left = 4, right = 4, top = 4, bottom = 4}
+        })
+    end
     f:SetMovable(true)
     f:EnableMouse(true)
     f:RegisterForDrag("LeftButton")
     f:SetScript("OnDragStart", f.StartMoving)
-    f:SetScript("OnDragStop", f.StopMovingOrSizing)
+    f:SetScript("OnDragStop", function(self)
+        self:StopMovingOrSizing()
+        if S.SmartDefaults then
+            S.SmartDefaults:SavePosition("BuildManager", self)
+        end
+    end)
     f:Hide()
     
     f.title = f:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
@@ -52,6 +83,11 @@ function BM:CreateFrame()
     
     f.close = CreateFrame("Button", nil, f, "UIPanelCloseButton")
     f.close:SetPoint("TOPRIGHT", -5, -5)
+    f.close:SetScript("OnClick", function() f:Hide() end)
+    
+    if S.SmartDefaults then
+        S.SmartDefaults:RestorePosition("BuildManager")
+    end
     
     -- Current spec info
     f.specInfo = f:CreateFontString(nil, "OVERLAY", "GameFontNormal")
@@ -387,6 +423,12 @@ if S.ModuleConfig then
             }
         }
     })
+end
+
+SLASH_BUILDMANAGER1 = "/bm"
+SLASH_BUILDMANAGER2 = "/build"
+SlashCmdList["BUILDMANAGER"] = function(msg)
+    BM:SlashCommand(msg)
 end
 
 local loader = CreateFrame("Frame")

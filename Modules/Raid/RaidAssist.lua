@@ -840,7 +840,7 @@ function RA:CreateAlertFrame()
     frame.flashTexture:SetVertexColor(1, 0, 0, 0.3)
     frame.flashTexture:Hide()
     
-    -- OnUpdate para fade out
+    -- OnUpdate para fade out (purga el script al terminar - Ley IV)
     frame:SetScript("OnUpdate", function(self, elapsed)
         if self.hideTimer then
             self.hideTimer = self.hideTimer - elapsed
@@ -849,6 +849,7 @@ function RA:CreateAlertFrame()
                 -- Fade out
                 local alpha = self:GetAlpha() - elapsed * 2
                 if alpha <= 0 then
+                    self:SetScript("OnUpdate", nil)  -- purga antes de ocultar
                     self:Hide()
                     self:SetAlpha(1)
                 else

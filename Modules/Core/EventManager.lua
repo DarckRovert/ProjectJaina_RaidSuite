@@ -192,18 +192,24 @@ function S:Speak(category, target)
         end
         
         -- Validate channel based on group status
-        if chatType == "RAID" and not IsInRaid() then
-            chatType = IsInGroup() and "PARTY" or "SAY"
-        elseif chatType == "PARTY" and not IsInGroup() then
-            chatType = "SAY"
-        end
-        
-        -- Safety check for instance channels
+        local inRaid = GetNumRaidMembers() > 0
+        local inParty = GetNumPartyMembers() > 0
         local instanceType = select(2, IsInInstance())
-        if instanceType == "pvp" or instanceType == "arena" then
-            if chatType == "SAY" then chatType = "BATTLEGROUND" end
+        local isPvP = (instanceType == "pvp" or instanceType == "arena")
+
+        if isPvP then
+            if chatType == "SAY" or chatType == "RAID" or chatType == "PARTY" then
+                chatType = "BATTLEGROUND"
+            end
+        else
+            if chatType == "RAID" and not inRaid then
+                chatType = inParty and "PARTY" or "SAY"
+            elseif chatType == "PARTY" and not inParty then
+                chatType = "SAY"
+            end
         end
 
+        if #msg > 240 then msg = msg:sub(1, 237) .. "..." end
         SendChatMessage(msg, chatType)
     end
 end

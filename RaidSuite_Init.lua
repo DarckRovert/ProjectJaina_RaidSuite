@@ -1004,9 +1004,28 @@ function S:RegisterComm(prefix, callback)
     self.CommHandlers[prefix] = callback
 end
 
+function S:GetCommChannel()
+    local inInstance, instanceType = IsInInstance()
+    if inInstance and (instanceType == "pvp" or instanceType == "arena") then
+        return "BATTLEGROUND"
+    elseif GetNumRaidMembers() > 0 then
+        return "RAID"
+    elseif GetNumPartyMembers() > 0 then
+        return "PARTY"
+    elseif IsInGuild() then
+        return "GUILD"
+    end
+    return nil
+end
+
 function S:SendComm(prefix, message, channel, target)
     if not prefix or not message then return end
-    local chan = channel or (IsInRaid() and "RAID" or IsInGroup() and "PARTY" or "GUILD")
+    local chan = channel or self:GetCommChannel()
+    if not chan then return end
+    if #message > 240 then message = message:sub(1, 240) end
+    if RegisterAddonMessagePrefix then
+        RegisterAddonMessagePrefix(prefix)
+    end
     SendAddonMessage(prefix, message, chan, target)
 end
 

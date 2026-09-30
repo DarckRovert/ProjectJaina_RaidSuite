@@ -66,18 +66,7 @@ local RESOURCE_CONFIG = {
         icon = "Interface\\Icons\\INV_Misc_Gem_Amethyst_02",
         color = {0.6, 0.2, 0.8},
         getCount = function()
-            local count = 0
-            for bag = 0, 4 do
-                local numSlots = GetContainerNumSlots(bag)
-                for slot = 1, numSlots do
-                    local link = GetContainerItemLink(bag, slot)
-                    if link and (link:find("Soul Shard") or link:find("Fragmento de alma")) then
-                        local _, itemCount = GetContainerItemInfo(bag, slot)
-                        count = count + (itemCount or 0)
-                    end
-                end
-            end
-            return count
+            return GetItemCount(6265)
         end,
         max = 32,
     },
@@ -109,7 +98,9 @@ local RESOURCE_CONFIG = {
 -- ============================================
 
 function O:Initialize()
+    if self.initialized then return end
     if not self:GetOption("enabled") then return end
+    self.initialized = true
     
     -- Crear HUD según opciones del usuario
     if self:GetOption("showProcs") then
@@ -215,7 +206,8 @@ function O:CreateResourceBar()
     -- Fondo de la barra
     f.bar.bg = f.bar:CreateTexture(nil, "BACKGROUND")
     f.bar.bg:SetAllPoints()
-    f.bar.bg:SetTexture(0.1, 0.1, 0.1, 0.6)
+    f.bar.bg:SetTexture("Interface\\Buttons\\WHITE8X8")
+    f.bar.bg:SetVertexColor(0.1, 0.1, 0.1, 0.6)
     
     -- Texto de la barra
     f.bar.text = f.bar:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
@@ -291,7 +283,8 @@ function O:CreatePetHealthBar()
     -- Fondo
     f.bg = f:CreateTexture(nil, "BACKGROUND")
     f.bg:SetAllPoints()
-    f.bg:SetTexture(0.05, 0.05, 0.05, 0.8)
+    f.bg:SetTexture("Interface\\Buttons\\WHITE8X8")
+    f.bg:SetVertexColor(0.05, 0.05, 0.05, 0.8)
     
     -- Barra de vida
     f.bar = CreateFrame("StatusBar", nil, f)
@@ -305,7 +298,8 @@ function O:CreatePetHealthBar()
     -- Fondo de barra
     f.bar.bg = f.bar:CreateTexture(nil, "BACKGROUND")
     f.bar.bg:SetAllPoints()
-    f.bar.bg:SetTexture(0.15, 0.15, 0.15, 0.7)
+    f.bar.bg:SetTexture("Interface\\Buttons\\WHITE8X8")
+    f.bar.bg:SetVertexColor(0.15, 0.15, 0.15, 0.7)
     
     -- Icono de pet
     f.icon = f:CreateTexture(nil, "ARTWORK")
@@ -385,8 +379,38 @@ end
 -- ============================================
 
 function O:RegisterEvents()
+    if S.CLEU and S.CLEU.Register then
+        S.CLEU:Register("SPELL_AURA_APPLIED", function(...)
+            local _, _, _, _, _, destGUID, _, _, _, spellName = ...
+            if destGUID == UnitGUID("player") then
+                local procInfo = PROC_DATA[spellName]
+                if procInfo then
+                    if spellName ~= "Maelstrom Weapon" and spellName ~= "Arma de vorágine" then
+                        S:ShowAlert(procInfo.text, "INFO", procInfo.icon, procInfo.color)
+                    end
+                end
+            end
+        end)
+        S.CLEU:Register("SPELL_AURA_APPLIED_DOSE", function(...)
+            local _, _, _, _, _, destGUID, _, _, _, spellName = ...
+            if destGUID == UnitGUID("player") then
+                if spellName == "Maelstrom Weapon" or spellName == "Arma de vorágine" then
+                    local _, _, amount = select(11, ...)
+                    if amount == 5 then
+                        local procInfo = PROC_DATA[spellName]
+                        if procInfo then
+                            S:ShowAlert(procInfo.text, "INFO", procInfo.icon, procInfo.color)
+                        end
+                    end
+                end
+            end
+        end)
+    end
+
     local f = CreateFrame("Frame")
-    f:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+    if not (S.CLEU and S.CLEU.Register) then
+        f:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+    end
     f:RegisterEvent("UNIT_PET")
     f:RegisterEvent("PLAYER_ENTERING_WORLD")
     

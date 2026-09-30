@@ -10,16 +10,16 @@ local DT = S.DoTTracker
 -- Configuración de Spells a rastrear (Por prioridad)
 DT.Spells = {
     -- Affli / Destro Core
-    { id = 172, name = "Corruption", icon = "Spell_Shadow_AbominationExplosion" }, -- Corrupción
-    { id = 348, name = "Immolate", icon = "Spell_Fire_Immolation" }, -- Inmolar
-    { id = 30108, name = "Unstable Affliction", icon = "Spell_Shadow_UnstableAffliction_3" }, -- Aflicción inestable
-    { id = 980, name = "Curse of Agony", icon = "Spell_Shadow_CurseOfSargeras" }, -- Agonía
-    { id = 603, name = "Curse of Doom", icon = "Spell_Shadow_AuraOfDarkness" }, -- Apocalipsis
-    { id = 1490, name = "Curse of the Elements", icon = "Spell_Shadow_ChillTouch" }, -- Elementos
-    { id = 702, name = "Curse of Weakness", icon = "Spell_Shadow_CurseOfMannoroth" }, -- Debilidad
-    { id = 1714, name = "Curse of Tongues", icon = "Spell_Shadow_CurseOfTounges" }, -- Lenguas
-    { id = 48181, name = "Haunt", icon = "Ability_Warlock_Haunt" }, -- Poseer
-    { id = 27243, name = "Seed of Corruption", icon = "Spell_Shadow_SeedOfDestruction" }, -- Semilla
+    { id = 172, name = "Corruption", icon = "Interface\\Icons\\Spell_Shadow_AbominationExplosion" }, -- Corrupción
+    { id = 348, name = "Immolate", icon = "Interface\\Icons\\Spell_Fire_Immolation" }, -- Inmolar
+    { id = 30108, name = "Unstable Affliction", icon = "Interface\\Icons\\Spell_Shadow_UnstableAffliction_3" }, -- Aflicción inestable
+    { id = 980, name = "Curse of Agony", icon = "Interface\\Icons\\Spell_Shadow_CurseOfSargeras" }, -- Agonía
+    { id = 603, name = "Curse of Doom", icon = "Interface\\Icons\\Spell_Shadow_AuraOfDarkness" }, -- Apocalipsis
+    { id = 1490, name = "Curse of the Elements", icon = "Interface\\Icons\\Spell_Shadow_ChillTouch" }, -- Elementos
+    { id = 702, name = "Curse of Weakness", icon = "Interface\\Icons\\Spell_Shadow_CurseOfMannoroth" }, -- Debilidad
+    { id = 1714, name = "Curse of Tongues", icon = "Interface\\Icons\\Spell_Shadow_CurseOfTounges" }, -- Lenguas
+    { id = 48181, name = "Haunt", icon = "Interface\\Icons\\Ability_Warlock_Haunt" }, -- Poseer
+    { id = 27243, name = "Seed of Corruption", icon = "Interface\\Icons\\Spell_Shadow_SeedOfDestruction" }, -- Semilla
 }
 
 -- Mapeo de nombres localizados (se llenará en Initialize)
@@ -34,9 +34,11 @@ function DT:GetOption(key)
 end
 
 function DT:Initialize()
+    if self.initialized then return end
     if not self:GetOption("enabled") then
         return
     end
+    self.initialized = true
     
     local _, class = UnitClass("player")
     if class ~= "WARLOCK" then return end
@@ -66,10 +68,12 @@ function DT:CreateAnchor()
     f:SetMovable(true)
     f:EnableMouse(true)
     f:RegisterForDrag("LeftButton")
+    if S.SmartDefaults then S.SmartDefaults:RestorePosition("DoTTracker", f) end
     
     f.bg = f:CreateTexture(nil, "BACKGROUND")
     f.bg:SetAllPoints()
-    f.bg:SetTexture(0, 0, 0, 0.3)
+    f.bg:SetTexture("Interface\\Buttons\\WHITE8X8")
+    f.bg:SetVertexColor(0, 0, 0, 0.3)
     f.bg:Hide()
     
     f.text = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
@@ -77,15 +81,15 @@ function DT:CreateAnchor()
     f.text:SetText("Sequito DoT Tracker")
     f.text:Hide()
     
-    f:SetScript("OnDragStart", function(self) if not S.db.profile.Locked then self:StartMoving() end end)
+    f:SetScript("OnDragStart", function(self) if not (S.db and S.db.profile and S.db.profile.Locked) then self:StartMoving() end end)
     f:SetScript("OnDragStop", function(self)
         self:StopMovingOrSizing()
-        -- Save pos logic if needed
+        if S.SmartDefaults then S.SmartDefaults:SavePosition("DoTTracker", self) end
     end)
     
     -- Manejo de bloqueo
     f:SetScript("OnEnter", function(self)
-        if not S.db.profile.Locked then
+        if not (S.db and S.db.profile and S.db.profile.Locked) then
             self.bg:Show()
             self.text:Show()
         end

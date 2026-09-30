@@ -22,9 +22,11 @@ end
 -- INICIALIZACIÓN
 -- ===========================================================================
 function S.RaidSync:Initialize()
+    if self.initialized then return end
     if not self:GetOption("enabled") then
         return
     end
+    self.initialized = true
     
     -- Registrar prefijo de addon
     if RegisterAddonMessagePrefix then
@@ -58,14 +60,16 @@ function S.RaidSync:OnEvent(event, ...)
         self:BroadcastMyInfo()
     elseif event == "PLAYER_ENTERING_WORLD" then
         -- Delay para asegurar que todo esté cargado (WotLK compatible)
-        local delayFrame = CreateFrame("Frame")
-        delayFrame.timer = 0
-        delayFrame:SetScript("OnUpdate", function(self, elapsed)
-            self.timer = self.timer + elapsed
-            if self.timer >= 2 then
+        if not self.pewFrame then
+            self.pewFrame = CreateFrame("Frame")
+        end
+        self.pewFrame.timer = 0
+        self.pewFrame:SetScript("OnUpdate", function(f, elapsed)
+            f.timer = f.timer + elapsed
+            if f.timer >= 2 then
                 S.RaidSync:ScanRaid()
                 S.RaidSync:BroadcastMyInfo()
-                self:SetScript("OnUpdate", nil)
+                f:SetScript("OnUpdate", nil)
             end
         end)
     end
@@ -82,12 +86,20 @@ function S.RaidSync:Broadcast(msg, targetChannel)
     
     local channel = targetChannel
     if not channel then
-        if GetNumRaidMembers() > 0 then
-            channel = "RAID"
-        elseif GetNumPartyMembers() > 0 then
-            channel = "PARTY"
-        elseif IsInGuild() then
-            channel = "GUILD"
+        if IsInInstance then
+            local inInstance, instanceType = IsInInstance()
+            if inInstance and instanceType == "pvp" then
+                channel = "BATTLEGROUND"
+            end
+        end
+        if not channel then
+            if GetNumRaidMembers() > 0 then
+                channel = "RAID"
+            elseif GetNumPartyMembers() > 0 then
+                channel = "PARTY"
+            elseif IsInGuild() then
+                channel = "GUILD"
+            end
         end
     end
     
@@ -225,7 +237,14 @@ function S.RaidSync:IsOfficer(name)
     
     -- Fallback for Party (Leader is officer)
     if GetNumPartyMembers() > 0 then
-        if UnitIsPartyLeader(name) then return true end
+        if name == UnitName("player") then
+            return (IsPartyLeader and IsPartyLeader()) or false
+        end
+        for i = 1, GetNumPartyMembers() do
+            if UnitName("party"..i) == name then
+                return UnitIsPartyLeader("party"..i) or false
+            end
+        end
     end
     
     return false
@@ -560,7 +579,8 @@ function S.RaidSync:CreateAlertFrame()
     -- Fondo semi-transparente para darle peso
     f.bg = f:CreateTexture(nil, "BACKGROUND")
     f.bg:SetAllPoints()
-    f.bg:SetTexture(0, 0, 0, 0.6)
+    f.bg:SetTexture("Interface\\Buttons\\WHITE8X8")
+    f.bg:SetVertexColor(0, 0, 0, 0.6)
     f.bg:SetBlendMode("MOD") -- Efecto oscurecedor
     
     -- Texto Gigante

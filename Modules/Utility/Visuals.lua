@@ -55,8 +55,16 @@ function FX:GetOption(key)
 end
 
 function FX:Initialize()
+    if self.initialized then return end
     if not self:GetOption("enabled") then
         return
+    end
+    self.initialized = true
+    
+    if S.CLEU and S.CLEU.Register then
+        S.CLEU:Register("PARTY_KILL", function(...)
+            FX:CheckSoulSiphon(...)
+        end)
     end
     
     self.Frame = CreateFrame("Frame")
@@ -64,7 +72,9 @@ function FX:Initialize()
     self.Frame:RegisterEvent("UNIT_AURA")
     self.Frame:RegisterEvent("PLAYER_REGEN_ENABLED")
     self.Frame:RegisterEvent("PLAYER_REGEN_DISABLED")
-    self.Frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+    if not (S.CLEU and S.CLEU.Register) then
+        self.Frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+    end
     
     self.Frame:SetScript("OnEvent", function(self, event, ...)
         if event == "UNIT_HEALTH" then
@@ -141,20 +151,6 @@ function FX:CheckProcs(unit)
     local map = self.Procs[class]
     if not map then return end
     
-    -- Buscar buffs activos
-    for i=1, 40 do
-        local name, _, _, _, _, _, _, _, _, _, spellID = UnitBuff("player", i)
-        if not name then break end
-        
-        local targetSpell = map[name]
-        if targetSpell then
-            self:GlowButtonForSpell(targetSpell, true)
-        end
-    end
-    
-    -- Limpiar brillos de buffs que ya no están?
-    -- Esto es costoso de comprobar (ausencia).
-    -- Simplificación: Apagar todos y re-encender los activos.
     self:ClearAllGlows()
     for i=1, 40 do
         local name = UnitBuff("player", i)

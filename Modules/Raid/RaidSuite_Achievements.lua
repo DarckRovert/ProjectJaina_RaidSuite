@@ -231,19 +231,10 @@ function SA:CreateToastFrame()
     f.points = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
     f.points:SetPoint("BOTTOMRIGHT", -15, 15)
     
-    -- Animation
-    f.anim = f:CreateAnimationGroup()
-    local a1 = f.anim:CreateAnimation("Alpha")
-    a1:SetChange(1)
-    a1:SetDuration(0.4)
-    a1:SetOrder(1)
-    local a2 = f.anim:CreateAnimation("Alpha")
-    a2:SetChange(-1)
-    a2:SetStartDelay(3.5)
-    a2:SetDuration(0.8)
-    a2:SetOrder(2)
-    
-    f.anim:SetScript("OnFinished", function() f:Hide() end)
+    -- Ticker nativo 3.3.5a para fade-in -> hold -> fade-out -> hide
+    -- Fases: 0=fade-in(0.4s), 1=hold(3.5s), 2=fade-out(0.8s)
+    f.phase = 0
+    f.phaseTimer = 0
     
     self.toast = f
 end
@@ -258,8 +249,36 @@ function SA:ShowToast(ach)
     f.name:SetText(ach.title)
     f.points:SetText("+" .. tostring(ach.points) .. " pts")
     
-    f.anim:Stop()
-    f.anim:Play()
+    -- Motor de animación 3.3.5a: fade-in(0.4s) -> hold(3.5s) -> fade-out(0.8s) -> hide
+    f.phase = 0
+    f.phaseTimer = 0
+    f:SetScript("OnUpdate", function(frame, elapsed)
+        frame.phaseTimer = frame.phaseTimer + elapsed
+        if frame.phase == 0 then
+            -- Fase 0: fade-in (0.4 segundos)
+            local alpha = math.min(1.0, frame.phaseTimer / 0.4)
+            frame:SetAlpha(alpha)
+            if frame.phaseTimer >= 0.4 then
+                frame.phase = 1
+                frame.phaseTimer = 0
+            end
+        elseif frame.phase == 1 then
+            -- Fase 1: hold (3.5 segundos)
+            frame:SetAlpha(1.0)
+            if frame.phaseTimer >= 3.5 then
+                frame.phase = 2
+                frame.phaseTimer = 0
+            end
+        elseif frame.phase == 2 then
+            -- Fase 2: fade-out (0.8 segundos)
+            local alpha = math.max(0.0, 1.0 - (frame.phaseTimer / 0.8))
+            frame:SetAlpha(alpha)
+            if frame.phaseTimer >= 0.8 then
+                frame:Hide()
+                frame:SetScript("OnUpdate", nil)
+            end
+        end
+    end)
     
     if S.Print then
         S:Print(string.format("|cFFFFD700¡Logro Desbloqueado!|r %s (+%d pts)", ach.title, ach.points))

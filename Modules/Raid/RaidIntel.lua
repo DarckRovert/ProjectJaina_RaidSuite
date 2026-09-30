@@ -266,7 +266,7 @@ if S.ModuleConfig then
         name = "Raid Intel",
         description = "Escaneo de buffs, alertas estratégicas y datos en tiempo real",
         category = "raid",
-        icon = "Interface\\\\Icons\\\\Spell_Holy_MindVision",
+        icon = "Interface\\Icons\\Spell_Holy_MindVision",
         options = {
             {key = "enabled", type = "checkbox", label = "Habilitar Raid Intel", default = true},
             {key = "scanBuffs", type = "checkbox", label = "Escanear buffs de raid", default = true},

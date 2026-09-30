@@ -153,12 +153,12 @@ if S.ModuleConfig then
         name = "Visualizador de Runas",
         description = "Visualización de runas para Death Knights",
         category = "class",
-        icon = "Interface\\\\Icons\\\\Spell_Deathknight_RuneTap",
+        icon = "Interface\\Icons\\Spell_Deathknight_RuneTap",
         options = {
-            {key = "enabled", type = "checkbox", name = "Habilitar Runas", description = "Habilitar/deshabilitar visualización de runas", default = true},
-            {key = "showCooldowns", type = "checkbox", name = "Mostrar Cooldowns", description = "Mostrar cooldowns en las runas", default = true},
-            {key = "runeSize", type = "slider", name = "Tamaño de Runas", description = "Tamaño de los iconos de runas", min = 20, max = 60, step = 5, default = 32},
-            {key = "showNumbers", type = "checkbox", name = "Mostrar Números", description = "Mostrar números de cooldown", default = true}
+            {key = "enabled", type = "checkbox", label = "Habilitar Runas", tooltip = "Habilitar/deshabilitar visualización de runas", default = true},
+            {key = "showCooldowns", type = "checkbox", label = "Mostrar Cooldowns", tooltip = "Mostrar cooldowns de recarga en las runas", default = true},
+            {key = "runeSize", type = "slider", label = "Tamaño de Runas", tooltip = "Tamaño de los iconos de runas en píxeles", min = 20, max = 60, step = 5, default = 32},
+            {key = "showNumbers", type = "checkbox", label = "Mostrar Números", tooltip = "Mostrar temporizadores numéricos de cooldown", default = true}
         }
     })
 end

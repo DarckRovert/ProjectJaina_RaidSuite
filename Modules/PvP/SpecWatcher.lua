@@ -219,7 +219,7 @@ if Sequito.ModuleConfig then
         name = "Spec Watcher",
         description = "Detecta cambios de especialización y actualiza macros automáticamente",
         category = "utility",
-        icon = "Interface\\\\Icons\\\\Ability_Marksmanship",
+        icon = "Interface\\Icons\\Ability_Marksmanship",
         options = {
             {key = "enabled", type = "checkbox", label = "Habilitar Spec Watcher", default = true},
             {key = "autoUpdate", type = "checkbox", label = "Actualizar macros automáticamente", default = true},

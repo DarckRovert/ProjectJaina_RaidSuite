@@ -596,19 +596,8 @@ function S.RaidSync:CreateAlertFrame()
     f.icon:SetPoint("RIGHT", f.text, "LEFT", -10, 0)
     f.icon:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcon_8")
     
-    -- Animacion de Flash
-    f.ag = f:CreateAnimationGroup()
-    local a1 = f.ag:CreateAnimation("Alpha")
-    a1:SetChange(-1)
-    a1:SetDuration(0.5)
-    a1:SetOrder(1)
-    a1:SetSmoothing("IN_OUT") 
-    local a2 = f.ag:CreateAnimation("Alpha")
-    a2:SetChange(1)
-    a2:SetDuration(0.5)
-    a2:SetOrder(2)
-    a2:SetSmoothing("IN_OUT")
-    f.ag:SetLooping("BOUNCE")
+    -- Oscilador nativo 3.3.5a (sin AnimationGroup/BOUNCE)
+    f.flashTimer = 0
     
     self.AlertFrame = f
 end
@@ -621,18 +610,28 @@ function S.RaidSync:ShowFocusAlert(targetName, sender)
     local f = self.AlertFrame
     f.text:SetText("MATAR: " .. (targetName or "TARGET"))
     f:Show()
-    f.ag:Play() -- Iniciar parpadeo
+    f.flashTimer = 0
+    
+    -- Oscilador de parpadeo: math.sin sin dependencia de AnimationGroup
+    f:SetScript("OnUpdate", function(frame, elapsed)
+        frame.flashTimer = frame.flashTimer + elapsed
+        local sine = (math.sin(frame.flashTimer * 5) + 1) / 2
+        frame:SetAlpha(0.4 + (sine * 0.6))
+    end)
     
     -- Sonido de Alerta de Raid
     PlaySound("RaidWarning")
     
-    -- Auto-ocultar tras 6 segundos
-    if self.hideTimer then C_Timer.After(0.1, function() end) end -- Cancel dummy
-    -- Tip: C_Timer.After no devuelve handle en nuestro polyfill simple.
-    -- Simplemente lanzamos otro timer que oculte. Si se solapan, se oculta antes. No es critico.
-    C_Timer.After(6, function() 
-        f:Hide() 
-        f.ag:Stop()
+    -- Auto-ocultar tras 6 segundos usando ticker nativo
+    local hideFrame = CreateFrame("Frame")
+    hideFrame.elapsed = 0
+    hideFrame:SetScript("OnUpdate", function(self, elapsed)
+        self.elapsed = self.elapsed + elapsed
+        if self.elapsed >= 6 then
+            f:Hide()
+            f:SetScript("OnUpdate", nil)
+            self:SetScript("OnUpdate", nil)
+        end
     end)
 end
 
@@ -642,7 +641,7 @@ if S.ModuleConfig then
         name = "Raid Sync",
         description = "Sincronización de raid y comunicación addon-to-addon",
         category = "raid",
-        icon = "Interface\\\\Icons\\\\Spell_Holy_PrayerOfHealing",
+        icon = "Interface\\Icons\\Spell_Holy_PrayerOfHealing",
         options = {
             {key = "enabled", type = "checkbox", label = "Habilitar Raid Sync", default = true},
             {key = "broadcastInfo", type = "checkbox", label = "Transmitir información de spec/rol", default = true},

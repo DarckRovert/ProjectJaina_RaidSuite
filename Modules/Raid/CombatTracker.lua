@@ -500,7 +500,7 @@ if Sequito.ModuleConfig then
         name = "Combat Tracker",
         description = "Rastrea DPS, HPS y estadísticas de combate en tiempo real",
         category = "utility",
-        icon = "Interface\\\\Icons\\\\Ability_DualWield",
+        icon = "Interface\\Icons\\Ability_DualWield",
         options = {
             {key = "enabled", type = "checkbox", label = "Habilitar Combat Tracker", default = true},
             {key = "showSummary", type = "checkbox", label = "Mostrar resumen al finalizar combate", default = true},

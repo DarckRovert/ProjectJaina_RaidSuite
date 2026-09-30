@@ -165,7 +165,8 @@ end
 
 function O:GetOption(key)
     if S.ModuleConfig then
-        return S.ModuleConfig:GetValue("Overlord", key)
+        local val = S.ModuleConfig:GetValue("Overlord", key)
+        if val ~= nil then return val end
     end
     if key == "enabled" then return true end
     if key == "showProcs" then return true end

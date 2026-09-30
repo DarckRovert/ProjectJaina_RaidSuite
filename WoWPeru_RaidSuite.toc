@@ -2,7 +2,7 @@
 ## Title: |cFFD4AF37WoW Perú|r - RaidSuite
 ## Notes: Suite integral y avanzada de combate, optimización de bandas y utilidades tácticas para el Reino Andino.
 ## Author: DarckRovert (Ingame: Elnazzareno) & WoW Perú Team
-## Version: 11.2.0
+## Version: 11.2.1
 ## SavedVariables: SequitoDB, SequitoPlayerNotesDB, SequitoBuildDB, SequitoQuickWhisperDB, SequitoStatsDB, SequitoPositionsDB, SequitoLootDB
 
 # 1. Localizacion
@@ -26,7 +26,6 @@ Core\SmartDefaults.lua
 Core\ProfileManager.lua
 Core\EcosystemBridge.lua
 Core\GUI.lua
-Core\Bindings.xml
 
 # 4. Modules - Core System
 Modules\Core\ModuleConfig.lua

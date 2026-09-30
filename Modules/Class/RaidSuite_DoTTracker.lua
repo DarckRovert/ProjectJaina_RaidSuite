@@ -28,7 +28,8 @@ DT.tickerElapsed = 0
 
 function DT:GetOption(key)
     if S.ModuleConfig then
-        return S.ModuleConfig:GetValue("DoTTracker", key)
+        local val = S.ModuleConfig:GetValue("DoTTracker", key)
+        if val ~= nil then return val end
     end
     return true
 end

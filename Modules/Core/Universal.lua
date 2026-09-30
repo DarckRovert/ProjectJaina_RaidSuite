@@ -170,7 +170,8 @@ end
 -- Helper para obtener configuración
 function S.Universal:GetOption(key)
     if S.ModuleConfig then
-        return S.ModuleConfig:GetValue("Universal", key)
+        local val = S.ModuleConfig:GetValue("Universal", key)
+        if val ~= nil then return val end
     end
     return true
 end

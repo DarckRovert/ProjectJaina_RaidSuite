@@ -657,16 +657,21 @@ function MC:GetValue(moduleId, key)
     local dbKey = moduleId .. "_" .. key
     local value = db[dbKey]
     
-    -- Si no existe, buscar default
+    -- Si no existe, buscar default en modulo registrado
     if value == nil then
         local mod = self.Modules[moduleId]
-        if mod then
+        if mod and mod.options then
             for _, opt in ipairs(mod.options) do
                 if opt.key == key then
                     return opt.default
                 end
             end
         end
+    end
+    
+    -- Fallback de resiliencia: si es 'enabled' y no está explícitamente en la base de datos, siempre es true
+    if value == nil and key == "enabled" then
+        return true
     end
     
     return value
@@ -1182,6 +1187,70 @@ function MC:RegisterAllModules()
             {type = "checkbox", key = "checkClass", label = "Verificar Requisitos de Clase", default = true, tooltip = "Verificar venenos, piedras de brujo y mascotas"},
             {type = "checkbox", key = "alertSound", label = "Sonido de Alerta", default = true, tooltip = "Reproducir sonido al detectar comprobación de preparación"},
             {type = "checkbox", key = "announceResults", label = "Anunciar Faltantes al Chat", default = true, tooltip = "Emitir mensaje en el canal de banda/grupo"},
+        }
+    })
+
+    self:RegisterModule("Overlord", {
+        name = "The Overlord (HUD)",
+        category = "general",
+        icon = "Interface\\Icons\\Spell_Shadow_Twilight",
+        description = "HUD de recursos (maná, furia, energía, runas, combo points), barra de pet y alertas de procs mayores",
+        options = {
+            {type = "checkbox", key = "enabled", label = "Habilitar Overlord HUD", default = true, tooltip = "Activa el HUD central de recursos y procs"},
+            {type = "checkbox", key = "showResource", label = "Mostrar Barra de Recursos", default = true, tooltip = "Muestra la barra de recurso de clase (maná, furia, runas, combo)"},
+            {type = "checkbox", key = "showPetHealth", label = "Mostrar Vida de Mascota", default = true, tooltip = "Muestra la barra de salud de la mascota si está activa"},
+            {type = "checkbox", key = "showProcs", label = "Alertas de Procs", default = true, tooltip = "Muestra alertas en pantalla de procs mayores de clase"},
+            {type = "slider", key = "opacity", label = "Opacidad del HUD", min = 0.2, max = 1.0, step = 0.1, default = 0.8, tooltip = "Transparencia del HUD de Overlord"}
+        }
+    })
+
+    self:RegisterModule("DoTTracker", {
+        name = "Seguimiento de DoTs (Brujo)",
+        category = "class",
+        icon = "Interface\\Icons\\Spell_Shadow_AbominationExplosion",
+        description = "Monitoreo en tiempo real de DoTs en el objetivo actual para Brujos",
+        options = {
+            {type = "checkbox", key = "enabled", label = "Habilitar Rastreador de DoTs", default = true, tooltip = "Muestra iconos de DoTs activos en el objetivo con temporizador"}
+        }
+    })
+
+    self:RegisterModule("Universal", {
+        name = "Universal Core",
+        category = "general",
+        icon = "Interface\\Icons\\INV_Misc_Book_09",
+        description = "Motor universal de detección de clase, raza, talentos y rol táctico",
+        options = {
+            {type = "checkbox", key = "enabled", label = "Habilitar Universal Core", default = true, tooltip = "Activa la sincronización de clase, rol y especificación"}
+        }
+    })
+
+    self:RegisterModule("SoulEngine", {
+        name = "Soul Engine",
+        category = "raid",
+        icon = "Interface\\Icons\\Spell_Fire_FelFlameRing",
+        description = "Motor táctico de cálculo en combate (DPS, HPS y actividad)",
+        options = {
+            {type = "checkbox", key = "enabled", label = "Habilitar Soul Engine", default = true, tooltip = "Activa el cálculo de rendimiento en combate"}
+        }
+    })
+
+    self:RegisterModule("Spy", {
+        name = "Spy (Vigilancia PvP)",
+        category = "pvp",
+        icon = "Interface\\Icons\\Ability_Stealth",
+        description = "Detección de sigilo y lista de enemigos hostiles cercanos",
+        options = {
+            {type = "checkbox", key = "enabled", label = "Habilitar Spy", default = true, tooltip = "Activa la detección de enemigos y sigilo en PvP"}
+        }
+    })
+
+    self:RegisterModule("EventManager", {
+        name = "Gestor de Eventos",
+        category = "general",
+        icon = "Interface\\Icons\\INV_Misc_PocketWatch_01",
+        description = "Gestión centralizada de eventos del juego para módulos",
+        options = {
+            {type = "checkbox", key = "enabled", label = "Habilitar Gestor de Eventos", default = true, tooltip = "Activa el gestor de eventos del núcleo"}
         }
     })
 

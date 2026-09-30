@@ -41,7 +41,8 @@ end
 
 function SE:GetOption(key)
     if S.ModuleConfig then
-        return S.ModuleConfig:GetValue("SoulEngine", key)
+        local val = S.ModuleConfig:GetValue("SoulEngine", key)
+        if val ~= nil then return val end
     end
     return true
 end

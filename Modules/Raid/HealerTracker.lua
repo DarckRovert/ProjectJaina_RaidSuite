@@ -76,15 +76,15 @@ function HT:GetOption(key)
         if key == "lowManaThreshold" or key == "manaThreshold" then
             val = S.ModuleConfig:GetValue("HealerTracker", "lowManaThreshold")
             if val ~= nil then return val end
-            return S.ModuleConfig:GetValue("HealerTracker", "manaThreshold") or 30
+            return 30
         elseif key == "announceToGroup" or key == "announce" then
             val = S.ModuleConfig:GetValue("HealerTracker", "announceToGroup")
             if val ~= nil then return val end
-            return S.ModuleConfig:GetValue("HealerTracker", "announce") or false
+            return false
         elseif key == "alertLowMana" or key == "alerts" then
             val = S.ModuleConfig:GetValue("HealerTracker", "alertLowMana")
             if val ~= nil then return val end
-            return S.ModuleConfig:GetValue("HealerTracker", "alerts") or true
+            return true
         end
     end
     

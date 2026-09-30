@@ -1,7 +1,27 @@
 # WoW Perú RaidSuite Changelog
 
-**Versión Actual:** 11.2.0 (Full 3.3.5a Animation Engine Audit)
+**Versión Actual:** 11.2.1 (HUD Restoration & Engine Root Fix)
 **Autor:** DarckRovert (Ingame: Elnazzareno) & WoW Perú Team
+
+---
+
+## v11.2.1 "HUD Restoration & Engine Root Fix"
+**Release Date:** 2026-09-30
+
+### 🔴 Causa Raíz de Desaparición de Componentes (Root-Cause Analysis)
+- **Restauración de 6 Módulos Core no Registrados en `ModuleConfig`:**
+  - `TheOverlord`: El HUD de recursos (maná, furia, energía, runas, combo points), pet health bar y alertas de procs mayores (`Ocaso`, `Decimation`, etc.) abortaban silenciosamente al inicializar porque `ModuleConfig:GetValue("Overlord", "enabled")` retornaba `nil`. Módulo registrado formalmente con esquema completo de opciones.
+  - `DoTTracker`: El rastreador de DoTs en objetivo para Brujos abortaba silenciosamente. Registrado formalmente y con fallback defensivo.
+  - `Universal`: Motor central de detección de rol, spec y clase registrado con fallback seguro para no bloquear la propagación de datos al resto de módulos.
+  - `SoulEngine`, `Spy`, `EventManager`: Registrados formalmente con fallbacks activos para telemetría y vigilancia PvP.
+- **Resiliencia en `MC:GetValue`:** Añadido fallback arquitectónico para que cualquier consulta de la clave `enabled` retorne `true` por defecto si no ha sido explícitamente desactivada por el usuario.
+- **Normalización de `GetOption` en todos los módulos:** Cada módulo comprueba `val ~= nil` antes de retornar, evitando que fallbacks predeterminados sean ignorados cuando el perfil esté vacío.
+
+### 🛠️ Corrección Crítica de Atajos (Ley II — WotLK 3.3.5a)
+- **Reubicación de `Bindings.xml` a la raíz del addon:**
+  - En WoW 3.3.5a, `Bindings.xml` debe ubicarse en la raíz del addon y **no** debe listarse en el archivo `.toc`.
+  - La inclusión previa como `Core\Bindings.xml` en el `.toc` causaba 25 errores de tipo `Unknown frame type: Binding` en `FrameXML.log` e impedía que los atajos de teclado se registraran en el menú nativo de WoW.
+  - Eliminado del `.toc` y movido a la raíz; atajos restaurados al 100%.
 
 ---
 

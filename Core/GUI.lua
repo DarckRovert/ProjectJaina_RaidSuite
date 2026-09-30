@@ -23,7 +23,8 @@ local ClassSphereIcons = {
 -- Helper para obtener configuración
 function S.GUI:GetOption(key)
     if S.ModuleConfig then
-        return S.ModuleConfig:GetValue("GUI", key)
+        local val = S.ModuleConfig:GetValue("GUI", key)
+        if val ~= nil then return val end
     end
     return true
 end

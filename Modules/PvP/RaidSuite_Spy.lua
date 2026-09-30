@@ -84,7 +84,8 @@ end
 
 function SP:GetOption(key)
     if S.ModuleConfig then
-        return S.ModuleConfig:GetValue("Spy", key)
+        local val = S.ModuleConfig:GetValue("Spy", key)
+        if val ~= nil then return val end
     end
     return true
 end

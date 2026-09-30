@@ -9,7 +9,8 @@ S.Events = {}
 -- Helper para obtener configuración
 function S.Events:GetOption(key)
     if S.ModuleConfig then
-        return S.ModuleConfig:GetValue("EventManager", key)
+        local val = S.ModuleConfig:GetValue("EventManager", key)
+        if val ~= nil then return val end
     end
     return true
 end

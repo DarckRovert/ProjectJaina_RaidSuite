@@ -19,9 +19,11 @@ end
 -- INICIALIZACIÓN
 -- ===========================================================================
 function S.Logistics:Initialize()
+    if self.initialized then return end
     if not self:GetOption("enabled") then
         return
     end
+    self.initialized = true
     
     local f = CreateFrame("Frame")
     f:RegisterEvent("MERCHANT_SHOW")
@@ -111,10 +113,13 @@ end
 -- COMERCIO (AUTO-TRADE)
 -- ===========================================================================
 function S.Logistics:OnTradeShow()
-    if not S.db.profile.AutoTrade then return end
+    if not self:GetOption("autoTrade") then return end
     
-    -- Solo si estamos comerciando con un jugador (Target existe)
-    if not UnitExists("NPC") and UnitIsPlayer("target") then
+    -- Identificar destinatario de comercio legítimo
+    local tradePartner = (TradeFrameRecipientNameText and TradeFrameRecipientNameText:GetText()) or (UnitExists("target") and UnitIsPlayer("target") and UnitName("target"))
+    if not tradePartner or tradePartner == "" or tradePartner == UnitName("player") then return end
+    
+    if tradePartner then
         -- Warlock: Healthstone
         -- Mage: Water/Food
         local _, class = UnitClass("player")
@@ -183,18 +188,22 @@ function S.Logistics:ManageShards()
     self.lastShardCount = count
 
     if count > limit then
+        if InCombatLockdown() or CursorHasItem() then return end
         local toDelete = count - limit
         local deleted = 0
         
         for bag = 4, 0, -1 do
             for slot = GetContainerNumSlots(bag), 1, -1 do
                 if deleted >= toDelete then break end
+                if CursorHasItem() then break end
                 
                 local id = GetContainerItemID(bag, slot)
                 if id == shardID then
                     PickupContainerItem(bag, slot)
-                    DeleteCursorItem()
-                    deleted = deleted + 1
+                    if CursorHasItem() then
+                        DeleteCursorItem()
+                        deleted = deleted + 1
+                    end
                 end
             end
         end

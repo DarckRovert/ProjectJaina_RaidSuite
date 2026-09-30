@@ -21,9 +21,11 @@ function PS:GetOption(key)
 end
 
 function PS:Initialize()
+    if self.initialized then return end
     if not self:GetOption("enabled") then
         return
     end
+    self.initialized = true
     
     self.frame = self:CreateFrame()
     self:RegisterEvents()
@@ -31,14 +33,24 @@ end
 
 function PS:CreateFrame()
     local f = CreateFrame("Frame", "SequitoPerformanceStatsFrame", UIParent)
+    self.frame = f
     f:SetSize(400, 350)
     f:SetPoint("CENTER")
-    f:SetBackdrop({bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background", edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border", edgeSize = 16, insets = {left = 4, right = 4, top = 4, bottom = 4}})
+    if S.Theme and S.Theme.ApplyPanelBackdrop then
+        S.Theme:ApplyPanelBackdrop(f)
+    else
+        f:SetBackdrop({bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background", edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border", edgeSize = 16, insets = {left = 4, right = 4, top = 4, bottom = 4}})
+    end
     f:SetMovable(true)
     f:EnableMouse(true)
     f:RegisterForDrag("LeftButton")
     f:SetScript("OnDragStart", f.StartMoving)
-    f:SetScript("OnDragStop", f.StopMovingOrSizing)
+    f:SetScript("OnDragStop", function(self)
+        self:StopMovingOrSizing()
+        if S.SmartDefaults then
+            S.SmartDefaults:SavePosition("PerformanceStats", self)
+        end
+    end)
     f:Hide()
     
     f.title = f:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
@@ -55,6 +67,11 @@ function PS:CreateFrame()
     
     f.close = CreateFrame("Button", nil, f, "UIPanelCloseButton")
     f.close:SetPoint("TOPRIGHT", -5, -5)
+    f.close:SetScript("OnClick", function() f:Hide() end)
+    
+    if S.SmartDefaults then
+        S.SmartDefaults:RestorePosition("PerformanceStats")
+    end
     
     return f
 end
@@ -206,7 +223,8 @@ function PS:ShowStats()
     
     local yOffset = 0
     local lineIdx = 1
-    for i = #SequitoStatsDB, math.max(1, #SequitoStatsDB - 20), -1 do
+    local maxDisplay = tonumber(self:GetOption("maxRecords")) or 50
+    for i = #SequitoStatsDB, math.max(1, #SequitoStatsDB - maxDisplay + 1), -1 do
         local record = SequitoStatsDB[i]
         local text = self.statLines[lineIdx]
         if not text then
@@ -220,6 +238,12 @@ function PS:ShowStats()
         text:Show()
         yOffset = yOffset + 15
         lineIdx = lineIdx + 1
+    end
+    for j = lineIdx, #self.statLines do
+        self.statLines[j]:Hide()
+    end
+    if self.frame and self.frame.content then
+        self.frame.content:SetHeight(math.max(yOffset + 20, 270))
     end
     self.frame:Show()
 end
@@ -282,4 +306,10 @@ if S.ModuleConfig then
             }
         }
     })
+end
+
+SLASH_PERFORMANCESTATS1 = "/ps"
+SLASH_PERFORMANCESTATS2 = "/stats"
+SlashCmdList["PERFORMANCESTATS"] = function(msg)
+    PS:SlashCommand(msg)
 end

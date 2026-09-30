@@ -30,6 +30,9 @@ local registeredTriggers = {}
 -- INICIALIZACIÓN
 -- ============================================
 function CE:Initialize()
+    if self.initialized then return end
+    self.initialized = true
+
     self:RegisterEvents()
     self:RegisterDefaultTriggers()
     S:Print("|cff00ff00ContextEngine|r inicializado - Ventanas automáticas activas")
@@ -39,6 +42,8 @@ function CE:RegisterEvents()
     local frame = CreateFrame("Frame")
     frame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
     frame:RegisterEvent("PLAYER_ENTERING_WORLD")
+    frame:RegisterEvent("PARTY_MEMBERS_CHANGED")
+    frame:RegisterEvent("RAID_ROSTER_UPDATE")
     frame:RegisterEvent("LOOT_OPENED")
     frame:RegisterEvent("READY_CHECK")
     frame:RegisterEvent("PLAYER_DEAD")
@@ -53,7 +58,7 @@ function CE:RegisterEvents()
 end
 
 function CE:OnEvent(event, ...)
-    if event == "ZONE_CHANGED_NEW_AREA" or event == "PLAYER_ENTERING_WORLD" then
+    if event == "ZONE_CHANGED_NEW_AREA" or event == "PLAYER_ENTERING_WORLD" or event == "PARTY_MEMBERS_CHANGED" or event == "RAID_ROSTER_UPDATE" then
         self:DetectContext()
     elseif event == "LOOT_OPENED" then
         self:OnLootOpened()
@@ -87,9 +92,9 @@ function CE:DetectContext()
         else
             currentContext = CONTEXT.DUNGEON
         end
-    elseif IsInRaid() then
+    elseif GetNumRaidMembers() > 0 then
         currentContext = CONTEXT.RAID
-    elseif IsInGroup() then
+    elseif GetNumPartyMembers() > 0 then
         currentContext = CONTEXT.PARTY
     else
         currentContext = CONTEXT.SOLO
@@ -269,7 +274,7 @@ function CE:OnPlayerDead()
             local deadCount = 0
             local groupSize = S.AutoSync and S.AutoSync:GetGroupSize() or 1
             
-            if IsInRaid() then
+            if GetNumRaidMembers() > 0 then
                 for i = 1, GetNumRaidMembers() do
                     if UnitIsDead("raid" .. i) then
                         deadCount = deadCount + 1

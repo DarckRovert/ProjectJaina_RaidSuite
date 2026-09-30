@@ -31,8 +31,13 @@ local isInGroup = false
 -- INICIALIZACIÓN
 -- ============================================
 function AS:Initialize()
+    if self.initialized then return end
+    self.initialized = true
+
     self:RegisterEvents()
-    RegisterAddonMessagePrefix(SYNC_PREFIX)
+    if RegisterAddonMessagePrefix then
+        RegisterAddonMessagePrefix(SYNC_PREFIX)
+    end
     
     -- Verificar si ya estamos en grupo
     self:CheckGroupStatus()
@@ -41,21 +46,26 @@ function AS:Initialize()
 end
 
 function AS:RegisterEvents()
-    frame:RegisterEvent("PARTY_MEMBERS_CHANGED") -- WotLK
-    frame:RegisterEvent("RAID_ROSTER_UPDATE") -- WotLK
-    frame:RegisterEvent("PLAYER_ENTERING_WORLD")
-    frame:RegisterEvent("PLAYER_TALENT_UPDATE")
-    frame:RegisterEvent("CHAT_MSG_ADDON")
-    frame:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
-    frame:RegisterEvent("PLAYER_REGEN_ENABLED") -- Salir de combate
-    frame:RegisterEvent("GUILD_ROSTER_UPDATE")
-    frame:RegisterEvent("CHAT_MSG_LOOT")
+    local eventFrame = CreateFrame("Frame")
+    eventFrame:RegisterEvent("PARTY_MEMBERS_CHANGED") -- WotLK
+    eventFrame:RegisterEvent("RAID_ROSTER_UPDATE") -- WotLK
+    eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+    eventFrame:RegisterEvent("PLAYER_TALENT_UPDATE")
+    eventFrame:RegisterEvent("CHAT_MSG_ADDON")
+    eventFrame:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
+    eventFrame:RegisterEvent("PLAYER_REGEN_ENABLED") -- Salir de combate
+    eventFrame:RegisterEvent("GUILD_ROSTER_UPDATE")
+    eventFrame:RegisterEvent("CHAT_MSG_LOOT")
     
-    frame:SetScript("OnEvent", function(_, event, ...)
+    eventFrame:SetScript("OnEvent", function(_, event, ...)
         if event == "PARTY_MEMBERS_CHANGED" or event == "RAID_ROSTER_UPDATE" then
             AS:OnGroupChanged()
         elseif event == "PLAYER_ENTERING_WORLD" then
-            C_Timer.After(2, function() AS:OnLogin() end)
+            if C_Timer and C_Timer.After then
+                C_Timer.After(2, function() AS:OnLogin() end)
+            else
+                AS:OnLogin()
+            end
         elseif event == "PLAYER_TALENT_UPDATE" then
             AS:OnTalentChange()
         elseif event == "CHAT_MSG_ADDON" then
@@ -71,7 +81,19 @@ function AS:RegisterEvents()
         end
     end)
     
-    self.eventFrame = frame
+    self.eventFrame = eventFrame
+end
+
+function AS:GetGroupChannel()
+    local inInstance, instanceType = IsInInstance()
+    if inInstance and (instanceType == "pvp" or instanceType == "arena") then
+        return "BATTLEGROUND"
+    elseif GetNumRaidMembers() > 0 then
+        return "RAID"
+    elseif GetNumPartyMembers() > 0 then
+        return "PARTY"
+    end
+    return nil
 end
 
 -- ============================================
@@ -79,7 +101,7 @@ end
 -- ============================================
 function AS:CheckGroupStatus()
     local wasInGroup = isInGroup
-    isInGroup = IsInRaid() or IsInGroup()
+    isInGroup = (self:GetGroupChannel() ~= nil)
     
     if isInGroup and not wasInGroup then
         -- Acabamos de entrar a grupo
@@ -196,7 +218,8 @@ end
 -- BROADCAST DE DATOS
 -- ============================================
 function AS:BroadcastPlayerData()
-    if not isInGroup then return end
+    local channel = self:GetGroupChannel()
+    if not channel then return end
     
     -- Throttle para evitar spam
     local now = GetTime()
@@ -207,15 +230,17 @@ function AS:BroadcastPlayerData()
     
     local data = self:GetPlayerData()
     local encoded = self:EncodeData(data)
-    
-    local channel = IsInRaid() and "RAID" or "PARTY"
-    SendAddonMessage(SYNC_PREFIX, "DATA:" .. encoded, channel)
+    local payload = "DATA:" .. encoded
+    if #payload > 240 then payload = payload:sub(1, 240) end
+    if RegisterAddonMessagePrefix then RegisterAddonMessagePrefix(SYNC_PREFIX) end
+    SendAddonMessage(SYNC_PREFIX, payload, channel)
 end
 
 function AS:RequestAllData()
-    if not isInGroup then return end
+    local channel = self:GetGroupChannel()
+    if not channel then return end
     
-    local channel = IsInRaid() and "RAID" or "PARTY"
+    if RegisterAddonMessagePrefix then RegisterAddonMessagePrefix(SYNC_PREFIX) end
     SendAddonMessage(SYNC_PREFIX, "REQUEST", channel)
 end
 
@@ -312,11 +337,15 @@ function AS:OnSpellCast(unit, _, spellId)
     if S.CooldownMonitor and S.CooldownMonitor.IsImportantCooldown then
         if S.CooldownMonitor:IsImportantCooldown(spellId) then
             -- Broadcast que usamos un CD
-            local channel = IsInRaid() and "RAID" or "PARTY"
+            local channel = self:GetGroupChannel()
+            if not channel then return end
             local start, duration = GetSpellCooldown(spellId)
             if start and duration then
                 local expires = start + duration
-                SendAddonMessage(SYNC_PREFIX, "CD:" .. spellId .. "|0|" .. expires, channel)
+                local payload = "CD:" .. spellId .. "|0|" .. expires
+                if #payload > 240 then payload = payload:sub(1, 240) end
+                if RegisterAddonMessagePrefix then RegisterAddonMessagePrefix(SYNC_PREFIX) end
+                SendAddonMessage(SYNC_PREFIX, payload, channel)
             end
         end
     end
@@ -337,7 +366,7 @@ end
 function AS:UpdateRaidRoster()
     local currentMembers = {}
     
-    if IsInRaid() then
+    if GetNumRaidMembers() > 0 then
         for i = 1, GetNumRaidMembers() do
             local name = GetRaidRosterInfo(i)
             if name then
@@ -386,10 +415,12 @@ function AS:OnLootMessage(msg)
 end
 
 function AS:BroadcastLoot(itemLink, player, reason)
-    if not isInGroup then return end
-    local channel = IsInRaid() and "RAID" or "PARTY"
+    local channel = self:GetGroupChannel()
+    if not channel then return end
     -- LOOT:ItemLink|Player|Reason
     local msg = string.format("LOOT:%s|%s|%s", itemLink, player, reason or "Gained")
+    if #msg > 240 then msg = msg:sub(1, 240) end
+    if RegisterAddonMessagePrefix then RegisterAddonMessagePrefix(SYNC_PREFIX) end
     SendAddonMessage(SYNC_PREFIX, msg, channel)
 end
 
@@ -405,9 +436,9 @@ function AS:GetPlayerInfo(name)
 end
 
 function AS:GetGroupSize()
-    if IsInRaid() then
+    if GetNumRaidMembers() > 0 then
         return GetNumRaidMembers()
-    elseif IsInGroup() then
+    elseif GetNumPartyMembers() > 0 then
         return GetNumPartyMembers() + 1
     end
     return 1

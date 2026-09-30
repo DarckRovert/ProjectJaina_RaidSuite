@@ -147,9 +147,9 @@ function DA:GetChannel()
     local _, instanceType = IsInInstance()
     if instanceType == "pvp" then
         return "BATTLEGROUND"
-    elseif IsInRaid() then
+    elseif GetNumRaidMembers() > 0 then
         return "RAID"
-    elseif (IsInGroup and IsInGroup()) or (GetNumPartyMembers() > 0) then
+    elseif GetNumPartyMembers() > 0 then
         return "PARTY"
     end
     return nil

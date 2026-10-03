@@ -20,7 +20,7 @@ local addonName, S = ...
 _G.Sequito = S -- Tabla global interna (nombre legacy mantenido por compatibilidad)
 
 -- Version
-S.Version = "11.0.0"
+S.Version = "11.2.1"
 S.Build = "Ecosystem Edition"
 
 -- C_Timer polyfill is in Core/Constants.lua (loads first via TOC)

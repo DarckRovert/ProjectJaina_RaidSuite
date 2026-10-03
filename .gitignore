@@ -30,6 +30,8 @@ ehthumbs_vista.db
 *.tmp
 *_backup.lua
 scratch/
+__pycache__/
+*.pyc
 
 # WoW Client runtime directories (if cloned inside AddOns directly)
 WTF/

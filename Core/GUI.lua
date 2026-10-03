@@ -192,20 +192,30 @@ end
 function S.GUI:CreateBuffMonitor()
     if self.BuffMonitor then return end
     
-    local icon = S.Sphere:CreateTexture("SequitoBuffMonitor", "OVERLAY")
-    icon:SetSize(24, 24)
-    icon:SetPoint("CENTER", S.Sphere, "CENTER", 0, 0) -- Center overlay
-    icon:SetTexture("Interface\\Icons\\Spell_Shadow_DemonBreath") -- Warning Icon
+    local monitor = CreateFrame("Frame", "SequitoBuffMonitor", S.Sphere)
+    monitor:SetSize(24, 24)
+    monitor:SetPoint("CENTER", S.Sphere, "CENTER", 0, 0) -- Center overlay
+    
+    local texture = monitor:CreateTexture(nil, "OVERLAY")
+    texture:SetAllPoints(monitor)
+    texture:SetTexture("Interface\\Icons\\Spell_Shadow_DemonBreath") -- Warning Icon
     
     -- Oscilador de parpadeo 3.3.5a (sin AnimationGroup/BOUNCE)
-    icon.flashTimer = 0
-    icon.flashing = false
+    monitor.flashTimer = 0
+    monitor.flashing = false
+    monitor.texture = texture
     
-    self.BuffMonitor = { icon = icon, anim = icon }
-    icon:Hide()
+    -- Exponer interfaz retrocompatible (self.BuffMonitor.icon apunta al Frame contenedor)
+    self.BuffMonitor = {
+        frame = monitor,
+        icon = monitor,
+        texture = texture,
+        anim = monitor,
+    }
+    monitor:Hide()
     
-    -- Oscilador único con math.sin en el icono
-    icon:SetScript("OnUpdate", function(frame, elapsed)
+    -- Oscilador único con math.sin en el frame
+    monitor:SetScript("OnUpdate", function(frame, elapsed)
         if not frame.flashing then return end
         frame.flashTimer = frame.flashTimer + elapsed
         local sine = (math.sin(frame.flashTimer * 4) + 1) / 2

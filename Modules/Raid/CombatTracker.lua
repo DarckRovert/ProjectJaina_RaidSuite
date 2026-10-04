@@ -253,12 +253,13 @@ local function EndCombat()
     local summary = CombatTracker:GetSummary()
     table.insert(combatHistory, 1, summary)
     
-    -- Limitar historial
-    while #combatHistory > CONFIG.maxHistory do
+    -- Limitar historial respetando la opción configurada por el usuario (Slider en ModuleConfig)
+    local maxHistory = tonumber(CombatTracker:GetOption("maxHistory")) or CONFIG.maxHistory or 10
+    while #combatHistory > maxHistory do
         table.remove(combatHistory)
     end
     
-    -- Mostrar resumen
+    -- Mostrar resumen en chat
     CombatTracker:PrintSummary()
 end
 
@@ -355,40 +356,37 @@ end
 
 -- Imprimir resumen del combate
 function CombatTracker:PrintSummary()
-    if not Sequito.db.profile.CombatShowSummary then return end
-    local summary = self:GetSummary()
+    -- Conexión correcta con ModuleConfig (eliminación de dependencia nula a Sequito.db)
+    if not self:GetOption("showSummary") then return end
     
-    print("|cff9966ff=== Sequito Combat Summary ===")
-    print(string.format("|cffffffffDuracion: |cff00ff00%s", FormatTime(summary.duration)))
-    print(string.format("|cffffffffDano: |cffff6600%s |cff888888(%.1f DPS)", 
-        FormatNumber(summary.damage), summary.dps))
+    local summary = self:GetSummary()
+    if not summary or (summary.duration and summary.duration < 1) then return end
+    
+    local chatFrame = DEFAULT_CHAT_FRAME or ChatFrame1
+    if not chatFrame then return end
+    
+    chatFrame:AddMessage("|cFFD4AF37[WoW Perú]|r |cFF00CCFFResumen de Combate|r |cFF888888(" .. FormatTime(summary.duration) .. ")|r")
+    chatFrame:AddMessage(string.format("  Daño: |cFFFF6600%s|r |cFF888888(%.1f DPS)|r | Recibido: |cFFFF3333%s|r", 
+        FormatNumber(summary.damage), summary.dps, FormatNumber(summary.damageTaken)))
     
     if summary.healing > 0 then
-        print(string.format("|cffffffffCuracion: |cff00ff00%s |cff888888(%.1f HPS)", 
+        chatFrame:AddMessage(string.format("  Sanación: |cFF00FF00%s|r |cFF888888(%.1f HPS)|r", 
             FormatNumber(summary.healing), summary.hps))
     end
     
-    print(string.format("|cffffffffDano Recibido: |cffff0000%s", FormatNumber(summary.damageTaken)))
-    
-    if summary.kills > 0 then
-        print(string.format("|cffffffffKills: |cff00ff00%d", summary.kills))
-    end
-    
-    if summary.interrupts > 0 then
-        print(string.format("|cffffffffInterrupts: |cff00ffff%d", summary.interrupts))
-    end
-    
-    if summary.dispels > 0 then
-        print(string.format("|cffffffffDispels: |cffff00ff%d", summary.dispels))
+    local extras = {}
+    if summary.kills > 0 then table.insert(extras, string.format("Bajas: |cFF00FF00%d|r", summary.kills)) end
+    if summary.interrupts > 0 then table.insert(extras, string.format("Cortes: |cFF00FFFF%d|r", summary.interrupts)) end
+    if summary.dispels > 0 then table.insert(extras, string.format("Disipaciones: |cFFFF00FF%d|r", summary.dispels)) end
+    if #extras > 0 then
+        chatFrame:AddMessage("  " .. table.concat(extras, " | "))
     end
     
     if summary.topAbility then
         local _, topDmg = self:GetTopAbility()
-        print(string.format("|cffffffffTop Habilidad: |cffffff00%s |cff888888(%s)", 
+        chatFrame:AddMessage(string.format("  Habilidad Clave: |cFFFFFF00%s|r |cFF888888(%s)|r", 
             summary.topAbility, FormatNumber(topDmg)))
     end
-    
-    print("|cff9966ff================================|r")
 end
 
 -- Obtener datos en tiempo real para la UI
@@ -461,10 +459,16 @@ function CombatTracker:Initialize()
                 end
             end)
         elseif event == "PLAYER_REGEN_ENABLED" then
-            C_Timer.After(0.5, function()
+            local delayFunc = function()
                 EndCombat()
-                eventFrame:SetScript("OnUpdate", nil)
-            end)
+                if eventFrame then eventFrame:SetScript("OnUpdate", nil) end
+            end
+            
+            if C_Timer and C_Timer.After then
+                C_Timer.After(0.5, delayFunc)
+            else
+                delayFunc()
+            end
         end
     end)
 

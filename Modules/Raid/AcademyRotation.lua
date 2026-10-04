@@ -207,13 +207,14 @@ function AR:Initialize()
 end
 
 function AR:GetPlayerSpec()
-    -- Heurística basada en puntos invertidos de talentos
+    -- Heurística basada en puntos invertidos de talentos sincronizada con Dual Spec
     local numTabs = GetNumTalentTabs()
     local maxPoints = -1
     local activeTab = 1
+    local activeGroup = _G.GetActiveTalentGroup and _G.GetActiveTalentGroup() or 1
 
     for i = 1, numTabs do
-        local _, _, pointsSpent = GetTalentTabInfo(i)
+        local _, _, pointsSpent = GetTalentTabInfo(i, false, false, activeGroup)
         if pointsSpent and pointsSpent > maxPoints then
             maxPoints = pointsSpent
             activeTab = i

@@ -25,7 +25,14 @@ function Coven:Initialize()
     self.Frame:RegisterEvent("CHAT_MSG_PARTY")
     self.Frame:RegisterEvent("CHAT_MSG_PARTY_LEADER")
     self.Frame:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
-    self.Frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+    
+    if S.CLEU and S.CLEU.Register then
+        S.CLEU:Register("UNIT_DIED", function(...)
+            Coven:CheckDoomSacrifice(...)
+        end)
+    else
+        self.Frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+    end
     
     self.Frame:SetScript("OnEvent", function(self, event, ...)
         if event == "UNIT_SPELLCAST_SUCCEEDED" then
@@ -186,11 +193,26 @@ function Coven:OnSpellCast(unit, spellName, rank, lineId, spellId)
     end
 end
 
+function Coven:GetAnnouncementChannel(preferWarning)
+    if GetNumRaidMembers() > 0 then
+        if preferWarning and (IsRaidLeader() or IsRaidOfficer()) then
+            return "RAID_WARNING"
+        end
+        return "RAID"
+    elseif GetNumPartyMembers() > 0 then
+        return "PARTY"
+    end
+    return nil
+end
+
 function Coven:StartDoomRoulette()
-    local chan = (GetNumRaidMembers() > 0) and "RAID" or ((GetNumPartyMembers() > 0) and "PARTY" or nil)
-    if chan then
-        SendChatMessage("¡RULETA RUSA INICIADA! ¿Quién será el sacrificio?", "RAID_WARNING")
-        SendChatMessage("El Ritual de la Perdición ha comenzado. Uno morirá para invocar al Guardia Apocalíptico.", chan)
+    local warnChan = self:GetAnnouncementChannel(true)
+    local groupChan = self:GetAnnouncementChannel(false)
+    if warnChan then
+        SendChatMessage("¡RULETA RUSA INICIADA! ¿Quién será el sacrificio?", warnChan)
+    end
+    if groupChan then
+        SendChatMessage("El Ritual de la Perdición ha comenzado. Uno morirá para invocar al Guardia Apocalíptico.", groupChan)
     end
     
     self.DoomActive = true
@@ -213,12 +235,25 @@ function Coven:CheckDoomSacrifice(...)
     -- WoW 3.3.5a CLEU signature: timestamp, event, sourceGUID, sourceName, sourceFlags, destGUID, destName, destFlags
     local timestamp, subEvent, sourceGUID, sourceName, sourceFlags, destGUID, destName, destFlags = ...
     
-    if subEvent == "UNIT_DIED" then
-        if UnitInRaid(destName) or UnitInParty(destName) or destName == UnitName("player") then
-            local chan = (GetNumRaidMembers() > 0) and "RAID" or ((GetNumPartyMembers() > 0) and "PARTY" or nil)
-            if chan then
-                SendChatMessage("¡" .. destName .. " HA SIDO SACRIFICADO!", "RAID_WARNING")
-                SendChatMessage("Gracias por tu ofrenda, " .. destName .. ". El Guardia Apocalíptico te saluda.", chan)
+    if subEvent == "UNIT_DIED" and destName then
+        local inGroup = (destName == UnitName("player")) or (UnitInRaid and UnitInRaid(destName))
+        if not inGroup and GetNumPartyMembers() > 0 then
+            for i = 1, GetNumPartyMembers() do
+                if UnitName("party" .. i) == destName then
+                    inGroup = true
+                    break
+                end
+            end
+        end
+
+        if inGroup then
+            local warnChan = self:GetAnnouncementChannel(true)
+            local groupChan = self:GetAnnouncementChannel(false)
+            if warnChan then
+                SendChatMessage("¡" .. destName .. " HA SIDO SACRIFICADO!", warnChan)
+            end
+            if groupChan then
+                SendChatMessage("Gracias por tu ofrenda, " .. destName .. ". El Guardia Apocalíptico te saluda.", groupChan)
             end
             self.DoomActive = false 
             PlaySound("RaidWarning")

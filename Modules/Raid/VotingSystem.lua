@@ -366,7 +366,7 @@ function VS:ShowPoll(question, options)
     end
 
     -- Configurar permisos de cierre anticipado
-    local isLeader = UnitIsRaidOfficer("player") or IsRaidLeader() or UnitIsPartyLeader("player")
+    local isLeader = UnitIsRaidOfficer("player")
     local isCreator = (currentPoll and currentPoll.creator == UnitName("player"))
     if isLeader or isCreator then
         pView.closePollBtn:Show()
@@ -492,8 +492,8 @@ function VS:OnAddonMessage(msg, sender)
         end
 
     elseif cmd == "END" then
-        -- Verificación de seguridad de permisos (Ley V)
-        local isLeader = UnitIsRaidOfficer(sender) or IsRaidLeader() or UnitIsPartyLeader(sender)
+        -- Verificación de seguridad de permisos: emisor con rango de líder/oficial, creador o local
+        local isLeader = UnitIsRaidOfficer(sender)
         local isCreator = (currentPoll and currentPoll.creator and (sender == currentPoll.creator))
         local isSelf = (sender == UnitName("player"))
 

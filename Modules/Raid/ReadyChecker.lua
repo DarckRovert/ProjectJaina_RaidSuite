@@ -302,6 +302,15 @@ function RC:GetGroupChannel()
     return nil
 end
 
+function RC:CanAnnounceToGroup()
+    if GetNumRaidMembers() > 0 then
+        return (IsRaidLeader() or IsRaidOfficer()) and true or false
+    elseif GetNumPartyMembers() > 0 then
+        return IsPartyLeader() and true or false
+    end
+    return true
+end
+
 -- ============================================================================
 -- INTERFAZ VISUAL
 -- ============================================================================
@@ -602,6 +611,17 @@ function RC:AnnounceProblems(forceManual)
     end
 
     local channel = self:GetGroupChannel()
+    local canAnnounce = self:CanAnnounceToGroup()
+
+    -- En auto-check (evento del sistema), si no es oficial, solo emitir a consola local personal
+    if not forceManual and not canAnnounce then
+        channel = nil
+    elseif forceManual and not canAnnounce and channel then
+        if S.Print then
+            S:Print("|cFFFF0000Aviso:|r Se requieren permisos de Líder o Asistente para anunciar al grupo.")
+        end
+        channel = nil
+    end
 
     if #problems == 0 then
         local msg = "[Sequito] ¡Todos los miembros están listos para el pull!"

@@ -314,10 +314,21 @@ function CC:OnCombatLog(...)
         if category and destGUID then
             self:OnCCRemoved(destGUID, destName, spellId, spellName, category)
         end
-    elseif event == "SPELL_AURA_BROKEN" or event == "SPELL_AURA_BROKEN_SPELL" then
+    elseif event == "SPELL_AURA_BROKEN_SPELL" then
+        local _, extraSpellId, extraSpellName = select(11, ...)
+        local category = self:GetDRCategory(extraSpellId, extraSpellName)
+        if category and destGUID then
+            self:OnCCBroken(destGUID, destName, extraSpellId, extraSpellName, sourceName, category)
+        end
+    elseif event == "SPELL_AURA_BROKEN" then
         local category = self:GetDRCategory(spellId, spellName)
         if category and destGUID then
             self:OnCCBroken(destGUID, destName, spellId, spellName, sourceName, category)
+        end
+    elseif event == "UNIT_DIED" then
+        if destGUID and self.ActiveCCs[destGUID] then
+            self.ActiveCCs[destGUID] = nil
+            self:UpdateDisplay()
         end
     end
 end
@@ -643,10 +654,26 @@ function CC:OnCommReceived(prefix, message, channel, sender)
     end
 end
 
+local function CanAnnounceGroup()
+    if GetNumRaidMembers() > 0 then
+        return IsRaidLeader() or IsRaidOfficer()
+    elseif GetNumPartyMembers() > 0 then
+        return IsPartyLeader()
+    end
+    return true
+end
+
 function CC:AnnounceAssignments()
     local channel = self:GetChannel()
     if not channel then
         if S.Print then S:Print("No estás en un grupo.") end
+        return
+    end
+
+    if not CanAnnounceGroup() then
+        if S.Print then
+            S:Print("Solo el líder o los asistentes de banda/grupo pueden anunciar asignaciones de CC.")
+        end
         return
     end
 

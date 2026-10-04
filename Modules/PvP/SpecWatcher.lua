@@ -22,25 +22,26 @@ local CONFIG = {
     delay = 0.5, -- Delay antes de actualizar macros
 }
 
--- Obtener spec actual basado en puntos de talento
-local function GetCurrentSpec()
+-- Obtener grupo de talentos activo (Dual Spec)
+local function GetActiveTalentGroup()
+    return _G.GetActiveTalentGroup and _G.GetActiveTalentGroup() or 1
+end
+
+-- Obtener spec actual basado en puntos de talento (sincronizado con Dual Spec)
+local function GetCurrentSpec(talentGroup)
     local spec = 0
-    local maxPoints = 0
+    local maxPoints = -1
+    local group = talentGroup or GetActiveTalentGroup()
     
     for i = 1, 3 do
-        local _, _, pointsSpent = GetTalentTabInfo(i)
-        if pointsSpent > maxPoints then
+        local _, _, pointsSpent = GetTalentTabInfo(i, false, false, group)
+        if pointsSpent and pointsSpent > maxPoints then
             maxPoints = pointsSpent
             spec = i
         end
     end
     
-    return spec
-end
-
--- Obtener grupo de talentos activo (Dual Spec)
-local function GetActiveTalentGroup()
-    return _G.GetActiveTalentGroup and _G.GetActiveTalentGroup() or 1
+    return (spec > 0 and maxPoints > 0) and spec or 1
 end
 
 -- Nombres de especializacion por clase
@@ -95,8 +96,8 @@ end
 
 -- Verificar si hubo cambio de spec
 local function CheckSpecChange()
-    local newSpec = GetCurrentSpec()
     local newTalentGroup = GetActiveTalentGroup()
+    local newSpec = GetCurrentSpec(newTalentGroup)
     
     if isInitialized then
         if newSpec ~= currentSpec or newTalentGroup ~= currentTalentGroup then

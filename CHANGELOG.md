@@ -1,12 +1,43 @@
 # WoW Perú RaidSuite Changelog
 
-**Versión Actual:** 11.2.1 (HUD Restoration & Engine Root Fix)
+**Versión Actual:** 11.3.0 (Ecosystem Synchronization & Protocol Hardening)
 **Autor:** DarckRovert (Ingame: Elnazzareno) & WoW Perú Team
 
 ---
 
-## v11.2.1 "HUD Restoration & Engine Root Fix"
-**Release Date:** 2026-09-30
+## v11.3.0 "Ecosystem Synchronization & Protocol Hardening"
+**Release Date:** 2026-10-04
+
+### 🛡️ Auditoría de Sincronización, Red y Lógica de Banda (Fixes #6 a #19)
+- **`Modules/Raid/CombatTracker.lua` (Fix #6):**
+  - Solucionado crash por nil-index en `CLEU` para eventos de daño ambiental/caída sin `spellId` (`ENVIRONMENTAL_DAMAGE`, etc.). Implementado guardia estricto en tablas de métricas.
+- **`Modules/Raid/Assignments.lua` (Fix #8):**
+  - Resuelto bug en asignaciones multi-perfil donde cambios de rol no persistían en perfiles secundarios al recargar la interfaz.
+- **`Core/EcosystemBridge.lua` (Fix #9):**
+  - Eliminado registro de evento fantasma de Vanilla (`PLAYER_PET_CHANGED`) que generaba advertencias en consola de WoW 3.3.5a. Reemplazado por hooks canónicos de WotLK.
+- **`Modules/Raid/RaidSuite_LootGallery.lua` (Fix #10):**
+  - Reparado fallo de resolución de hipervínculos de ítems que dejaba la galería vacía al inspeccionar jefes antes del cacheo local del cliente.
+- **`Core/Constants.lua` & `Modules/Raid/VotingSystem.lua` (Fix #12):**
+  - Polyfill `UnitIsRaidOfficer` corregido para respetar permisos de asistente y líder en bandas de 10/25 sin otorgar privilegios no autorizados a miembros ordinarios.
+- **`Modules/Class/RaidSuite_Coven.lua` (Fix #13):**
+  - Blindada emisión a `RAID_WARNING`: miembros ordinarios sin rango de oficial son desviados a chat de banda o impresión local para evitar errores de Lua en Ritual de la Perdición.
+- **`Modules/Raid/PullGuide.lua` (Fix #14):**
+  - Añadido `CHAT_MARK_TOKENS` ({star}, {circle}, etc.) en reemplazo de secuencias de escape `|TInterface\...|t` en canales de texto. Agregada verificación estricta de oficial en `CanMarkTargets`, `ClearMarks` y `MarkTarget`.
+- **`Modules/Raid/RaidSync.lua` (Fix #15):**
+  - Implementado método faltante `OnReadyCheck` (eliminando nil-call crash en Ready Checks). Reescrito `IsOfficer` eliminando el bypass ciego `name == UnitName("player")`, protegiendo `FOCUS`, `ALPHA` y `STRAT`.
+- **`Modules/Raid/ReadyChecker.lua` (Fix #16):**
+  - Erradicada tormenta de spam masivo en `READY_CHECK_FINISHED`: solo el líder o los asistentes de banda anuncian el resumen general al canal grupal; los miembros ordinarios reciben el informe en su consola local.
+- **`Modules/PvP/CCCoordinator.lua` (Fix #17):**
+  - Corregida extracción de parámetros en `SPELL_AURA_BROKEN_SPELL` (args 12-13 `extraSpellId`/`extraSpellName` para el CC roto en lugar de args 9-10 del hechizo agresor).
+  - Añadido desregistro inmediato por `UNIT_DIED` para evitar CCs huérfanos.
+  - Protección de oficial en `AnnounceAssignments`.
+- **`Modules/Raid/RaidAssist.lua` (Fix #18):**
+  - Erradicada tormenta de red en `INTERRUPT_USED`: implementación de `RecordInterrupt` deduplicada e idempotente; solo el lanzador local emite por red si es necesario.
+  - Eliminado spam cada 2s en `OnUpdate`: `CheckUnitConsumables` emite `CONSUMABLE_STATUS` únicamente ante cambios de estado (`lastSentConsumables`); `TrackCooldowns` emite únicamente en transiciones de inicio/reinicio de CD con cómputo temporal local en `GetAvailableCooldowns`.
+- **`Modules/PvP/SpecWatcher.lua` & `Modules/Raid/AcademyRotation.lua` (Fix #19):**
+  - Parametrizado `GetTalentTabInfo(i, false, false, activeGroup)` con `GetActiveTalentGroup()` en ambos módulos. Resuelta ceguera de Dual Spec donde el cambio a la segunda especialización continuaba leyendo los talentos de la primera.
+
+---
 
 ### 🔴 Causa Raíz de Desaparición de Componentes (Root-Cause Analysis)
 - **Restauración de 6 Módulos Core no Registrados en `ModuleConfig`:**

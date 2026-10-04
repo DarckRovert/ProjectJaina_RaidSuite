@@ -39,16 +39,28 @@ local DANGEROUS_TYPES = {
     ["Normal"] = 1,
 }
 
--- Nombres de marcas
+-- Nombres de marcas para la Interfaz (UI FontStrings)
 local MARK_NAMES = {
-    [1] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_1:0|t Star",
-    [2] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_2:0|t Circle",
-    [3] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_3:0|t Diamond",
-    [4] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_4:0|t Triangle",
-    [5] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_5:0|t Moon",
-    [6] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_6:0|t Square",
-    [7] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_7:0|t Cross",
-    [8] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_8:0|t Skull",
+    [1] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_1:0|t Estrella",
+    [2] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_2:0|t Círculo",
+    [3] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_3:0|t Diamante",
+    [4] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_4:0|t Triángulo",
+    [5] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_5:0|t Luna",
+    [6] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_6:0|t Cuadrado",
+    [7] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_7:0|t Cruz",
+    [8] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_8:0|t Calavera",
+}
+
+-- Tokens canónicos para canales de Chat de WoW 3.3.5a
+local CHAT_MARK_TOKENS = {
+    [1] = "{star}",
+    [2] = "{circle}",
+    [3] = "{diamond}",
+    [4] = "{triangle}",
+    [5] = "{moon}",
+    [6] = "{square}",
+    [7] = "{cross}",
+    [8] = "{skull}",
 }
 
 -- Catálogo Bilingüe de Hechizos (Inglés y Español)
@@ -128,7 +140,9 @@ end
 
 function PG:CanMarkTargets()
     if GetNumRaidMembers() > 0 then
-        return IsRaidLeader() or IsRaidOfficer()
+        return (IsRaidLeader() or IsRaidOfficer()) and true or false
+    elseif GetNumPartyMembers() > 0 then
+        return IsPartyLeader() and true or false
     end
     return true
 end
@@ -491,7 +505,12 @@ function PG:HasCCInGroup()
 end
 
 function PG:ClearMarks()
-    if not self:CanMarkTargets() then return end
+    if not self:CanMarkTargets() then
+        if S.Print then
+            S:Print("|cFFFF0000Aviso:|r Se requieren permisos de líder para limpiar marcas.")
+        end
+        return
+    end
 
     for guid, data in pairs(self.CurrentPack) do
         local unit = self:FindUnitByGUID(guid) or data.unit
@@ -535,9 +554,9 @@ function PG:AnnounceMarks()
     SendChatMessage("=== Orden de Kill ===", channel)
     for _, markId in ipairs(KILL_ORDER) do
         if byMark[markId] then
-            local markName = MARK_NAMES[markId] or tostring(markId)
+            local token = CHAT_MARK_TOKENS[markId] or string.format("{rt%d}", markId)
             SendChatMessage(string.format("%s -> %s (%s)",
-                markName, byMark[markId].name, byMark[markId].type), channel)
+                token, byMark[markId].name, byMark[markId].type), channel)
         end
     end
 
@@ -548,9 +567,9 @@ function PG:AnnounceMarks()
                 SendChatMessage("=== CC ===", channel)
                 hasCCs = true
             end
-            local markName = MARK_NAMES[markId] or tostring(markId)
+            local token = CHAT_MARK_TOKENS[markId] or string.format("{rt%d}", markId)
             SendChatMessage(string.format("%s -> %s (CC)",
-                markName, byMark[markId].name), channel)
+                token, byMark[markId].name), channel)
         end
     end
 end
@@ -610,6 +629,13 @@ end
 function PG:MarkTarget(markId)
     if not UnitExists("target") then
         if S.Print then S:Print("No tienes un objetivo.") end
+        return
+    end
+
+    if not self:CanMarkTargets() then
+        if S.Print then
+            S:Print("|cFFFF0000Aviso:|r Se requieren permisos de líder para marcar objetivos.")
+        end
         return
     end
 

@@ -50,34 +50,7 @@ function RA:Initialize()
     end
     
     -- Initialize data tables from SpellData
-    self.requiredBuffs = {}
-    self.importantCooldowns = {}
-    self.interruptSpells = {}
-    
-    -- Load consumables from SpellData
-    if S.SpellData and S.SpellData.Consumables then
-        for _, buff in ipairs(S.SpellData.Consumables) do
-            self.requiredBuffs[buff.id] = buff.type
-        end
-    end
-    
-    -- Load cooldowns from SpellData
-    if S.SpellData and S.SpellData.ImportantCooldowns then
-        for class, spells in pairs(S.SpellData.ImportantCooldowns) do
-            for _, spell in ipairs(spells) do
-                self.importantCooldowns[spell.id] = {name = spell.name, duration = spell.duration or 0}
-            end
-        end
-    end
-    
-    -- Load interrupts from SpellData
-    if S.SpellData and S.SpellData.Interrupts then
-        for class, spells in pairs(S.SpellData.Interrupts) do
-            for _, spell in ipairs(spells) do
-                self.interruptSpells[spell.name] = true
-            end
-        end
-    end
+    self:LoadSpellData()
     
     self.frame = CreateFrame("Frame")
     self.frame:RegisterEvent("CHAT_MSG_ADDON")
@@ -122,13 +95,16 @@ function RA:LoadSpellData()
     
     -- Load interrupt spells
     self.interruptSpells = {}
+    self.interruptSpellsByID = {}
+    self.interruptSpellsByName = {}
     if S.SpellData.Interrupts then
         for class, spells in pairs(S.SpellData.Interrupts) do
             for _, spell in ipairs(spells) do
                 self.interruptSpells[spell.id] = true
-                -- Also store by name for 3.3.5 compatibility
+                self.interruptSpellsByID[spell.id] = { name = spell.name, class = class }
                 if spell.name then
-                    self.interruptSpells[spell.name] = true
+                    self.interruptSpells[spell.name] = spell.id
+                    self.interruptSpellsByName[spell.name] = spell.id
                 end
             end
         end
@@ -213,15 +189,49 @@ end
 -- ============================================
 -- Note: interruptSpells is loaded from SpellData in Initialize()
 
+function RA:RecordInterrupt(playerName, spellID)
+    if not playerName or not spellID then return end
+    if not self.interrupts[playerName] then
+        self.interrupts[playerName] = {}
+    end
+
+    local curTime = time()
+    local list = self.interrupts[playerName]
+
+    -- Deduplicación idempotente: evitar registrar duplicados en ventana de 2s
+    if #list > 0 then
+        local last = list[#list]
+        if last.spellID == spellID and (curTime - last.time) < 2 then
+            return
+        end
+    end
+
+    table.insert(list, {
+        spellID = tonumber(spellID),
+        time = curTime
+    })
+
+    -- Limpieza de entradas antiguas (> 30s)
+    for i = #list, 1, -1 do
+        if curTime - list[i].time > 30 then
+            table.remove(list, i)
+        end
+    end
+end
+
 function RA:COMBAT_LOG_EVENT_UNFILTERED(...)
     local timestamp, event, sourceGUID, sourceName, _, _, _, _, spellId, spellName = ...
     
     if event ~= "SPELL_CAST_SUCCESS" then return end
     
     -- Check if it's an interrupt spell
-    if self.interruptSpells[spellId] then
-        if self:IsRaidMember(sourceGUID) then
-             self:SendMessage("INTERRUPT_USED", sourceName .. ":" .. spellId)
+    if self.interruptSpells[spellId] and self:IsRaidMember(sourceGUID) then
+        -- 1. Registro directo e inmediato en el cliente local (cero latencia)
+        self:RecordInterrupt(sourceName, spellId)
+
+        -- 2. Anti-Flooding: SOLO el propio jugador que realizó el corte emite el mensaje
+        if sourceGUID == UnitGUID("player") then
+            self:SendMessage("INTERRUPT_USED", sourceName .. ":" .. spellId)
         end
     end
 end
@@ -261,60 +271,99 @@ end
 
 function RA:Handle_INTERRUPT_USED(sender, data)
     local playerName, spellID = data:match("^([^:]+):(.+)$")
-    if not playerName then return end
-    
-    -- Track interrupt usage for rotation
-    if not self.interrupts[playerName] then
-        self.interrupts[playerName] = {}
-    end
-    
-    table.insert(self.interrupts[playerName], {
-        spellID = tonumber(spellID),
-        time = time()
-    })
-    
-    -- Clean old entries (older than 30 seconds)
-    for name, interrupts in pairs(self.interrupts) do
-        for i = #interrupts, 1, -1 do
-            if time() - interrupts[i].time > 30 then
-                table.remove(interrupts, i)
-            end
-        end
-    end
+    if not playerName or not spellID then return end
+    self:RecordInterrupt(playerName, tonumber(spellID))
 end
 
 function RA:GetNextInterrupter()
     -- Find who should interrupt next based on rotation
     local interrupters = {}
-    
-    for i = 1, GetNumRaidMembers() do
-        local name = GetRaidRosterInfo(i)
-        if name and self.users[name] then
-            -- Check if they have interrupt available
-            local hasInterrupt = false
-            for spellID in pairs(self.interruptSpells) do
-                if IsSpellKnown(spellID) then
-                    local start, duration = GetSpellCooldown(spellID)
-                    if start == 0 or (start + duration - GetTime()) < 1 then
+    local numRaid = GetNumRaidMembers()
+    local isRaid = numRaid > 0
+    local total = isRaid and numRaid or GetNumPartyMembers()
+    local localPlayer = UnitName("player")
+    local curTime = time()
+
+    local INTERRUPT_CD = {
+        [47528] = 10, -- Mind Freeze (DK)
+        [34490] = 20, -- Silencing Shot (Hunter)
+        [2139]  = 24, -- Counterspell (Mage)
+        [15487] = 45, -- Silence (Priest)
+        [1766]  = 10, -- Kick (Rogue)
+        [57994] = 6,  -- Wind Shear (Shaman)
+        [19647] = 24, -- Spell Lock (Warlock)
+        [6552]  = 10, -- Pummel (Warrior)
+        [72]    = 10, -- Shield Bash (Warrior)
+    }
+
+    local CLASS_HAS_INTERRUPT = {
+        DEATHKNIGHT = 10,
+        HUNTER      = 20,
+        MAGE        = 24,
+        PRIEST      = 45,
+        ROGUE       = 10,
+        SHAMAN      = 6,
+        WARLOCK     = 24,
+        WARRIOR     = 10,
+    }
+
+    for i = 1, total do
+        local name, rank, subgroup, level, class, fileName, zone, online, isDead
+        if isRaid then
+            name, rank, subgroup, level, class, fileName, zone, online, isDead = GetRaidRosterInfo(i)
+        else
+            local unit = (i == total) and "player" or ("party" .. i)
+            name = UnitName(unit)
+            _, fileName = UnitClass(unit)
+            online = UnitIsConnected(unit)
+            isDead = UnitIsDeadOrGhost(unit)
+        end
+
+        if name and online and not isDead then
+            local baseCD = fileName and CLASS_HAS_INTERRUPT[fileName]
+            if baseCD then
+                local hasInterrupt = false
+                local lastUsed = 0
+
+                if name == localPlayer then
+                    -- Para el jugador local sí es válido comprobar el cooldown nativo de su spellbook
+                    if self.interruptSpellsByID then
+                        for spellID in pairs(self.interruptSpellsByID) do
+                            if IsSpellKnown(spellID) then
+                                local start, duration = GetSpellCooldown(spellID)
+                                if start == 0 or (start + duration - GetTime()) < 1 then
+                                    hasInterrupt = true
+                                    break
+                                end
+                            end
+                        end
+                    end
+                else
+                    -- Para otros miembros, verificar historial de uso en self.interrupts
+                    if self.interrupts[name] and #self.interrupts[name] > 0 then
+                        local lastEntry = self.interrupts[name][#self.interrupts[name]]
+                        lastUsed = lastEntry.time or 0
+                        local spellCD = (lastEntry.spellID and INTERRUPT_CD[lastEntry.spellID]) or baseCD
+                        if (curTime - lastUsed) >= spellCD then
+                            hasInterrupt = true
+                        end
+                    else
+                        -- No ha usado interrupción en la ventana reciente; está disponible
                         hasInterrupt = true
-                        break
+                        lastUsed = 0
                     end
                 end
-            end
-            
-            if hasInterrupt then
-                local lastUsed = 0
-                if self.interrupts[name] and #self.interrupts[name] > 0 then
-                    lastUsed = self.interrupts[name][#self.interrupts[name]].time
+
+                if hasInterrupt then
+                    table.insert(interrupters, {name = name, lastUsed = lastUsed})
                 end
-                table.insert(interrupters, {name = name, lastUsed = lastUsed})
             end
         end
     end
-    
-    -- Sort by who used it longest ago
+
+    -- Ordenar por el que usó la interrupción hace más tiempo (o nunca: lastUsed = 0)
     table.sort(interrupters, function(a, b) return a.lastUsed < b.lastUsed end)
-    
+
     return interrupters[1] and interrupters[1].name
 end
 
@@ -339,13 +388,21 @@ RA.importantCooldowns = {
 }
 
 function RA:TrackCooldowns()
+    self.activeCDStates = self.activeCDStates or {}
     for spellID, info in pairs(self.importantCooldowns) do
         if IsSpellKnown(spellID) then
             local start, duration = GetSpellCooldown(spellID)
-            if start > 0 and duration > 1.5 then
-                -- Cooldown is active
-                local remaining = (start + duration) - GetTime()
-                self:SendMessage("COOLDOWN_UPDATE", spellID .. ":" .. math.floor(remaining))
+            local onCD = (start > 0 and duration > 1.5)
+            local wasOnCD = self.activeCDStates[spellID]
+
+            -- Transmitir ÚNICAMENTE en transiciones de estado (inicio o reset)
+            if onCD and not wasOnCD then
+                self.activeCDStates[spellID] = true
+                local remaining = math.floor((start + duration) - GetTime())
+                self:SendMessage("COOLDOWN_UPDATE", spellID .. ":" .. remaining)
+            elseif not onCD and wasOnCD then
+                self.activeCDStates[spellID] = nil
+                self:SendMessage("COOLDOWN_UPDATE", spellID .. ":0")
             end
         end
     end
@@ -367,9 +424,16 @@ end
 
 function RA:GetAvailableCooldowns(spellID)
     local available = {}
+    local now = time()
     
     for name, cds in pairs(self.cooldowns) do
-        if not cds[spellID] or cds[spellID].remaining <= 0 then
+        local cd = cds[spellID]
+        local remaining = 0
+        if cd then
+            local elapsed = now - (cd.updated or now)
+            remaining = math.max(0, cd.remaining - elapsed)
+        end
+        if remaining <= 0 then
             table.insert(available, name)
         end
     end
@@ -386,10 +450,54 @@ function RA:AssignTargets(targets)
     -- Distribute among DPS
     
     local dps = {}
-    for i = 1, GetNumRaidMembers() do
-        local name, rank, subgroup, level, class, fileName, zone, online, isDead, role = GetRaidRosterInfo(i)
-        if name and self.users[name] and role == "DAMAGER" then
-            table.insert(dps, name)
+    local numRaid = GetNumRaidMembers()
+    local isRaid = numRaid > 0
+    local total = isRaid and numRaid or GetNumPartyMembers()
+
+    for i = 1, total do
+        local name, online, isDead, role, fileName
+        local unit
+        if isRaid then
+            local rName, _, _, _, _, rFile, _, rOnline, rDead, rRole = GetRaidRosterInfo(i)
+            name = rName
+            fileName = rFile
+            online = rOnline
+            isDead = rDead
+            role = rRole
+            unit = "raid" .. i
+        else
+            unit = (i == total) and "player" or ("party" .. i)
+            name = UnitName(unit)
+            _, fileName = UnitClass(unit)
+            online = UnitIsConnected(unit)
+            isDead = UnitIsDeadOrGhost(unit)
+            role = nil
+        end
+
+        if name and online and not isDead then
+            local isDps = false
+
+            -- 1. Verificación por rol asignado nativo (Dungeon Finder / LFG 3.3.5a)
+            if UnitGroupRolesAssigned then
+                local assignedRole = UnitGroupRolesAssigned(unit)
+                if assignedRole == "DAMAGER" then
+                    isDps = true
+                elseif assignedRole == "TANK" or assignedRole == "HEALER" then
+                    isDps = false
+                end
+            end
+
+            -- 2. Fallback estándar para bandas 3.3.5a: No es MainTank ni MainAssist ni Healer
+            if not isDps and role ~= "MAINTANK" and role ~= "MAINASSIST" then
+                local assignedRole = UnitGroupRolesAssigned and UnitGroupRolesAssigned(unit)
+                if assignedRole ~= "TANK" and assignedRole ~= "HEALER" then
+                    isDps = true
+                end
+            end
+
+            if isDps and (self.users[name] or not next(self.users)) then
+                table.insert(dps, name)
+            end
         end
     end
     
@@ -487,10 +595,13 @@ function RA:CheckUnitConsumables(unit)
         updated = time()
     }
     
-    -- If checking self, broadcast status
+    -- If checking self, broadcast ONLY if status changed
     if UnitIsUnit(unit, "player") then
         local status = (hasFlask and "1" or "0") .. ":" .. (hasFood and "1" or "0")
-        self:SendMessage("CONSUMABLE_STATUS", status)
+        if self.lastSentConsumables ~= status then
+            self.lastSentConsumables = status
+            self:SendMessage("CONSUMABLE_STATUS", status)
+        end
     end
 end
 

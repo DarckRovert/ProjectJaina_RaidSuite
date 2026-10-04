@@ -289,26 +289,46 @@ if not UnitIsGroupLeader then
     _G.UnitIsGroupLeader = UnitIsGroupLeader
 end
 
--- Polyfill for UnitIsRaidOfficer (doesn't exist in 3.3.5)
-if not UnitIsRaidOfficer then
-    function UnitIsRaidOfficer(unit)
-        if not unit then return false end
-        if UnitIsUnit(unit, "player") then
-            return (IsRaidOfficer and IsRaidOfficer()) or false
+-- Polyfill robusto para UnitIsRaidOfficer (compatible con UnitID y nombres de jugador en WotLK 3.3.5a)
+function UnitIsRaidOfficer(unit)
+    if not unit then return false end
+
+    -- Comprobación del jugador local
+    if unit == "player" or UnitIsUnit(unit, "player") or unit == UnitName("player") then
+        if GetNumRaidMembers() > 0 then
+            return (IsRaidLeader and IsRaidLeader() == 1) or (IsRaidOfficer and IsRaidOfficer() == 1) or false
+        elseif GetNumPartyMembers() > 0 then
+            return (IsPartyLeader and IsPartyLeader()) or (UnitIsPartyLeader and UnitIsPartyLeader("player")) or false
         end
-        local numRaid = GetNumRaidMembers()
-        if numRaid > 0 then
-            for i = 1, numRaid do
-                local name, rank = GetRaidRosterInfo(i)
-                if UnitIsUnit(unit, "raid"..i) then
-                    return rank == 1
-                end
+        return false
+    end
+
+    -- Comprobación en Banda (Raid)
+    local numRaid = GetNumRaidMembers()
+    if numRaid > 0 then
+        for i = 1, numRaid do
+            local name, rank = GetRaidRosterInfo(i)
+            if name == unit or (type(unit) == "string" and UnitIsUnit(unit, "raid" .. i)) then
+                return rank >= 1 -- 2 = Líder de Banda, 1 = Oficial/Asistente
             end
         end
         return false
     end
-    _G.UnitIsRaidOfficer = UnitIsRaidOfficer
+
+    -- Comprobación en Grupo (Party)
+    local numParty = GetNumPartyMembers()
+    if numParty > 0 then
+        for i = 1, numParty do
+            local partyUnit = "party" .. i
+            if UnitName(partyUnit) == unit or (type(unit) == "string" and UnitIsUnit(unit, partyUnit)) then
+                return UnitIsPartyLeader(partyUnit) or false
+            end
+        end
+    end
+
+    return false
 end
+_G.UnitIsRaidOfficer = UnitIsRaidOfficer
 
 -- Polyfill for CastSpellByID (introduced in 4.0.1, missing in 3.3.5a)
 if not CastSpellByID then

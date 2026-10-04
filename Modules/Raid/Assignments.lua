@@ -58,15 +58,25 @@ function AS:GetOption(key)
     return true
 end
 
-function AS:Initialize()
-    if not self:GetOption("enabled") then
-        return
+function AS:GetAssignmentsData()
+    local profile = (S.db and S.db.profile) or (Sequito and Sequito.db and Sequito.db.profile)
+    if not profile then
+        if not SequitoDB then SequitoDB = {} end
+        if not SequitoDB.profiles then SequitoDB.profiles = {} end
+        local key = UnitName("player") .. " - " .. (GetRealmName() or "Realm")
+        local pName = (SequitoDB.profileKeys and SequitoDB.profileKeys[key]) or "Default"
+        if not SequitoDB.profiles[pName] then SequitoDB.profiles[pName] = {} end
+        profile = SequitoDB.profiles[pName]
     end
-    
-    -- Inicializar persistencia
-    if not SequitoDB.profile then SequitoDB.profile = {} end
-    if not SequitoDB.profile.AssignmentsData then
-        SequitoDB.profile.AssignmentsData = {
+
+    -- Migración resiliente desde SequitoDB.profile legado si existía
+    if SequitoDB and SequitoDB.profile and SequitoDB.profile.AssignmentsData and not profile.AssignmentsData then
+        profile.AssignmentsData = SequitoDB.profile.AssignmentsData
+        SequitoDB.profile.AssignmentsData = nil
+    end
+
+    if not profile.AssignmentsData then
+        profile.AssignmentsData = {
             interrupts = {}, 
             tanks = "",
             healers = "",
@@ -74,9 +84,17 @@ function AS:Initialize()
             marks = ""
         }
     end
+
+    return profile.AssignmentsData
+end
+
+function AS:Initialize()
+    if not self:GetOption("enabled") then
+        return
+    end
     
-    -- Vincular Current a la DB
-    self.Current = SequitoDB.profile.AssignmentsData
+    -- Vincular al perfil activo del sistema central
+    self.Current = self:GetAssignmentsData()
     
     -- Migración de seguridad (Tablas -> Strings)
     if type(self.Current.tanks) == "table" then self.Current.tanks = "" end
@@ -86,6 +104,24 @@ function AS:Initialize()
     
     self:CreateFrame()
     self:RegisterComm()
+    
+    -- Escuchar cambios dinámicos de perfil de Sequito
+    if S.RegisterMessage then
+        S:RegisterMessage("SEQUITO_PROFILE_CHANGED", function()
+            AS.Current = AS:GetAssignmentsData()
+            AS:UpdateInterruptersDisplay()
+            if AS.editBoxes then
+                for key, edit in pairs(AS.editBoxes) do
+                    local val = AS.Current[key]
+                    if not val or val == "" then
+                        edit:SetText(L["NOTE_PLACEHOLDER"] or "...")
+                    else
+                        edit:SetText(val)
+                    end
+                end
+            end
+        end)
+    end
     
     if S.ModuleConfig then
         S.ModuleConfig:RegisterModule("Assignments", {
@@ -339,6 +375,9 @@ function AS:CreateNoteEditor(parent, dbKey)
         AS:AnnounceNote(dbKey)
     end)
     
+    self.editBoxes = self.editBoxes or {}
+    self.editBoxes[dbKey] = edit
+
     return edit
 end
 
@@ -630,13 +669,20 @@ end
 -- Note: AnnounceAll is already defined at line 325. This duplicate has been removed.
 
 function AS:ClearAll()
-    self.Current.interrupts = {}
-    self.Current.tanks = ""
-    self.Current.healers = ""
-    self.Current.cooldowns = ""
-    self.Current.marks = ""
-    SequitoDB.profile.AssignmentsData = self.Current
+    local data = self:GetAssignmentsData()
+    data.interrupts = {}
+    data.tanks = ""
+    data.healers = ""
+    data.cooldowns = ""
+    data.marks = ""
+    self.Current = data
     self:UpdateInterruptersDisplay()
+    
+    if self.editBoxes then
+        for _, edit in pairs(self.editBoxes) do
+            edit:SetText(L["NOTE_PLACEHOLDER"] or "...")
+        end
+    end
     print("|cff00ff00[Sequito]|r Todas las asignaciones han sido limpiadas")
 end
 

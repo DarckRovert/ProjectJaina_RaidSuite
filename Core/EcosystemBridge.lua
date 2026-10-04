@@ -97,17 +97,32 @@ end
 local bridgeFrame = CreateFrame("Frame", "WPRaidSuite_BridgeFrame")
 Bridge.frame = bridgeFrame
 
-bridgeFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
-bridgeFrame:RegisterEvent("LFG_COMPLETION_REWARD")
-bridgeFrame:RegisterEvent("CHAT_MSG_COMBAT_HOSTILE_DEATH")
+function Bridge:Initialize()
+    if self.initialized then return end
+    self.initialized = true
+
+    bridgeFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+    bridgeFrame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
+    bridgeFrame:RegisterEvent("LFG_COMPLETION_REWARD")
+    bridgeFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+
+    -- Integración con CLEU centralizado de Sequito (WotLK 3.3.5a)
+    if S.CLEU and S.CLEU.Register then
+        S.CLEU:Register("UNIT_DIED", function(...)
+            Bridge:OnUnitDied(...)
+        end)
+    end
+end
 
 bridgeFrame:SetScript("OnEvent", function(_, event, ...)
     if event == "PLAYER_ENTERING_WORLD" then
         Bridge:OnEnteringWorld()
+    elseif event == "ZONE_CHANGED_NEW_AREA" then
+        Bridge:OnZoneChanged()
     elseif event == "LFG_COMPLETION_REWARD" then
         Bridge:NotifyDungeonComplete()
-    elseif event == "CHAT_MSG_COMBAT_HOSTILE_DEATH" then
-        Bridge:OnCombatDeath(...)
+    elseif event == "PLAYER_REGEN_ENABLED" then
+        Bridge:OnCombatEnd()
     end
 end)
 
@@ -119,8 +134,32 @@ function Bridge:OnEnteringWorld()
     end
 end
 
-function Bridge:OnCombatDeath(msg)
-    if not msg then return end
+function Bridge:OnZoneChanged()
+    local inInstance, instanceType = IsInInstance()
+    -- Si salimos de la mazmorra o cambiamos de mapa, permitir cómputo de la siguiente
+    if not inInstance or instanceType ~= "party" then
+        dungeonDone = false
+    end
+end
+
+function Bridge:OnUnitDied(...)
+    local timestamp, subEvent, sourceGUID, sourceName, sourceFlags, destGUID, destName, destFlags = ...
+    local inInstance, instanceType = IsInInstance()
+    if not inInstance or not destFlags then return end
+
+    -- Verificar si el objetivo abatido era un NPC hostil dentro de la estancia
+    local isHostileNPC = (bit.band(destFlags, COMBATLOG_OBJECT_TYPE_NPC) > 0) and
+                         (bit.band(destFlags, COMBATLOG_OBJECT_REACTION_HOSTILE) > 0)
+
+    if isHostileNPC and instanceType == "raid" then
+        if S.WipeAnalyzer and S.WipeAnalyzer.lastEncounterWon then
+            S.WipeAnalyzer.lastEncounterWon = false
+            self:NotifyBossKill(destName or "Jefe de Banda")
+        end
+    end
+end
+
+function Bridge:OnCombatEnd()
     local inInstance, instanceType = IsInInstance()
     if not inInstance then return end
 
@@ -131,19 +170,12 @@ function Bridge:OnCombatDeath(msg)
             S.WipeAnalyzer.lastEncounterWon = false
         end
         if isBossKill then
-            bossKillCount = bossKillCount + 1
-            self:ReportQuestProgress(BP_QUEST.RAID_WEEKLY, 1, "Boss kill #" .. bossKillCount)
-            self:ReportQuestProgress(BP_QUEST.ECO_RAID_CLEAR, 1, "Raid encounter clear")
-            if self:IsHighRiskMode() then
-                self:ReportQuestProgress(BP_QUEST.ECO_HARDCORE_RAID, 1, "HC Raid clear")
-            end
+            self:NotifyBossKill("Jefe de Banda")
         end
     elseif instanceType == "party" and not dungeonDone then
         if S.DungeonTimer and S.DungeonTimer.lastRunCompleted then
-            dungeonDone = true
             S.DungeonTimer.lastRunCompleted = false
-            self:ReportQuestProgress(BP_QUEST.DUNGEON_DAILY, 1, "Dungeon complete")
-            self:ReportQuestProgress(BP_QUEST.ECO_DUNGEON_3, 1, "Weekly Dungeon +1")
+            self:NotifyDungeonComplete()
         end
     end
 end
@@ -177,7 +209,7 @@ end
 --- Notifica al bridge un kill de jefe confirmado por un modulo externo.
 function Bridge:NotifyBossKill(bossName)
     bossKillCount = bossKillCount + 1
-    self:ReportQuestProgress(BP_QUEST.RAID_WEEKLY, 1, "Boss: " .. (bossName or "unknown"))
+    -- Misión 101 se procesa autoritativamente en servidor; se notifica únicamente el ecosistema
     self:ReportQuestProgress(BP_QUEST.ECO_RAID_CLEAR, 1, "Raid encounter: " .. (bossName or "unknown"))
     if self:IsHighRiskMode() then
         self:ReportQuestProgress(BP_QUEST.ECO_HARDCORE_RAID, 1, "HC Raid: " .. (bossName or "unknown"))
@@ -188,8 +220,9 @@ end
 function Bridge:NotifyDungeonComplete()
     if dungeonDone then return end
     dungeonDone = true
-    self:ReportQuestProgress(BP_QUEST.DUNGEON_DAILY, 1, "Dungeon complete")
+    -- Misión 1 se procesa autoritativamente en servidor; se notifica únicamente el ecosistema
     self:ReportQuestProgress(BP_QUEST.ECO_DUNGEON_3, 1, "Weekly Dungeon +1")
 end
 
 S.EcosystemBridge = Bridge
+Bridge:Initialize()

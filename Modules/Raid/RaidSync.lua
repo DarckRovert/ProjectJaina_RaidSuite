@@ -195,13 +195,19 @@ function S.RaidSync:parseLogic(msg, sender)
         local class, spec, role = strsplit(":", payload)
         self:UpdateMemberInfo(sender, class, tonumber(spec), role)
     elseif cmd == "FOCUS" then
-        self:OnFocusCommand(payload, sender)
+        if self:IsOfficer(sender) then
+            self:OnFocusCommand(payload, sender)
+        end
     elseif cmd == "ALPHA" then
-        self:OnAlphaStrike(sender)
+        if self:IsOfficer(sender) then
+            self:OnAlphaStrike(sender)
+        end
     elseif cmd == "READY" then
         self:OnReadyCheck(payload, sender)
     elseif cmd == "STRAT" then
-        self:OnBossStrat(payload, sender)
+        if self:IsOfficer(sender) then
+            self:OnBossStrat(payload, sender)
+        end
     elseif cmd == "CONFIG" then
         if self:IsOfficer(sender) then
             self:OnRemoteConfig(payload, sender)
@@ -224,30 +230,58 @@ end
 -- ===========================================================================
 function S.RaidSync:IsOfficer(name)
     if not name then return false end
-    if name == UnitName("player") then return true end -- Trust self
-    
-    -- Check Raid Roster for rank
-    for i = 1, GetNumRaidMembers() do
-        local n, rank = GetRaidRosterInfo(i)
-        if n == name then
-            -- Rank 2 = Leader, Rank 1 = Assistant/Officer
-            return rank >= 1
-        end
-    end
-    
-    -- Fallback for Party (Leader is officer)
-    if GetNumPartyMembers() > 0 then
+
+    -- En banda: verificar rango 2 (Líder) o 1 (Asistente/Oficial)
+    local numRaid = GetNumRaidMembers()
+    if numRaid > 0 then
         if name == UnitName("player") then
-            return (IsPartyLeader and IsPartyLeader()) or false
+            return (IsRaidLeader() or IsRaidOfficer()) and true or false
         end
-        for i = 1, GetNumPartyMembers() do
-            if UnitName("party"..i) == name then
-                return UnitIsPartyLeader("party"..i) or false
+        for i = 1, numRaid do
+            local n, rank = GetRaidRosterInfo(i)
+            if n == name then
+                return (rank and rank >= 1) and true or false
             end
         end
+        return false
     end
-    
+
+    -- En grupo (Party): el líder es el oficial
+    local numParty = GetNumPartyMembers()
+    if numParty > 0 then
+        if name == UnitName("player") then
+            return (IsPartyLeader and IsPartyLeader()) and true or false
+        end
+        for i = 1, numParty do
+            if UnitName("party" .. i) == name then
+                return (UnitIsPartyLeader and UnitIsPartyLeader("party" .. i)) and true or false
+            end
+        end
+        return false
+    end
+
+    -- En solitario (fuera de grupo, ej. pruebas locales)
+    if name == UnitName("player") then
+        return true
+    end
+
     return false
+end
+
+function S.RaidSync:OnReadyCheck(payload, sender)
+    if not sender then return end
+    if not self.RaidData[sender] then
+        self.RaidData[sender] = {
+            class = "UNKNOWN",
+            spec = 0,
+            role = "UNKNOWN",
+            hasSequito = true
+        }
+    end
+    self.RaidData[sender].ready = (payload == "1" or payload == "READY" or payload == "true")
+    if S.RaidSync.UpdateUI then
+        S.RaidSync:UpdateUI()
+    end
 end
 
 -- ===========================================================================
@@ -522,32 +556,29 @@ end
 -- COMANDOS TÁCTICOS
 -- ===========================================================================
 function S.RaidSync:SendFocus(targetName)
+    if not self:IsOfficer(UnitName("player")) then
+        print("|cFFFF0000[Sequito]|r Solo Líderes u Oficiales pueden ordenar FOCUS táctico.")
+        return
+    end
     if not targetName then
         targetName = UnitName("target")
     end
     if not targetName then
-        print("|cFFFF0000Sequito|r: No hay objetivo seleccionado.")
+        print("|cFFFF0000[Sequito]|r No hay objetivo seleccionado.")
         return
     end
     
     self:Broadcast("FOCUS:" .. targetName)
-    print("|cFFFF00FFSequito|r: Orden de FOCUS enviada: " .. targetName)
-end
-
-function S.RaidSync:OnFocusCommand(targetName, sender)
-    -- Mostrar alerta visual
-    if S.RaidSync.ShowFocusAlert then
-        S.RaidSync:ShowFocusAlert(targetName, sender)
-    else
-        -- Fallback: mensaje en chat
-        print(string.format("|cFFFF0000[SEQUITO] FOCUS: %s|r (ordenado por %s)", targetName, sender))
-        PlaySound("RaidWarning")
-    end
+    print("|cFFFF00FF[Sequito]|r Orden de FOCUS enviada: " .. targetName)
 end
 
 function S.RaidSync:SendAlphaStrike()
+    if not self:IsOfficer(UnitName("player")) then
+        print("|cFFFF0000[Sequito]|r Solo Líderes u Oficiales pueden ordenar ALPHA STRIKE.")
+        return
+    end
     self:Broadcast("ALPHA:NOW")
-    print("|cFFFF00FFSequito|r: ¡ALPHA STRIKE enviado!")
+    print("|cFFFF00FF[Sequito]|r ¡ALPHA STRIKE enviado!")
 end
 
 function S.RaidSync:OnAlphaStrike(sender)

@@ -87,13 +87,19 @@ function DB:CreateDashboardFrame()
     f.headerBar = header
 
     -- Logo & Title
+    local logo = header:CreateTexture(nil, "ARTWORK")
+    logo:SetSize(72, 36)
+    logo:SetPoint("LEFT", header, "LEFT", 4, 0)
+    logo:SetTexture("Interface\\AddOns\\WoWPeru_RaidSuite\\Media\\wowperu_logo.tga")
+    f.logo = logo
+
     local title = header:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-    title:SetPoint("LEFT", 6, 6)
-    title:SetText("|cFFFFD700SEQUITO|r |cFFFFFFFFCónclave Hub|r |cFF888888v" .. (S.Version or "10.1.0") .. "|r")
+    title:SetPoint("LEFT", logo, "RIGHT", 10, 8)
+    title:SetText("|cFFFFD700WoW Perú|r |cFFFFFFFFRaidSuite|r |cFF888888v" .. (S.Version or "11.2.1") .. "|r")
     f.title = title
 
     local subtitle = header:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-    subtitle:SetPoint("LEFT", 6, -10)
+    subtitle:SetPoint("LEFT", logo, "RIGHT", 10, -8)
     subtitle:SetText("Centro de Comando Unificado & Gestión Estratégica de Banda")
     subtitle:SetTextColor(0.65, 0.65, 0.7)
 

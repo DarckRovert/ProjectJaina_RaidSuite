@@ -668,7 +668,7 @@ function S.GUI:CreateMinimapButton()
     icon:SetTexture("Interface\\Icons\\Ability_Racial_Cannibalize")
     icon:SetPoint("CENTER", 0, 1)
     
-    local angle = 45
+    local angle = 15
     local radius = 80
     
     local function UpdatePosition()

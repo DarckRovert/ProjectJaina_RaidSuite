@@ -95,8 +95,8 @@ function MB:CreateButton()
         local x = math.cos(angle) * radius
         local y = math.sin(angle) * radius
         btn:SetPoint("CENTER", Minimap, "CENTER", x, y)
-    else
-        btn:SetPoint("CENTER", Minimap, "CENTER", -60, -60) -- Default position
+        local defaultAngle = math.rad(15)
+        btn:SetPoint("CENTER", Minimap, "CENTER", math.cos(defaultAngle) * 80, math.sin(defaultAngle) * 80) -- Default position (15 deg)
     end
     
     self.frame = btn

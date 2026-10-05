@@ -1,6 +1,6 @@
-# 🇵🇪 WoW Perú - RaidSuite (v10.2.0 Definitive Edition)
+# 🇵🇪 WoW Perú - RaidSuite (v11.2.1 Definitive Edition)
 
-**Versión:** 10.2.0 (Definitive Edition)  
+**Versión:** 11.2.1 (Definitive Edition)  
 **Autor:** DarckRovert (Ingame: Elnazzareno) & WoW Perú Team  
 **Servidor Destino:** [WoW Perú](https://wow-peru.lat/) - Reino Andino  
 **Cliente Compatible:** World of Warcraft 3.3.5a (Build 12340)
@@ -9,7 +9,7 @@
 
 [![WoW Client](https://img.shields.io/badge/WoW%20Client-3.3.5a%20(Build%2012340)-blue.svg)](https://wow-peru.lat/)
 [![Servidor](https://img.shields.io/badge/Servidor-WoW%20Perú-gold.svg)](https://wow-peru.lat/)
-[![Version](https://img.shields.io/badge/version-10.2.0-blue.svg)](https://github.com/DarckRovert/WoWPeru_RaidSuite/releases)
+[![Version](https://img.shields.io/badge/version-11.2.1-blue.svg)](https://github.com/DarckRovert/WoWPeru_RaidSuite/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ---

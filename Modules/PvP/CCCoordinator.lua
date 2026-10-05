@@ -10,8 +10,9 @@ local CC = S.CCCoordinator
 
 -- Estado
 CC.Assignments = {}  -- {targetName = {player = "Name", spell = "Polymorph", icon = 123}}
-CC.ActiveCCs = {}    -- {targetGUID = {spell, spellId, caster, startTime, category}}
+CC.ActiveCCs = {}    -- {targetGUID = {targetName, spell, spellId, caster, startTime, category}}
 CC.DRTracking = {}   -- {targetGUID = {category = {stacks, resetTime, isActive}}}
+CC.GUIDNames = {}     -- {guid = "Name"} cache compatible con WotLK 3.3.5a
 CC.Frame = nil
 CC.IsVisible = false
 
@@ -304,6 +305,9 @@ function CC:OnCombatLog(...)
     local timestamp, event, sourceGUID, sourceName, sourceFlags, destGUID, destName, destFlags, spellId, spellName = ...
     if not self:GetOption("trackDR") then return end
 
+    if sourceGUID and sourceName and sourceName ~= "" then self.GUIDNames[sourceGUID] = sourceName end
+    if destGUID and destName and destName ~= "" then self.GUIDNames[destGUID] = destName end
+
     if event == "SPELL_AURA_APPLIED" or event == "SPELL_AURA_REFRESH" then
         local category = self:GetDRCategory(spellId, spellName)
         if category and destGUID then
@@ -315,15 +319,15 @@ function CC:OnCombatLog(...)
             self:OnCCRemoved(destGUID, destName, spellId, spellName, category)
         end
     elseif event == "SPELL_AURA_BROKEN_SPELL" then
-        local _, extraSpellId, extraSpellName = select(11, ...)
-        local category = self:GetDRCategory(extraSpellId, extraSpellName)
+        local category = self:GetDRCategory(spellId, spellName)
         if category and destGUID then
-            self:OnCCBroken(destGUID, destName, extraSpellId, extraSpellName, sourceName, category)
+            local _, extraSpellId, extraSpellName = select(11, ...)
+            self:OnCCBroken(destGUID, destName, spellId, spellName, sourceName, category, extraSpellName)
         end
     elseif event == "SPELL_AURA_BROKEN" then
         local category = self:GetDRCategory(spellId, spellName)
         if category and destGUID then
-            self:OnCCBroken(destGUID, destName, spellId, spellName, sourceName, category)
+            self:OnCCBroken(destGUID, destName, spellId, spellName, sourceName, category, nil)
         end
     elseif event == "UNIT_DIED" then
         if destGUID and self.ActiveCCs[destGUID] then
@@ -335,6 +339,7 @@ end
 
 function CC:OnCCApplied(targetGUID, targetName, spellId, spellName, casterName, category)
     self.ActiveCCs[targetGUID] = {
+        targetName = targetName,
         spell = spellName,
         spellId = spellId,
         caster = casterName,
@@ -379,14 +384,17 @@ function CC:OnCCRemoved(targetGUID, targetName, spellId, spellName, category)
     self:UpdateDisplay()
 end
 
-function CC:OnCCBroken(targetGUID, targetName, spellId, spellName, breakerName, category)
+function CC:OnCCBroken(targetGUID, targetName, spellId, spellName, breakerName, category, breakingSpellName)
     self:OnCCRemoved(targetGUID, targetName, spellId, spellName, category)
 
     if not self:GetOption("alerts") then return end
 
+    local detail = breakingSpellName and string.format(" con %s", breakingSpellName) or ""
+    local msg = string.format("%s rompió %s%s en %s",
+        breakerName or "Alguien", spellName or "CC", detail, targetName or "Objetivo")
+
     if S.Print then
-        S:Print(string.format("|cFFFF0000¡CC ROTO!|r %s rompió %s en %s",
-            breakerName or "Alguien", spellName or "CC", targetName or "Objetivo"))
+        S:Print(string.format("|cFFFF0000¡CC ROTO!|r %s", msg))
     end
 
     if self:GetOption("playSound") then
@@ -396,8 +404,7 @@ function CC:OnCCBroken(targetGUID, targetName, spellId, spellName, breakerName, 
     if self:GetOption("announce") then
         local channel = self:GetChannel()
         if channel then
-            SendChatMessage(string.format("[Sequito] CC ROTO: %s rompió %s en %s!",
-                breakerName or "Alguien", spellName or "CC", targetName or "Objetivo"), channel)
+            SendChatMessage(string.format("[Sequito] CC ROTO: %s!", msg), channel)
         end
     end
 end
@@ -568,6 +575,9 @@ end
 -- Resolución de nombres por GUID compatible con WotLK 3.3.5a (Sin nameplate1..40)
 function CC:GetNameFromGUID(guid)
     if not guid then return nil end
+    if self.GUIDNames and self.GUIDNames[guid] then
+        return self.GUIDNames[guid]
+    end
 
     local units = {"target", "focus", "mouseover", "targettarget", "focustarget"}
     for _, u in ipairs(units) do

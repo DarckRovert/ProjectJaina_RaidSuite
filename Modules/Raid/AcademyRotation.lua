@@ -13,16 +13,19 @@ local ROTATIONS = {
     ["WARLOCK"] = {
         [1] = {
             name = "Aflicción",
+            background = "WarlockCurses",
             spells = {"Poseer", "Aflicción inestable", "Corrupción", "Maldición de agonía", "Descarga de las Sombras"},
             fallback = {"Haunt", "Unstable Affliction", "Corruption", "Curse of Agony", "Shadow Bolt"}
         },
         [2] = {
             name = "Demonología",
+            background = "WarlockSummoning",
             spells = {"Inmolar", "Corrupción", "Metamorfosis", "Fuego de alma", "Incinerar"},
             fallback = {"Immolate", "Corruption", "Metamorphosis", "Soul Fire", "Incinerate"}
         },
         [3] = {
             name = "Destrucción",
+            background = "WarlockDestruction",
             spells = {"Inmolar", "Conflagrar", "Descarga de Caos", "Incinerar", "Fuego de alma"},
             fallback = {"Immolate", "Conflagrate", "Chaos Bolt", "Incinerate", "Soul Fire"}
         },
@@ -229,6 +232,19 @@ function AR:GetActiveRotationData()
 
     local classTable = ROTATIONS[class]
     if not classTable then return nil end
+
+    -- Búsqueda robusta por nombre o fondo del DBC
+    local group = _G.GetActiveTalentGroup and _G.GetActiveTalentGroup() or 1
+    local tabName, _, _, background = GetTalentTabInfo(spec, false, false, group)
+
+    if tabName or background then
+        for idx, rot in pairs(classTable) do
+            if (tabName and (rot.name == tabName or (rot.fallback and tContains(rot.fallback, tabName))))
+               or (background and rot.background and rot.background == background) then
+                return rot
+            end
+        end
+    end
 
     return classTable[spec] or classTable[1]
 end

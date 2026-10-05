@@ -451,6 +451,9 @@ function CC:RegisterEvents()
         S.CLEU:Register("SPELL_AURA_APPLIED", onCLEU)
         S.CLEU:Register("SPELL_AURA_REFRESH", onCLEU)
         S.CLEU:Register("SPELL_AURA_REMOVED", onCLEU)
+        S.CLEU:Register("SPELL_AURA_BROKEN", onCLEU)
+        S.CLEU:Register("SPELL_AURA_BROKEN_SPELL", onCLEU)
+        S.CLEU:Register("UNIT_DIED", onCLEU)
     else
         local f = CreateFrame("Frame")
         f:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
@@ -463,22 +466,52 @@ end
 function CC:OnCombatLog(...)
     local timestamp, eventType, sourceGUID, sourceName, sourceFlags, destGUID, destName, destFlags, spellID, spellName = ...
 
-    -- Filtrar solo auras originadas por el jugador o su mascota
-    if sourceGUID ~= UnitGUID("player") and sourceGUID ~= UnitGUID("pet") then
+    -- 1. Limpieza inmediata si el objetivo bajo CC muere
+    if eventType == "UNIT_DIED" then
+        if destGUID then
+            for i = #self.ActiveList, 1, -1 do
+                local t = self.ActiveList[i]
+                if t.guid == destGUID then
+                    self:StopTimer(destGUID, t.spellID, false)
+                end
+            end
+        end
         return
     end
 
-    local spellData = (spellID and self.SpellsByID[spellID]) or (spellName and self.SpellsByName[spellName])
-    if not spellData then return end
+    -- 2. Detección de ruptura por daño o disipación forzada
+    -- En WoW 3.3.5a CLEU, en eventos BROKEN sourceGUID es el atacante agresor (no necesariamente el jugador).
+    -- Se elimina la barra y se dispara BreakAlert si la duración restante supera el umbral.
+    if eventType == "SPELL_AURA_BROKEN" or eventType == "SPELL_AURA_BROKEN_SPELL" then
+        if destGUID then
+            self:StopTimer(destGUID, spellID or 0, true)
+        end
+        return
+    end
 
+    -- 3. Remoción natural o forzada del aura
+    if eventType == "SPELL_AURA_REMOVED" then
+        if destGUID then
+            self:StopTimer(destGUID, spellID or 0, true)
+        end
+        return
+    end
+
+    -- 4. Aplicación o refresco de CC (solo CC aplicado por el jugador o su mascota)
     if eventType == "SPELL_AURA_APPLIED" or eventType == "SPELL_AURA_REFRESH" then
+        if sourceGUID ~= UnitGUID("player") and sourceGUID ~= UnitGUID("pet") then
+            return
+        end
+
+        local spellData = (spellID and self.SpellsByID[spellID]) or (spellName and self.SpellsByName[spellName])
+        if not spellData then return end
+
         local isPlayer = destFlags and (bit.band(destFlags, COMBATLOG_OBJECT_TYPE_PLAYER) > 0)
         local duration = isPlayer and spellData.pvp or spellData.pve
         self:StartTimer(destGUID, destName or "Objetivo", spellID or 0, spellName or "CC", duration)
-    elseif eventType == "SPELL_AURA_REMOVED" then
-        self:StopTimer(destGUID, spellID or 0, true)
     end
 end
+
 
 -- ============================================================================
 -- ARRANQUE Y PARADA DE TEMPORIZADORES

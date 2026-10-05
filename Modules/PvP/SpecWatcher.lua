@@ -44,7 +44,7 @@ local function GetCurrentSpec(talentGroup)
     return (spec > 0 and maxPoints > 0) and spec or 1
 end
 
--- Nombres de especializacion por clase
+-- Nombres de especializacion por clase (fallback alineado con orden de TalentTab.dbc)
 local SPEC_NAMES = {
     ["WARRIOR"] = {"Arms", "Fury", "Protection"},
     ["PALADIN"] = {"Holy", "Protection", "Retribution"},
@@ -58,12 +58,17 @@ local SPEC_NAMES = {
     ["DRUID"] = {"Balance", "Feral", "Restoration"},
 }
 
--- Obtener nombre de la spec
+-- Obtener nombre de la spec (resolucion canonica en vivo desde el cliente)
 local function GetSpecName(class, specIndex)
+    local group = GetActiveTalentGroup()
+    local name = GetTalentTabInfo(specIndex, false, false, group)
+    if name and name ~= "" then
+        return name
+    end
     if SPEC_NAMES[class] and SPEC_NAMES[class][specIndex] then
         return SPEC_NAMES[class][specIndex]
     end
-    return "Spec " .. specIndex
+    return "Spec " .. tostring(specIndex)
 end
 
 -- Callback cuando cambia la spec

@@ -717,7 +717,15 @@ end
 -- ============================================
 
 function RA:StartPullTimer(seconds)
+    seconds = tonumber(seconds) or 10
     self:SendMessage("PULL_TIMER", tostring(seconds))
+    
+    -- Sincronización cruzada con clientes/módulos que escuchan SEQ_ASSIGN
+    local channel = self:GetGroupChannel()
+    if channel then
+        SendAddonMessage("SEQ_ASSIGN", "PULL:" .. seconds, channel)
+    end
+
     self:ShowPullTimer(seconds)
 end
 

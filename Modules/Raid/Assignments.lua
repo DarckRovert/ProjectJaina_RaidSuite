@@ -786,53 +786,18 @@ end
 
 function AS:StartPullTimer(seconds)
     seconds = tonumber(seconds) or 10
-    -- Enviar mensaje sync
-    -- Usamos formato compatible con nuestra funcion Serialize/Deserialize manual
-    -- Enviamos mensaje directo separado para evitar conflicto con sync de asignaciones
-    local channel = self:GetGroupChannel()
-    if channel then
-        SendAddonMessage("SEQ_ASSIGN", "PULL:" .. seconds, channel)
+    if S.RaidAssist and S.RaidAssist.StartPullTimer then
+        S.RaidAssist:StartPullTimer(seconds)
+    else
+        self:ShowPullTimer(seconds)
     end
-    self:ShowPullTimer(seconds)
 end
 
 function AS:ShowPullTimer(seconds)
-    if not self.PullFrame then
-        local f = CreateFrame("Frame", "SequitoPullTimer", UIParent)
-        f:SetSize(250, 80)
-        f:SetPoint("CENTER", UIParent, "CENTER", 0, 150)
-        f.text = f:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge")
-        f.text:SetPoint("CENTER")
-        f.text:SetFont(GameFontNormalHuge:GetFont(), 32, "OUTLINE")
-        self.PullFrame = f
+    seconds = tonumber(seconds) or 10
+    if S.RaidAssist and S.RaidAssist.ShowPullTimer then
+        S.RaidAssist:ShowPullTimer(seconds)
     end
-    
-    self.PullFrame:Show()
-    self.PullFrame.check = 0
-    self.PullFrame.timeLeft = seconds
-    
-    self.PullFrame:SetScript("OnUpdate", function(self, elapsed)
-        -- Manejar delay de ocultado
-        if self.hideDelay then
-            self.hideDelay = self.hideDelay - elapsed
-            if self.hideDelay <= 0 then
-                self:Hide()
-                self:SetScript("OnUpdate", nil)
-                self.hideDelay = nil
-            end
-            return
-        end
-
-        self.timeLeft = self.timeLeft - elapsed
-        
-        if self.timeLeft <= 0 then
-            self.text:SetText("|cffff0000PULL!|r")
-            PlaySound("RaidWarning")
-            self.hideDelay = 2 -- Esperar 2 segundos antes de ocultar
-        else
-            self.text:SetText(string.format("Pull en: |cffffd700%.1f|r", self.timeLeft))
-        end
-    end)
 end
 
 function AS:Toggle()

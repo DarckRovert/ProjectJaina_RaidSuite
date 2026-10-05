@@ -124,9 +124,7 @@ function P:UpdatePlate(frame)
     if S.CCCoordinator and S.CCCoordinator.ActiveCCs then
          local foundCC = false
          for guid, data in pairs(S.CCCoordinator.ActiveCCs) do
-             -- match by name because we don't have GUID on plate easily in 3.3.5 without mouseover
-             -- This is heuristic but better than nothing
-             local targetName = S.CCCoordinator:GetNameFromGUID(guid)
+             local targetName = data.targetName or (S.CCCoordinator.GetNameFromGUID and S.CCCoordinator:GetNameFromGUID(guid))
              if targetName == name then
                   -- Found active CC on this unit name
                   frame.ccIcon:SetTexture(GetSpellTexture(data.spellId) or "Interface\\Icons\\INV_Misc_QuestionMark")

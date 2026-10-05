@@ -646,85 +646,21 @@ function S.GUI:UpdateCooldowns()
 end
 
 function S.GUI:CreateMinimapButton()
-    if self.MinimapBtn or _G["SequitoMinimapButton"] then
-        return
-    end
-    
-    local db = S.db.profile
-    
-    local btn = CreateFrame("Button", "SequitoMinimapButton", Minimap)
-    btn:SetSize(31, 31)
-    btn:SetFrameStrata("MEDIUM")
-    btn:SetToplevel(true)
-    btn:SetHighlightTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight")
-    
-    local overlay = btn:CreateTexture(nil, "OVERLAY")
-    overlay:SetSize(53, 53)
-    overlay:SetTexture("Interface\\Minimap\\MiniMap-TrackingBorder")
-    overlay:SetPoint("TOPLEFT", 0, 0)
-    
-    local icon = btn:CreateTexture(nil, "BACKGROUND")
-    icon:SetSize(20, 20)
-    icon:SetTexture("Interface\\Icons\\Ability_Racial_Cannibalize")
-    icon:SetPoint("CENTER", 0, 1)
-    
-    local angle = 15
-    local radius = 80
-    
-    local function UpdatePosition()
-        local r = 80
-        local x = math.cos(math.rad(angle)) * r
-        local y = math.sin(math.rad(angle)) * r
-        btn:SetPoint("CENTER", Minimap, "CENTER", x, y)
-    end
-    
-    UpdatePosition()
-    
-    btn:SetMovable(true)
-    btn:RegisterForDrag("LeftButton")
-    btn:SetScript("OnDragStart", function(self) self:LockHighlight() self:SetScript("OnUpdate", function(self)
-        local mx, my = Minimap:GetCenter()
-        local cx, cy = GetCursorPosition()
-        local scale = Minimap:GetEffectiveScale()
-        cx, cy = cx / scale, cy / scale
-        angle = math.deg(math.atan2(cy - my, cx - mx))
-        UpdatePosition()
-    end) end)
-    
-    btn:SetScript("OnDragStop", function(self) self:UnlockHighlight() self:SetScript("OnUpdate", nil) end)
-    
-    btn:SetScript("OnClick", function(self, button)
-        if button == "RightButton" then
-            if S.Options then S.Options:Toggle() end
-        else
-            if S.Menu then S.Menu:Toggle() end
-        end
-    end)
-    
-    btn:SetScript("OnEnter", function(self)
-        GameTooltip:SetOwner(self, "ANCHOR_LEFT")
-        GameTooltip:SetText("Sequito", 1, 0, 1)
-        GameTooltip:AddLine("Click Izquierdo: Menu Esfera", 1, 1, 1)
-        GameTooltip:AddLine("Click Derecho: Opciones", 1, 1, 1)
-        GameTooltip:Show()
-    end)
-    btn:SetScript("OnLeave", function() GameTooltip:Hide() end)
-    
-    self.MinimapBtn = btn
-    
-    if db.ShowMinimap == false then
-        btn:Hide()
-    else
-        btn:Show() 
+    if S.MinimapButton and S.MinimapButton.CreateButton then
+        self.MinimapBtn = S.MinimapButton:CreateButton()
+        return self.MinimapBtn
     end
 end
 
 function S.GUI:UpdateMinimap()
-    if not self.MinimapBtn then return end
-    if S.db.profile.ShowMinimap then
-        self.MinimapBtn:Show()
-    else
-        self.MinimapBtn:Hide()
+    if S.MinimapButton and S.MinimapButton.UpdateVisibility then
+        S.MinimapButton:UpdateVisibility()
+    elseif self.MinimapBtn then
+        if S.db and S.db.profile and S.db.profile.ShowMinimap == false then
+            self.MinimapBtn:Hide()
+        else
+            self.MinimapBtn:Show()
+        end
     end
 end
 

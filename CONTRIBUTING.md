@@ -538,7 +538,7 @@ Si tienes preguntas sobre cómo contribuir:
 
 Al contribuir a Sequito, aceptas que tus contribuciones serán licenciadas bajo la misma licencia que el proyecto.
 
-Ver [LICENSE.md](LICENSE.md) para detalles.
+Ver [LICENSE](LICENSE) para detalles.
 
 ---
 

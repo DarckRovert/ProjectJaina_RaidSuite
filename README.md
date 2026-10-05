@@ -101,8 +101,17 @@ Para conocer todos los detalles de cada subsistema, consulta las guías dedicada
 * 🤝 [Gobernanza del Proyecto (GOVERNANCE.md)](GOVERNANCE.md) — Estructura de toma de decisiones y roles.
 * 🌐 [Registro de Ecosistema (ECOSYSTEM_REGISTRY.md)](ECOSYSTEM_REGISTRY.md) — Mapeo de prefijos, tablas y convivencia con otros sistemas de WoW Perú.
 * 🤖 [Reglas de Agentes IA (AGENTS.md)](AGENTS.md) — Directivas y restricciones de arquitectura para desarrollo asistido.
+* ⚖️ [Licencia MIT (LICENSE)](LICENSE) — Términos legales de distribución y uso.
+* 📝 [Historial de Versiones (CHANGELOG.md)](CHANGELOG.md) — Registro cronológico de cambios y optimizaciones.
+* 🤝 [Guía de Contribución (CONTRIBUTING.md)](CONTRIBUTING.md) — Normas de estilo y flujo de pull requests.
 
 ---
+
+---
+
+## 📄 Licencia
+
+Este proyecto está licenciado bajo los términos de la **Licencia MIT**. Consulta el archivo [LICENSE](LICENSE) para conocer el texto legal completo.
 
 ## 📺 Soporte y Comunidad
 

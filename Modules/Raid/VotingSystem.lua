@@ -11,6 +11,58 @@ local VS = S.VotingSystem
 local currentPoll = nil
 local votes = {}
 local myVote = nil
+local tickerFrame = CreateFrame("Frame")
+
+local function NormalizeName(name)
+    if not name then return "" end
+    return name:match("^[^-]+") or name
+end
+
+function VS:CanManagePoll(sender)
+    local target = sender or UnitName("player")
+    local cleanTarget = NormalizeName(target)
+    local cleanPlayer = NormalizeName(UnitName("player"))
+
+    -- 1. Creador de la encuesta activa
+    if currentPoll and currentPoll.creator and NormalizeName(currentPoll.creator) == cleanTarget then
+        return true
+    end
+
+    -- 2. Privilegios del jugador local
+    if cleanTarget == cleanPlayer then
+        if IsRaidLeader and IsRaidLeader() == 1 then return true end
+        if IsPartyLeader and IsPartyLeader() then return true end
+        if UnitIsPartyLeader and UnitIsPartyLeader("player") then return true end
+        if UnitIsRaidOfficer and UnitIsRaidOfficer("player") then return true end
+    end
+
+    -- 3. Verificación en Roster de Banda
+    if GetNumRaidMembers() > 0 then
+        for i = 1, GetNumRaidMembers() do
+            local name, rank = GetRaidRosterInfo(i)
+            if name and NormalizeName(name) == cleanTarget then
+                return rank >= 1 -- 2 = Líder de Banda, 1 = Oficial/Asistente
+            end
+        end
+    elseif GetNumPartyMembers() > 0 then
+        -- 4. Verificación en Grupo de 5
+        if cleanTarget == cleanPlayer and IsPartyLeader and IsPartyLeader() then
+            return true
+        end
+        for i = 1, GetNumPartyMembers() do
+            local unit = "party" .. i
+            local name = UnitName(unit)
+            if name and NormalizeName(name) == cleanTarget then
+                return UnitIsPartyLeader(unit) and true or false
+            end
+        end
+    else
+        -- 5. Fuera de grupo (pruebas locales)
+        if cleanTarget == cleanPlayer then return true end
+    end
+
+    return false
+end
 
 -- Helper para obtener configuración
 function VS:GetOption(key)
@@ -315,7 +367,7 @@ function VS:CreatePoll(question, ...)
         question = question,
         options = options,
         votes = {},
-        creator = UnitName("player"),
+        creator = NormalizeName(UnitName("player")),
     }
     votes = {}
     myVote = nil
@@ -366,9 +418,7 @@ function VS:ShowPoll(question, options)
     end
 
     -- Configurar permisos de cierre anticipado
-    local isLeader = UnitIsRaidOfficer("player")
-    local isCreator = (currentPoll and currentPoll.creator == UnitName("player"))
-    if isLeader or isCreator then
+    if self:CanManagePoll() then
         pView.closePollBtn:Show()
     else
         pView.closePollBtn:Hide()
@@ -377,26 +427,45 @@ function VS:ShowPoll(question, options)
     self.frame.title:SetText("Votación")
     self.frame:Show()
 
-    -- Ticker OnUpdate para cuenta regresiva (Ley II & IV)
+    -- Ticker OnUpdate para cuenta regresiva (Ley II & IV) desacoplado de la ventana visual
     local timeout = tonumber(self:GetOption("timeout")) or 60
-    self.frame.timeRemaining = timeout
-    self.frame.elapsedTimer = 0
+    self.timeRemaining = timeout
+    self.elapsedTimer = 0
+    self.gracePeriod = 0
 
-    self.frame:SetScript("OnUpdate", function(f, elapsed)
-        f.timeRemaining = (f.timeRemaining or 60) - elapsed
-        f.elapsedTimer = (f.elapsedTimer or 0) + elapsed
+    tickerFrame:SetScript("OnUpdate", function(_, elapsed)
+        self.timeRemaining = (self.timeRemaining or 60) - elapsed
+        self.elapsedTimer = (self.elapsedTimer or 0) + elapsed
 
-        if f.elapsedTimer >= 0.5 then
-            f.elapsedTimer = 0
-            local secs = math.max(0, math.ceil(f.timeRemaining))
-            pView.timerText:SetText(string.format("Tiempo restante: |cFFFFD100%ds|r", secs))
-            f.title:SetText(string.format("Votación (%ds)", secs))
+        if self.elapsedTimer >= 0.5 then
+            self.elapsedTimer = 0
+            local secs = math.max(0, math.ceil(self.timeRemaining))
+            if self.frame and self.frame:IsShown() then
+                pView.timerText:SetText(string.format("Tiempo restante: |cFFFFD100%ds|r", secs))
+                self.frame.title:SetText(string.format("Votación (%ds)", secs))
+            end
         end
 
-        if f.timeRemaining <= 0 then
-            f:SetScript("OnUpdate", nil)
-            if currentPoll then
+        if self.timeRemaining <= 0 then
+            if self:CanManagePoll() then
+                -- Host autoritativo: cierra y anuncia formalmente
                 VS:ClosePoll()
+            else
+                -- Participante pasivo: desactiva interacción y espera el paquete END
+                self.gracePeriod = (self.gracePeriod or 0) + elapsed
+                if self.frame and self.frame:IsShown() then
+                    pView.timerText:SetText("|cFFFF6600Votación finalizada (esperando cierre)...|r")
+                    for _, btn in ipairs(pView.options) do
+                        btn:Disable()
+                    end
+                end
+                -- Si tras 5 segundos el creador no cerró (desconexión/caída), limpia localmente sin spamear
+                if self.gracePeriod >= 5 then
+                    tickerFrame:SetScript("OnUpdate", nil)
+                    if self.frame then self.frame:Hide() end
+                    currentPoll = nil
+                    myVote = nil
+                end
             end
         end
     end)
@@ -415,13 +484,17 @@ function VS:Vote(optionIndex)
         end
     end
     opt = opt or 1
+    if not currentPoll.options or opt < 1 or opt > #currentPoll.options then
+        return
+    end
 
     local channel = self:GetGroupChannel()
     if channel then
         SendAddonMessage("SeqVote", "VOTE:" .. opt, channel)
     end
 
-    votes[UnitName("player")] = opt
+    local me = NormalizeName(UnitName("player"))
+    votes[me] = opt
     myVote = opt
     self:UpdateResults()
 end
@@ -467,7 +540,7 @@ function VS:OnAddonMessage(msg, sender)
         currentPoll = {
             question = question,
             options = options,
-            creator = sender,
+            creator = NormalizeName(sender),
         }
         votes = {}
         myVote = nil
@@ -486,18 +559,15 @@ function VS:OnAddonMessage(msg, sender)
             elseif str == "no" then opt = 2
             end
         end
-        if opt and currentPoll then
-            votes[sender] = opt
+        if opt and currentPoll and currentPoll.options and opt >= 1 and opt <= #currentPoll.options then
+            local voter = NormalizeName(sender)
+            votes[voter] = opt
             self:UpdateResults()
         end
 
     elseif cmd == "END" then
-        -- Verificación de seguridad de permisos: emisor con rango de líder/oficial, creador o local
-        local isLeader = UnitIsRaidOfficer(sender)
-        local isCreator = (currentPoll and currentPoll.creator and (sender == currentPoll.creator))
-        local isSelf = (sender == UnitName("player"))
-
-        if isLeader or isCreator or isSelf then
+        if self:CanManagePoll(sender) then
+            tickerFrame:SetScript("OnUpdate", nil)
             if self.frame then
                 self.frame:SetScript("OnUpdate", nil)
                 self.frame:Hide()
@@ -511,6 +581,17 @@ end
 function VS:ClosePoll()
     if not currentPoll then return end
 
+    if not self:CanManagePoll() then
+        local msg = "Solo el creador de la votación o un líder/oficial puede finalizarla."
+        if S.Print then
+            S:Print(msg)
+        else
+            DEFAULT_CHAT_FRAME:AddMessage("|cFFFF0000[Sequito]|r " .. msg)
+        end
+        return
+    end
+
+    tickerFrame:SetScript("OnUpdate", nil)
     if self.frame then
         self.frame:SetScript("OnUpdate", nil)
     end
@@ -541,8 +622,10 @@ function VS:AnnounceResults()
     local counts = {}
     local totalVotes = 0
     for _, opt in pairs(votes) do
-        counts[opt] = (counts[opt] or 0) + 1
-        totalVotes = totalVotes + 1
+        if opt >= 1 and opt <= #currentPoll.options then
+            counts[opt] = (counts[opt] or 0) + 1
+            totalVotes = totalVotes + 1
+        end
     end
 
     local msg = string.format("[Sequito] Encuesta: '%s' | Total: %d votos -> ", currentPoll.question, totalVotes)

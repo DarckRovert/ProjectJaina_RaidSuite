@@ -59,6 +59,8 @@ function S.Mounts:Initialize()
         self.eventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
         self.eventFrame:RegisterEvent("SPELLS_CHANGED")
         
+        local debounceTimer = 0
+        local debouncePending = false
         self.eventFrame:SetScript("OnEvent", function(frame, event, ...)
             if event == "PLAYER_REGEN_ENABLED" then
                 if S.Mounts.pendingMacroUpdate then
@@ -66,8 +68,18 @@ function S.Mounts:Initialize()
                     S.Mounts:Refresh()
                 end
             else
-                S.Mounts:ScanMounts()
-                S.Mounts:Refresh()
+                debouncePending = true
+                debounceTimer = 0.5
+            end
+        end)
+        self.eventFrame:SetScript("OnUpdate", function(frame, elapsed)
+            if debouncePending then
+                debounceTimer = debounceTimer - (elapsed or 0.1)
+                if debounceTimer <= 0 then
+                    debouncePending = false
+                    S.Mounts:ScanMounts()
+                    S.Mounts:Refresh()
+                end
             end
         end)
     end
@@ -256,10 +268,6 @@ function S.Mounts:Refresh()
         local mountMacro = self:GenerateMountMacro()
         local finalMacro = "/cleartarget [dead]\n/targetenemy [noexists][dead]\n/cast [combat] !Auto Attack\n" .. mountMacro
         S.Sphere:SetAttribute("macrotext1", finalMacro)
-    end
-    
-    if S.MacroGen and S.MacroGen.GenerateClassMacros then
-        S.MacroGen:GenerateClassMacros()
     end
 end
 

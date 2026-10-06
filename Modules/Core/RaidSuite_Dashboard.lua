@@ -380,7 +380,7 @@ function DB:CreateOverviewTab()
         { name = "Asistente Invocaciones", func = function() if S.Coven then S.Coven:Toggle() end end },
         { name = "Logros de Guild", func = function() if S.Achievements then S.Achievements:ToggleBrowser() end end },
         { name = "Galería de Tesoros", func = function() if S.LootGallery and S.LootGallery.frame then S.LootGallery.frame:Show(); S.LootGallery:UpdateGallery() end end },
-        { name = "Generar Macros", func = function() if S.MacroGen then S.MacroGen:GenerateClassMacros() end end },
+        { name = "Generar Macros", func = function() if S.MacroGen then S.MacroGen.forceSync = true; S.MacroGen:GenerateClassMacros(false) end end },
         { name = "Inspeccionar Objetivo", func = function() if S.AcademyInspector then S.AcademyInspector:InspectTarget() end end },
         { name = "Iniciar Votación", func = function() if S.VotingSystem then S.VotingSystem:OpenCreationDialog() end end },
         { name = "Verificar Listos", func = function() if S.ReadyChecker then S.ReadyChecker:StartCheck() end end },

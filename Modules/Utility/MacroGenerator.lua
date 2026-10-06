@@ -570,19 +570,31 @@ end
 -- 4. GENERATOR CORE (SMART SYNC)
 -- ===========================================================================
 
-function S.MacroGen:GenerateClassMacros()
+function S.MacroGen:GenerateClassMacros(silent)
     -- Guarda de combate: En WoW 3.3.5a, CreateMacro, EditMacro y DeleteMacro arrojan ADDON_ACTION_BLOCKED en combate
     if InCombatLockdown() then
         self.pendingGeneration = true
-        print("|cFFFFFF00Sequito:|r En combate: las macros se sincronizarán automáticamente al salir de combate.")
+        if not silent then
+            print("|cFFFFFF00Sequito:|r En combate: las macros se sincronizarán automáticamente al salir de combate.")
+        end
         return
     end
     self.pendingGeneration = false
 
+    -- Coalescing / Debounce de 2 segundos para evitar ráfagas de sincronización en eventos sucesivos
+    local now = GetTime()
+    if self.lastSyncTime and (now - self.lastSyncTime < 2.0) and not self.forceSync then
+        return
+    end
+    self.lastSyncTime = now
+    self.forceSync = nil
+
     local _, class = UnitClass("player")
     local spec = S.Universal and S.Universal:GetSpec() or 1
     
-    print("|cFFFF00FFSequito:|r Sincronizando macros inteligentes para " .. class .. "...")
+    if not silent then
+        print("|cFFFF00FFSequito:|r Sincronizando macros inteligentes para " .. class .. "...")
+    end
 
     -- 1. Generate Desired Macros List (Target State)
     local desired = self:GetClassMacros(class, spec)
@@ -608,7 +620,9 @@ function S.MacroGen:GenerateClassMacros()
         local absIndex = BASE_MACRO_INDEX + i
         local name = GetMacroInfo(absIndex)
         if name and name:sub(1,3) == "Seq" and not desiredNames[name] then
-            print("|cFF999999Sequito:|r Eliminando macro de personaje obsoleta: " .. name)
+            if not silent then
+                print("|cFF999999Sequito:|r Eliminando macro de personaje obsoleta: " .. name)
+            end
             DeleteMacro(absIndex)
         end
     end
@@ -617,7 +631,9 @@ function S.MacroGen:GenerateClassMacros()
     for i = 36, 1, -1 do
         local name = GetMacroInfo(i)
         if name and name:sub(1,3) == "Seq" and not desiredNames[name] then
-            print("|cFF999999Sequito:|r Limpiando macro global obsoleta: " .. name)
+            if not silent then
+                print("|cFF999999Sequito:|r Limpiando macro global obsoleta: " .. name)
+            end
             DeleteMacro(i)
         end
     end
@@ -646,18 +662,23 @@ function S.MacroGen:GenerateClassMacros()
             if numChar < 18 then
                 CreateMacro(mac.Name, 1, body, 1) -- 1 = per character
             else
-                print("|cFFFF0000Sequito Error:|r Espacio de macros específico lleno (" .. numChar .. "/18). No se pudo crear: " .. mac.Name)
+                if not silent then
+                    print("|cFFFF0000Sequito Error:|r Espacio de macros específico lleno (" .. numChar .. "/18). No se pudo crear: " .. mac.Name)
+                end
             end
         end
     end
     
-    print("|cFF00FF00Sequito:|r Macros sincronizadas y optimizadas.")
+    if not silent then
+        print("|cFF00FF00Sequito:|r Macros sincronizadas y optimizadas.")
+    end
 end
 
 -- Slash command aliases for direct access
 SLASH_SEQUITOMACROS1 = "/smacros"
 SlashCmdList["SEQUITOMACROS"] = function()
-    S.MacroGen:GenerateClassMacros()
+    S.MacroGen.forceSync = true
+    S.MacroGen:GenerateClassMacros(false)
 end
 
 local f = CreateFrame("Frame")
@@ -668,13 +689,13 @@ f:RegisterEvent("PLAYER_REGEN_ENABLED") -- Sincronización diferida al salir de 
 f:SetScript("OnEvent", function(self, event, ...)
     if event == "PLAYER_REGEN_ENABLED" then
         if S.MacroGen.pendingGeneration then
-            S.MacroGen:GenerateClassMacros()
+            S.MacroGen:GenerateClassMacros(true)
         end
     elseif S.db and S.db.profile and S.db.profile.AutoMacros then
        if event == "PLAYER_ENTERING_WORLD" then
-           C_Timer.After(5, function() S.MacroGen:GenerateClassMacros() end)
+           C_Timer.After(5, function() S.MacroGen:GenerateClassMacros(true) end)
        else
-           S.MacroGen:GenerateClassMacros()
+           S.MacroGen:GenerateClassMacros(true)
        end
     end
 end)

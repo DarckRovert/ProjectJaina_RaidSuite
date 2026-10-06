@@ -177,10 +177,9 @@ function S:OnEnable()
         print("|cFFFF0000Sequito Error|r: Modulo GUI no encontrado.")
     end
     
-    -- 3. Generar Macros (Forzado)
+    -- 3. Generar Macros (Silencioso en arranque)
     if S.MacroGen then
-        print("|cFF00FFFFSequito|r: Verificando macros...")
-        S.MacroGen:GenerateClassMacros()
+        S.MacroGen:GenerateClassMacros(true)
     end
     
     -- Inicializar otros modulos
@@ -293,7 +292,8 @@ SlashCmdList["SEQUITO"] = function(msg)
         S:PrintHelp()
     elseif cmd == "macros" then
         if S.MacroGen then
-            S.MacroGen:GenerateClassMacros()
+            S.MacroGen.forceSync = true
+            S.MacroGen:GenerateClassMacros(false)
         end
     elseif cmd == "raid" or cmd == "comp" then
         if S.RaidSync then

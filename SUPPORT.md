@@ -1,7 +1,7 @@
 # 💬 Guía de Soporte y Ayuda - Project Jaina RaidSuite
 
 **Versión:** 10.2.0 (Definitive Edition)  
-**Autor:** DarckRovert (Ingame: Elnazzareno) & Project Jaina Team  
+**Autor:** DarckRovert (Ingame: Elnazzareno) & Antigravity (Mythos 5)  
 **Servidor:** Project Jaina - Project Jaina (projectjaina.com) [3.3.5a Build 12340]
 
 ---
@@ -26,7 +26,7 @@ Antes de abrir una incidencia, te recomendamos consultar la documentación inclu
 
 ### 1. GitHub Issues (Recomendado para Errores y Bugs)
 Para reportar errores del addon, problemas con perfiles o comportamientos inesperados:
-- **Enlace:** [https://github.com/DarckRovert/Wanos_RaidSuite/issues](https://github.com/DarckRovert/Wanos_RaidSuite/issues)
+- **Enlace:** [https://github.com/DarckRovert/ProjectJaina_RaidSuite/issues](https://github.com/DarckRovert/ProjectJaina_RaidSuite/issues)
 - Utiliza las plantillas disponibles (`Reporte de Bug` o `Solicitud de Funcionalidad`).
 - **Importante:** Adjunta siempre la traza de error completa de Lua (proporcionada por herramientas como *BugSack* o *Swatter*).
 

@@ -1,8 +1,8 @@
 # 📚 Manual de Usuario - Project Jaina RaidSuite
 
 **Versión:** 10.2.0 (Definitive Edition)  
-**Autor:** DarckRovert (Ingame: Elnazzareno) & Project Jaina Team  
-**Servidor Destino:** [Project Jaina](https://projectjaina.com/) - Project Jaina  
+**Autor:** DarckRovert (Ingame: Elnazzareno) & Antigravity (Mythos 5)  
+**Servidor Destino:** [Project Jaina](https://darckrovert.github.io/ProjectJaina_Web/) - Project Jaina  
 **Cliente Compatible:** World of Warcraft 3.3.5a (Build 12340)
 
 ---

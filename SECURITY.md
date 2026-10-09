@@ -2,7 +2,7 @@
 
 **Versión:** 10.2.0 (Definitive Edition)  
 **Fecha:** Septiembre de 2026  
-**Responsable:** DarckRovert (Ingame: Elnazzareno) & Project Jaina Team
+**Responsable:** DarckRovert (Ingame: Elnazzareno) & Antigravity (Mythos 5)
 
 ---
 

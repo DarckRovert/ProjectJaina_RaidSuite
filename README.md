@@ -2,13 +2,13 @@
 
 **Versión:** 11.2.1 (Definitive Edition)  
 **Autor:** DarckRovert (Ingame: Elnazzareno) & Antigravity (Mythos 5)  
-**Servidor Destino:** [Project Jaina](https://projectjaina.com/)  
+**Servidor Destino:** [Project Jaina](https://darckrovert.github.io/ProjectJaina_Web/)  
 **Cliente Compatible:** World of Warcraft 3.3.5a (Build 12340)
 
 ---
 
-[![WoW Client](https://img.shields.io/badge/WoW%20Client-3.3.5a%20(Build%2012340)-blue.svg)](https://projectjaina.com/)
-[![Servidor](https://img.shields.io/badge/Servidor-Project%20Jaina-gold.svg)](https://projectjaina.com/)
+[![WoW Client](https://img.shields.io/badge/WoW%20Client-3.3.5a%20(Build%2012340)-blue.svg)](https://darckrovert.github.io/ProjectJaina_Web/)
+[![Servidor](https://img.shields.io/badge/Servidor-Project%20Jaina-gold.svg)](https://darckrovert.github.io/ProjectJaina_Web/)
 [![Version](https://img.shields.io/badge/version-11.2.1-blue.svg)](https://github.com/DarckRovert/ProjectJaina_RaidSuite/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
@@ -124,5 +124,5 @@ Este proyecto está licenciado bajo los términos de la **Licencia MIT**. Consul
 
 ---
 
-*Desarrollado por DarckRovert (Ingame: Elnazzareno) & Project Jaina Team.*  
+*Desarrollado por DarckRovert (Ingame: Elnazzareno) & Antigravity (Mythos 5).*  
 *World of Warcraft® es una marca registrada de Blizzard Entertainment, Inc.*

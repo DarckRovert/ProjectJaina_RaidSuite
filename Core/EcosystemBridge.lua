@@ -1,5 +1,5 @@
 --[[
-    Wanos_RaidSuite -- EcosystemBridge
+    ProjectJaina_RaidSuite -- EcosystemBridge
     Puente de Integracion con el Ecosistema Project Jaina
 
     Conecta RaidSuite con los otros addons:
@@ -8,7 +8,7 @@
 
     PROTOCOLO: BP_QUEST_PROGRESS:<questId>:<delta>  (< 255 bytes, WHISPER)
     COMPATIBILIDAD: WoW 3.3.5a (Build 12340) | Lua 5.1 puro
-    Copyright (c) 2026 DarckRovert (Ingame: Elnazzareno) & Project Jaina Team
+    Copyright (c) 2026 DarckRovert (Ingame: Elnazzareno) & Antigravity (Mythos 5)
 ]]--
 
 local addonName, S = ...
@@ -35,7 +35,7 @@ local dungeonDone    = false
 
 --- Devuelve el modo de juego activo: NORMAL | HARDCORE | IRONMAN
 function Bridge:GetPlayerGameMode()
-    local db = Wanos_GameModes_CharDB or ProjectJaina_GameModes_CharDB
+    local db = ProjectJaina_GameModes_CharDB or ProjectJaina_GameModes_CharDB
     if db and db.hasSelectedMode and db.selectedMode then
         local mode = db.selectedMode
         if mode == "HARDCORE" or mode == "IRONMAN" or mode == "NORMAL" then

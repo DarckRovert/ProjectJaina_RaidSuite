@@ -1,7 +1,7 @@
 # 🤝 Código de Conducta de la Comunidad - Project Jaina RaidSuite
 
 **Versión:** 10.2.0 (Definitive Edition)  
-**Líder del Proyecto:** DarckRovert (Ingame: Elnazzareno) & Project Jaina Team
+**Líder del Proyecto:** DarckRovert (Ingame: Elnazzareno) & Antigravity (Mythos 5)
 
 ---
 

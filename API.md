@@ -1,7 +1,7 @@
 # 🔌 API Documentation - Project Jaina RaidSuite
 
 **Version:** 10.2.0 (Definitive Edition)  
-**Author:** DarckRovert (Ingame: Elnazzareno) & Project Jaina Team
+**Author:** DarckRovert (Ingame: Elnazzareno) & Antigravity (Mythos 5)
 
 ---
 
@@ -1344,4 +1344,4 @@ Verifica rápidamente si todos están listos.
 
 ---
 
-**Created by DarckRovert (Ingame: Elnazzareno) & Project Jaina Team**
+**Created by DarckRovert (Ingame: Elnazzareno) & Antigravity (Mythos 5)**

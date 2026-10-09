@@ -1,4 +1,4 @@
-# 📜 Aviso Legal y Atribución — Wanos_RaidSuite
+# 📜 Aviso Legal y Atribución — ProjectJaina_RaidSuite
 
 Este repositorio forma parte del ecosistema oficial de combate y banda de **Project Jaina - Project Jaina**.
 Contiene la edición definitiva multiclase del asistente de raid y combate para World of Warcraft 3.3.5a (Build 12340).
@@ -8,7 +8,7 @@ Contiene la edición definitiva multiclase del asistente de raid y combate para 
 ## 1. Genealogía y Reconocimiento a Obras Precursoras
 * **Inspiración Original:** El legendario addon **Necrosis LDC** (creado originalmente por Lomig y TiLt para brujos en WoW clásico/TBC).
 * **Evolución Jaina:** Expansión conceptual que llevó la mecánica esférica y botones de acción contextual a las 10 clases del juego.
-* **Consolidación y Edición Definitiva Project Jaina:** DarckRovert & Project Jaina Team. Re-ingeniería completa de menús radiales, contadores de componentes, invocaciones y compatibilidad con WotLK 3.3.5a.
+* **Consolidación y Edición Definitiva Project Jaina:** DarckRovert & Antigravity (Mythos 5). Re-ingeniería completa de menús radiales, contadores de componentes, invocaciones y compatibilidad con WotLK 3.3.5a.
 
 ---
 

@@ -1,7 +1,7 @@
 --[[
     SEQUITO - JainaHumor (Frases Cómicas y Diálogos de Incursión)
     Versión: 10.2.0 (Definitive Edition)
-    Autor: DarckRovert (Ingame: Elnazzareno) & Project Jaina Team
+    Autor: DarckRovert (Ingame: Elnazzareno) & Antigravity (Mythos 5)
     Servidor: Project Jaina - Project Jaina (projectjaina.com)
     
     Proporciona frases cómicas, ocurrentes y temáticas de hermandad

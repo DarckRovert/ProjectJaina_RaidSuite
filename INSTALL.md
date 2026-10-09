@@ -1,7 +1,7 @@
 # 📦 Guía de Instalación - Project Jaina RaidSuite
 
 **Versión:** 10.2.0 (Definitive Edition)  
-**Autor:** DarckRovert (Ingame: Elnazzareno) & Project Jaina Team
+**Autor:** DarckRovert (Ingame: Elnazzareno) & Antigravity (Mythos 5)
 
 ---
 
@@ -23,7 +23,7 @@
 ### Paso 2: Extraer Archivos
 
 1. Extrae el archivo comprimido
-2. Deberías tener una carpeta llamada `Wanos_RaidSuite`
+2. Deberías tener una carpeta llamada `ProjectJaina_RaidSuite`
 
 ### Paso 3: Copiar a la Carpeta de AddOns
 
@@ -39,8 +39,8 @@ World of Warcraft\Interface\AddOns\ProjectJaina_RaidSuite\
 
 ### Paso 4: Verificar Estructura
 
-Dentro de `Wanos_RaidSuite/`, deberías ver:
-- `Wanos_RaidSuite.toc`
+Dentro de `ProjectJaina_RaidSuite/`, deberías ver:
+- `ProjectJaina_RaidSuite.toc`
 - `SEQUITO.lua`
 - `Core/` (Arquitectura base, eventos y componentes del cónclave)
 - `Modules/` (Contiene `Core`, `Raid`, `PvP`, `Utility`)
@@ -50,8 +50,8 @@ Dentro de `Wanos_RaidSuite/`, deberías ver:
 Asegúrate de que la estructura sea:
 ```
 AddOns/
-└── Wanos_RaidSuite/
-    ├── Wanos_RaidSuite.toc
+└── ProjectJaina_RaidSuite/
+    ├── ProjectJaina_RaidSuite.toc
     ├── Jaina.lua
     ├── Embeds.xml
     ├── Core/
@@ -143,8 +143,8 @@ Muestra información en tiempo real de tu raid.
 **Problema:** Jaina no aparece en el menú de AddOns.
 
 **Solución:**
-1. Verifica que la carpeta se llame exactamente `Wanos_RaidSuite`
-2. Verifica que `Wanos_RaidSuite.toc` esté en la raíz de la carpeta
+1. Verifica que la carpeta se llame exactamente `ProjectJaina_RaidSuite`
+2. Verifica que `ProjectJaina_RaidSuite.toc` esté en la raíz de la carpeta
 3. Asegúrate de estar en la carpeta correcta de AddOns
 4. Reinicia completamente WoW
 
@@ -257,4 +257,4 @@ Si sigues teniendo problemas:
 
 ---
 
-**Creado por DarckRovert (Ingame: Elnazzareno) & Project Jaina Team**
+**Creado por DarckRovert (Ingame: Elnazzareno) & Antigravity (Mythos 5)**

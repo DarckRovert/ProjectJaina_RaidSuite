@@ -1,7 +1,7 @@
 # 💬 Lista Completa de Comandos - Project Jaina RaidSuite
 
 **Versión:** 10.2.0 (Definitive Edition)  
-**Autor:** DarckRovert (Ingame: Elnazzareno) & Project Jaina Team
+**Autor:** DarckRovert (Ingame: Elnazzareno) & Antigravity (Mythos 5)
 
 ---
 
@@ -618,4 +618,4 @@ Total muertes: 8 | Interrupts: 5
 
 ---
 
-**Creado por DarckRovert (Ingame: Elnazzareno) & Project Jaina Team**
+**Creado por DarckRovert (Ingame: Elnazzareno) & Antigravity (Mythos 5)**

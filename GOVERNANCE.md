@@ -2,8 +2,8 @@
 
 **Versión del Documento:** 1.0.0  
 **Fecha de Entrada en Vigor:** 27 de Septiembre de 2026  
-**Líder del Proyecto / Autor:** DarckRovert (Ingame: Elnazzareno) & Project Jaina Team  
-**Servidor Destino:** [Project Jaina](https://projectjaina.com/) - Project Jaina  
+**Líder del Proyecto / Autor:** DarckRovert (Ingame: Elnazzareno) & Antigravity (Mythos 5)  
+**Servidor Destino:** [Project Jaina](https://darckrovert.github.io/ProjectJaina_Web/) - Project Jaina  
 **Entorno de Ejecución:** World of Warcraft 3.3.5a (Build 12340)
 
 ---
@@ -50,7 +50,7 @@ El proyecto Jaina se rige bajo un modelo de **Liderazgo Técnico Centralizado (B
 
 ### 2.2. Core Maintainers (Mantenedores del Core)
 - **Responsabilidades:**
-  - Mantenimiento del ciclo de vida del addon (`Jaina.lua`, `Wanos_RaidSuite.toc`).
+  - Mantenimiento del ciclo de vida del addon (`Jaina.lua`, `ProjectJaina_RaidSuite.toc`).
   - Supervisión de los motores centrales: `CLEUDispatcher`, `AlertHub`, `ProfileManager`, `Theme` y `GUI`.
   - Verificación de ausencia de APIs incompatibles (e.g., funciones de MoP/Retail en cliente 3.3.5a).
   - Revisión y optimización de consumo de memoria y CPU en raids.

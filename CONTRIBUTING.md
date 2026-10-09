@@ -1,7 +1,7 @@
 # 🤝 Guía de Contribución - Project Jaina RaidSuite
 
 **Versión:** 10.2.0 (Definitive Edition)  
-**Autor:** DarckRovert (Ingame: Elnazzareno) & Project Jaina Team
+**Autor:** DarckRovert (Ingame: Elnazzareno) & Antigravity (Mythos 5)
 
 ---
 
@@ -169,13 +169,13 @@ Incluye:
 #### 2. Clonar el Proyecto
 ```bash
 cd "Interface/AddOns"
-git clone [URL_DEL_REPO] Wanos_RaidSuite
+git clone [URL_DEL_REPO] ProjectJaina_RaidSuite
 ```
 
 #### 3. Estructura del Proyecto
 ```
-Wanos_RaidSuite/
-├── Wanos_RaidSuite.toc  # Tabla de contenidos
+ProjectJaina_RaidSuite/
+├── ProjectJaina_RaidSuite.toc  # Tabla de contenidos
 ├── Jaina.lua          # Core principal
 ├── Embeds.xml           # Orden de carga
 ├── Core/                # Módulos core
@@ -548,4 +548,4 @@ Ver [LICENSE](LICENSE) para detalles.
 
 ---
 
-**Creado por DarckRovert (Ingame: Elnazzareno) & Project Jaina Team**
+**Creado por DarckRovert (Ingame: Elnazzareno) & Antigravity (Mythos 5)**

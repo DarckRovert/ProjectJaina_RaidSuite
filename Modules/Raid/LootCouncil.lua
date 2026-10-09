@@ -1,7 +1,7 @@
 --[[
     SEQUITO - LootCouncil Module (Definitive Edition)
     Versión: 10.2.0 (Definitive Edition)
-    Autor: DarckRovert (Ingame: Elnazzareno) & Project Jaina Team
+    Autor: DarckRovert (Ingame: Elnazzareno) & Antigravity (Mythos 5)
     Servidor: Project Jaina - Project Jaina (projectjaina.com)
     
     Sistema integral de Concilio de Botín para World of Warcraft 3.3.5a:

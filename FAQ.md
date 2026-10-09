@@ -1,8 +1,8 @@
 # ❓ Preguntas Frecuentes (FAQ) - Project Jaina RaidSuite
 
 **Versión:** 10.2.0 (Definitive Edition)  
-**Autor:** DarckRovert (Ingame: Elnazzareno) & Project Jaina Team  
-**Servidor Destino:** [Project Jaina](https://projectjaina.com/) - Project Jaina  
+**Autor:** DarckRovert (Ingame: Elnazzareno) & Antigravity (Mythos 5)  
+**Servidor Destino:** [Project Jaina](https://darckrovert.github.io/ProjectJaina_Web/) - Project Jaina  
 **Cliente:** World of Warcraft 3.3.5a (Build 12340)
 
 ---
@@ -42,18 +42,18 @@ Jaina no es un simple medidor de DPS ni un botón aislado. Es una **suite modula
 - Muestra sugerencias visuales de prioridades y alertas de buffs/procs que tú decides cuándo activar.
 
 ### ¿Quién creó el addon y a qué servidor pertenece?
-El proyecto fue creado y desarrollado por **DarckRovert (en el juego: Elnazzareno)** y el equipo técnico de **Project Jaina** para el servidor oficial [Project Jaina](https://projectjaina.com/) (Project Jaina).
+El proyecto fue creado y desarrollado por **DarckRovert (en el juego: Elnazzareno)** y el equipo técnico de **Project Jaina** para el servidor oficial [Project Jaina](https://darckrovert.github.io/ProjectJaina_Web/) (Project Jaina).
 
 ---
 
 ## 2. Instalación y Configuración Inicial
 
 ### ¿Dónde debo colocar la carpeta del addon?
-La carpeta debe llamarse exactamente `Wanos_RaidSuite` y residir en la ruta de addons de tu cliente:
+La carpeta debe llamarse exactamente `ProjectJaina_RaidSuite` y residir en la ruta de addons de tu cliente:
 ```
 Interface\AddOns\ProjectJaina_RaidSuite\
 ```
-Asegúrate de que el archivo Wanos_RaidSuite.toc esté directamente dentro de Interface\AddOns\ProjectJaina_RaidSuite\ y no dentro de subcarpetas anidadas como Wanos_RaidSuite\Wanos_RaidSuite\.
+Asegúrate de que el archivo ProjectJaina_RaidSuite.toc esté directamente dentro de Interface\AddOns\ProjectJaina_RaidSuite\ y no dentro de subcarpetas anidadas como ProjectJaina_RaidSuite\ProjectJaina_RaidSuite\.
 
 ### ¿El addon funciona de inmediato al entrar o requiere configuración compleja?
 Funciona **de inmediato**. Al iniciar sesión, Jaina:
@@ -255,7 +255,7 @@ Si tienes tu panel de macros lleno con 18 macros previas:
 Si encuentras un comportamiento anómalo o deseas sugerir una funcionalidad:
 - Contacta a **DarckRovert** (Ingame: **Elnazzareno**) en Project Jaina.
 - Abre un issue o pull request en el repositorio oficial de GitHub:  
-  [https://github.com/DarckRovert/Wanos_RaidSuite](https://github.com/DarckRovert/Wanos_RaidSuite)
+  [https://github.com/DarckRovert/ProjectJaina_RaidSuite](https://github.com/DarckRovert/ProjectJaina_RaidSuite)
 
 ---
 

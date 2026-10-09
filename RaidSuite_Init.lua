@@ -12,7 +12,7 @@
     garantizar compatibilidad con todos los modulos internos y los
     SavedVariables existentes de los jugadores (JainaDB, etc.).
     
-    Copyright (c) 2026 DarckRovert (Ingame: Elnazzareno) & Project Jaina Team
+    Copyright (c) 2026 DarckRovert (Ingame: Elnazzareno) & Antigravity (Mythos 5)
 ]]--
 
 -- Namespace principal del addon

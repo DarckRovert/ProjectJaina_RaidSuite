@@ -1,7 +1,7 @@
 # 📜 Guía de Macros - Project Jaina RaidSuite
 
 **Versión:** 10.2.0 (Definitive Edition)  
-**Autor:** DarckRovert (Ingame: Elnazzareno) & Project Jaina Team  
+**Autor:** DarckRovert (Ingame: Elnazzareno) & Antigravity (Mythos 5)  
 **Cliente WoW:** 3.3.5a (Build 12340)
 
 ---

@@ -1,9 +1,9 @@
-# 🏛️ Modelo de Gobernanza del Proyecto - WoW Perú RaidSuite
+# 🏛️ Modelo de Gobernanza del Proyecto - Project Jaina RaidSuite
 
 **Versión del Documento:** 1.0.0  
 **Fecha de Entrada en Vigor:** 27 de Septiembre de 2026  
-**Líder del Proyecto / Autor:** DarckRovert (Ingame: Elnazzareno) & WoW Perú Team  
-**Servidor Destino:** [WoW Perú](https://wow-peru.lat/) - Reino Andino  
+**Líder del Proyecto / Autor:** DarckRovert (Ingame: Elnazzareno) & Project Jaina Team  
+**Servidor Destino:** [Project Jaina](https://worldofwanos.com/) - Project Jaina  
 **Entorno de Ejecución:** World of Warcraft 3.3.5a (Build 12340)
 
 ---
@@ -50,7 +50,7 @@ El proyecto Sequito se rige bajo un modelo de **Liderazgo Técnico Centralizado 
 
 ### 2.2. Core Maintainers (Mantenedores del Core)
 - **Responsabilidades:**
-  - Mantenimiento del ciclo de vida del addon (`Sequito.lua`, `WoWPeru_RaidSuite.toc`).
+  - Mantenimiento del ciclo de vida del addon (`Sequito.lua`, `Wanos_RaidSuite.toc`).
   - Supervisión de los motores centrales: `CLEUDispatcher`, `AlertHub`, `ProfileManager`, `Theme` y `GUI`.
   - Verificación de ausencia de APIs incompatibles (e.g., funciones de MoP/Retail en cliente 3.3.5a).
   - Revisión y optimización de consumo de memoria y CPU en raids.

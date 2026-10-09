@@ -1,8 +1,8 @@
 --[[
-    WoWPeru_RaidSuite — Suite Definitiva de Combate y Raids
+    ProjectJaina_RaidSuite — Suite Definitiva de Combate y Raids
     Universal Sphere & Raid Management UI for WotLK 3.3.5a
     
-    Addon universal para TODAS las clases del Reino Andino.
+    Addon universal para TODAS las clases del Project Jaina.
     - Reconocimiento de clase/raza
     - Generacion de macros personalizadas
     - Sincronizacion de raid (hasta 40 jugadores)
@@ -12,7 +12,7 @@
     garantizar compatibilidad con todos los modulos internos y los
     SavedVariables existentes de los jugadores (SequitoDB, etc.).
     
-    Copyright (c) 2026 DarckRovert (Ingame: Elnazzareno) & WoW Perú Team
+    Copyright (c) 2026 DarckRovert (Ingame: Elnazzareno) & Project Jaina Team
 ]]--
 
 -- Namespace principal del addon
@@ -216,7 +216,7 @@ function S:OnEnable()
         -- Smart Coach UI & Automation
         "RaidPanel", "RaidAssistUI", "SequitoPlates", "CombatTracker",
         "AutoSync", "ContextEngine", "SmartDefaults",
-        -- Ecosistema WoW Peru (debe iniciar tras ContextEngine)
+        -- Ecosistema Project Jaina (debe iniciar tras ContextEngine)
         "EcosystemBridge"
     }
 

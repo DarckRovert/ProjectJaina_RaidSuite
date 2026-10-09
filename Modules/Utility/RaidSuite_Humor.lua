@@ -1,8 +1,8 @@
 --[[
     SEQUITO - SequitoHumor (Frases Cómicas y Diálogos de Incursión)
     Versión: 10.2.0 (Definitive Edition)
-    Autor: DarckRovert (Ingame: Elnazzareno) & WoW Perú Team
-    Servidor: WoW Perú - Reino Andino (wow-peru.lat)
+    Autor: DarckRovert (Ingame: Elnazzareno) & Project Jaina Team
+    Servidor: Project Jaina - Project Jaina (worldofwanos.com)
     
     Proporciona frases cómicas, ocurrentes y temáticas de hermandad
     cuando el jugador realiza actividades clave en mazmorras y bandas

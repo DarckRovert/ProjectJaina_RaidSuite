@@ -1,8 +1,8 @@
-# 💬 Guía de Soporte y Ayuda - WoW Perú RaidSuite
+# 💬 Guía de Soporte y Ayuda - Project Jaina RaidSuite
 
 **Versión:** 10.2.0 (Definitive Edition)  
-**Autor:** DarckRovert (Ingame: Elnazzareno) & WoW Perú Team  
-**Servidor:** WoW Perú - Reino Andino (wow-peru.lat) [3.3.5a Build 12340]
+**Autor:** DarckRovert (Ingame: Elnazzareno) & Project Jaina Team  
+**Servidor:** Project Jaina - Project Jaina (worldofwanos.com) [3.3.5a Build 12340]
 
 ---
 
@@ -26,12 +26,12 @@ Antes de abrir una incidencia, te recomendamos consultar la documentación inclu
 
 ### 1. GitHub Issues (Recomendado para Errores y Bugs)
 Para reportar errores del addon, problemas con perfiles o comportamientos inesperados:
-- **Enlace:** [https://github.com/DarckRovert/WoWPeru_RaidSuite/issues](https://github.com/DarckRovert/WoWPeru_RaidSuite/issues)
+- **Enlace:** [https://github.com/DarckRovert/Wanos_RaidSuite/issues](https://github.com/DarckRovert/Wanos_RaidSuite/issues)
 - Utiliza las plantillas disponibles (`Reporte de Bug` o `Solicitud de Funcionalidad`).
 - **Importante:** Adjunta siempre la traza de error completa de Lua (proporcionada por herramientas como *BugSack* o *Swatter*).
 
-### 2. Soporte Ingame (WoW Perú)
-Si juegas en el servidor WoW Perú (Reino Andino) y necesitas orientación directa:
+### 2. Soporte Ingame (Project Jaina)
+Si juegas en el servidor Project Jaina (Project Jaina) y necesitas orientación directa:
 - **Personaje:** `Elnazzareno`
 - **Líder del Proyecto:** DarckRovert
 

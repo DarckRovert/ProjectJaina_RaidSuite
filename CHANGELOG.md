@@ -1,7 +1,7 @@
-# WoW Perú RaidSuite Changelog
+# Project Jaina RaidSuite Changelog
 
 **Versión Actual:** 11.3.0 (Ecosystem Synchronization & Protocol Hardening)
-**Autor:** DarckRovert (Ingame: Elnazzareno) & WoW Perú Team
+**Autor:** DarckRovert (Ingame: Elnazzareno) & Project Jaina Team
 
 ---
 
@@ -106,14 +106,14 @@ Iconos en tablas `RegisterModule` tenían `\\\\` (4 barras) en lugar de `\\` (2 
 **Release Date:** 2026-09-28
 
 ### 🌟 Renaming & Branding
-- Proyecto renombrado de **SEQUITO** a **WoWPeru_RaidSuite** (branding oficial).
+- Proyecto renombrado de **SEQUITO** a **Wanos_RaidSuite** (branding oficial).
 - 17 archivos Lua internos renombrados de `Sequito*.lua` a `RaidSuite_*.lua`.
 - Tabla global `_G.Sequito` retenida intencionalmente para compatibilidad con 40+ módulos y `SavedVariables` existentes.
 - Nuevos slash commands: `/raidsuite`, `/wprs` (además de los originales `/sequito`, `/seq`).
 
 ### 🌉 EcosystemBridge (Core/EcosystemBridge.lua)
-- **Puente BattlePass:** Detecta kills de jefes y mazmorras completadas, reporta via `BP_QUEST_PROGRESS` al servidor Eluna de `WoWPeru_BattlePass` (Season 2, IDs 201-203).
-- **Puente GameModes:** Lee `WoWPeru_GameModes_CharDB.selectedMode` para adaptar comportamiento:
+- **Puente BattlePass:** Detecta kills de jefes y mazmorras completadas, reporta via `BP_QUEST_PROGRESS` al servidor Eluna de `Jaina_BattlePass` (Season 2, IDs 201-203).
+- **Puente GameModes:** Lee `Wanos_GameModes_CharDB.selectedMode` para adaptar comportamiento:
   - Modo Hardcore/Ironman: `DefensiveAlerts.aggressionLevel = 2`, `WipeAnalyzer` auto-record activado.
   - Badge de modo en mensajes del sistema (`|cFFFF3333[HARDCORE]|r`).
 - **API pública:** `Bridge:NotifyBossKill(name)`, `Bridge:NotifyDungeonComplete()` para módulos internos.

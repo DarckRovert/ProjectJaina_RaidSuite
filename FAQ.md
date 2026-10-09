@@ -1,8 +1,8 @@
-# ❓ Preguntas Frecuentes (FAQ) - WoW Perú RaidSuite
+# ❓ Preguntas Frecuentes (FAQ) - Project Jaina RaidSuite
 
 **Versión:** 10.2.0 (Definitive Edition)  
-**Autor:** DarckRovert (Ingame: Elnazzareno) & WoW Perú Team  
-**Servidor Destino:** [WoW Perú](https://wow-peru.lat/) - Reino Andino  
+**Autor:** DarckRovert (Ingame: Elnazzareno) & Project Jaina Team  
+**Servidor Destino:** [Project Jaina](https://worldofwanos.com/) - Project Jaina  
 **Cliente:** World of Warcraft 3.3.5a (Build 12340)
 
 ---
@@ -42,18 +42,18 @@ Sequito no es un simple medidor de DPS ni un botón aislado. Es una **suite modu
 - Muestra sugerencias visuales de prioridades y alertas de buffs/procs que tú decides cuándo activar.
 
 ### ¿Quién creó el addon y a qué servidor pertenece?
-El proyecto fue creado y desarrollado por **DarckRovert (en el juego: Elnazzareno)** y el equipo técnico de **WoW Perú** para el servidor oficial [WoW Perú](https://wow-peru.lat/) (Reino Andino).
+El proyecto fue creado y desarrollado por **DarckRovert (en el juego: Elnazzareno)** y el equipo técnico de **Project Jaina** para el servidor oficial [Project Jaina](https://worldofwanos.com/) (Project Jaina).
 
 ---
 
 ## 2. Instalación y Configuración Inicial
 
 ### ¿Dónde debo colocar la carpeta del addon?
-La carpeta debe llamarse exactamente `WoWPeru_RaidSuite` y residir en la ruta de addons de tu cliente:
+La carpeta debe llamarse exactamente `Wanos_RaidSuite` y residir en la ruta de addons de tu cliente:
 ```
-Interface\AddOns\WoWPeru_RaidSuite\
+Interface\AddOns\Jaina_RaidSuite\
 ```
-Asegúrate de que el archivo WoWPeru_RaidSuite.toc esté directamente dentro de Interface\AddOns\WoWPeru_RaidSuite\ y no dentro de subcarpetas anidadas como WoWPeru_RaidSuite\WoWPeru_RaidSuite\.
+Asegúrate de que el archivo Wanos_RaidSuite.toc esté directamente dentro de Interface\AddOns\Jaina_RaidSuite\ y no dentro de subcarpetas anidadas como Wanos_RaidSuite\Wanos_RaidSuite\.
 
 ### ¿El addon funciona de inmediato al entrar o requiere configuración compleja?
 Funciona **de inmediato**. Al iniciar sesión, Sequito:
@@ -231,7 +231,7 @@ Cuando la banda es derrotada, Sequito registra una autopsia precisa del enfrenta
 - Complementa la labor de DBM aportando analítica de hermandad y macros que DBM no provee.
 
 ### ¿En qué servidores y clientes de WoW funciona Sequito?
-Está optimizado principalmente para **WoW Perú (Reino Andino)**, y es 100% compatible con cualquier servidor privado basado en el cliente **World of Warcraft 3.3.5a (Build 12340)**, incluyendo Warmane, Dalaran-WoW, ChromieCraft, etc.
+Está optimizado principalmente para **Project Jaina (Project Jaina)**, y es 100% compatible con cualquier servidor privado basado en el cliente **World of Warcraft 3.3.5a (Build 12340)**, incluyendo Warmane, Dalaran-WoW, ChromieCraft, etc.
 
 ---
 
@@ -253,10 +253,10 @@ Si tienes tu panel de macros lleno con 18 macros previas:
 
 ### ¿Dónde puedo reportar un error o proponer una idea?
 Si encuentras un comportamiento anómalo o deseas sugerir una funcionalidad:
-- Contacta a **DarckRovert** (Ingame: **Elnazzareno**) en WoW Perú.
+- Contacta a **DarckRovert** (Ingame: **Elnazzareno**) en Project Jaina.
 - Abre un issue o pull request en el repositorio oficial de GitHub:  
-  [https://github.com/DarckRovert/WoWPeru_RaidSuite](https://github.com/DarckRovert/WoWPeru_RaidSuite)
+  [https://github.com/DarckRovert/Wanos_RaidSuite](https://github.com/DarckRovert/Wanos_RaidSuite)
 
 ---
 
-*¡Por WoW Perú - Reino Andino!*
+*¡Por Project Jaina - Project Jaina!*

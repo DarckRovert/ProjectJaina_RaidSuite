@@ -1,7 +1,7 @@
-# 📦 Módulos Extra - WoW Perú RaidSuite
+# 📦 Módulos Extra - Project Jaina RaidSuite
 
 **Versión:** 10.2.0 (Definitive Edition)  
-**Autor:** DarckRovert (Ingame: Elnazzareno) & WoW Perú Team  
+**Autor:** DarckRovert (Ingame: Elnazzareno) & Project Jaina Team  
 **Documentación de módulos adicionales y opcionales**
 
 ---

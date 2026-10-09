@@ -1,7 +1,7 @@
-# 🤝 Guía de Contribución - WoW Perú RaidSuite
+# 🤝 Guía de Contribución - Project Jaina RaidSuite
 
 **Versión:** 10.2.0 (Definitive Edition)  
-**Autor:** DarckRovert (Ingame: Elnazzareno) & WoW Perú Team
+**Autor:** DarckRovert (Ingame: Elnazzareno) & Project Jaina Team
 
 ---
 
@@ -98,7 +98,7 @@ Incluye la siguiente información:
 ```
 - Versión de Sequito: 2.2.0
 - Versión de WoW: 3.3.5a
-- Servidor: WoW Perú / Warmane / etc.
+- Servidor: Project Jaina / Warmane / etc.
 - Otros addons instalados: DBM, Recount, etc.
 ```
 
@@ -169,13 +169,13 @@ Incluye:
 #### 2. Clonar el Proyecto
 ```bash
 cd "Interface/AddOns"
-git clone [URL_DEL_REPO] WoWPeru_RaidSuite
+git clone [URL_DEL_REPO] Wanos_RaidSuite
 ```
 
 #### 3. Estructura del Proyecto
 ```
-WoWPeru_RaidSuite/
-├── WoWPeru_RaidSuite.toc  # Tabla de contenidos
+Wanos_RaidSuite/
+├── Wanos_RaidSuite.toc  # Tabla de contenidos
 ├── Sequito.lua          # Core principal
 ├── Embeds.xml           # Orden de carga
 ├── Core/                # Módulos core
@@ -548,4 +548,4 @@ Ver [LICENSE](LICENSE) para detalles.
 
 ---
 
-**Creado por DarckRovert (Ingame: Elnazzareno) & WoW Perú Team**
+**Creado por DarckRovert (Ingame: Elnazzareno) & Project Jaina Team**

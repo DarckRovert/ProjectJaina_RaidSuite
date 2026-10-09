@@ -647,7 +647,7 @@ function Options:BuildUI(optionsFrame)
     
     optionsFrame.title = optionsFrame.border:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     optionsFrame.title:SetPoint("TOP", optionsFrame.titleHeader, "TOP", 0, -14)
-    optionsFrame.title:SetText("|cffff0000El Sequito|r |cffffffffdel|r |cffff0000Terror|r")
+    optionsFrame.title:SetText("|cffff0000Project Jaina|r |cffffffffdel|r |cffff0000Terror|r")
     
     -- Versión (movida abajo)
     optionsFrame.version = optionsFrame:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")

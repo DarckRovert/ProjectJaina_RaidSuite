@@ -1,7 +1,7 @@
-# 📜 Guía de Macros - WoW Perú RaidSuite
+# 📜 Guía de Macros - Project Jaina RaidSuite
 
 **Versión:** 10.2.0 (Definitive Edition)  
-**Autor:** DarckRovert (Ingame: Elnazzareno) & WoW Perú Team  
+**Autor:** DarckRovert (Ingame: Elnazzareno) & Project Jaina Team  
 **Cliente WoW:** 3.3.5a (Build 12340)
 
 ---

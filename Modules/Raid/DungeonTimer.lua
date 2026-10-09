@@ -262,7 +262,7 @@ function DT:CalculateResetTime()
         year = dateT.year,
         month = dateT.month,
         day = dateT.day,
-        hour = 4, -- 04:00 AM hora oficial de reinicio del Reino Andino
+        hour = 4, -- 04:00 AM hora oficial de reinicio del Project Jaina
         min = 0,
         sec = 0
     })

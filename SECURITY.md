@@ -1,8 +1,8 @@
-# 🛡️ Política de Seguridad - WoW Perú RaidSuite
+# 🛡️ Política de Seguridad - Project Jaina RaidSuite
 
 **Versión:** 10.2.0 (Definitive Edition)  
 **Fecha:** Septiembre de 2026  
-**Responsable:** DarckRovert (Ingame: Elnazzareno) & WoW Perú Team
+**Responsable:** DarckRovert (Ingame: Elnazzareno) & Project Jaina Team
 
 ---
 

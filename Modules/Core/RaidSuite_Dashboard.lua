@@ -90,12 +90,12 @@ function DB:CreateDashboardFrame()
     local logo = header:CreateTexture(nil, "ARTWORK")
     logo:SetSize(72, 36)
     logo:SetPoint("LEFT", header, "LEFT", 4, 0)
-    logo:SetTexture("Interface\\AddOns\\WoWPeru_RaidSuite\\Media\\wowperu_logo.tga")
+    logo:SetTexture("Interface\\AddOns\\Jaina_RaidSuite\\Media\\jaina_logo.tga")
     f.logo = logo
 
     local title = header:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     title:SetPoint("LEFT", logo, "RIGHT", 10, 8)
-    title:SetText("|cFFFFD700WoW Perú|r |cFFFFFFFFRaidSuite|r |cFF888888v" .. (S.Version or "11.2.1") .. "|r")
+    title:SetText("|cFFFFD700Project Jaina|r |cFFFFFFFFRaidSuite|r |cFF888888v" .. (S.Version or "11.2.1") .. "|r")
     f.title = title
 
     local subtitle = header:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")

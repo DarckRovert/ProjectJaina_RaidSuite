@@ -1,7 +1,7 @@
 ## Interface: 30300
-## Title: |cFFD4AF37WoW Perú|r - RaidSuite
-## Notes: Suite integral y avanzada de combate, optimización de bandas y utilidades tácticas para el Reino Andino.
-## Author: DarckRovert (Ingame: Elnazzareno) & WoW Perú Team
+## Title: |cFFD4AF37Project Jaina|r - RaidSuite
+## Notes: Suite integral y avanzada de combate, optimización de bandas y utilidades tácticas para el Project Jaina.
+## Author: DarckRovert (Ingame: Elnazzareno) & Project Jaina Team
 ## Version: 11.2.1
 ## SavedVariables: SequitoDB, SequitoPlayerNotesDB, SequitoBuildDB, SequitoQuickWhisperDB, SequitoStatsDB, SequitoPositionsDB, SequitoLootDB
 

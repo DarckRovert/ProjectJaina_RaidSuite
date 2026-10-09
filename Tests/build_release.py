@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Tests/build_release.py
-WoWPeru_RaidSuite — Generador de ZIP para releases.
+ProjectJaina_RaidSuite — Generador de ZIP para releases.
 
 Uso:
     python Tests/build_release.py [VERSION]
@@ -21,7 +21,7 @@ VERSION = sys.argv[1] if len(sys.argv) > 1 else "dev"
 
 # Raíz del addon (un nivel arriba de Tests/)
 BASE = pathlib.Path(__file__).parent.parent.resolve()
-ADDON_NAME = "WoWPeru_RaidSuite"
+ADDON_NAME = "ProjectJaina_RaidSuite"
 OUT = pathlib.Path(f"{ADDON_NAME}_{VERSION}.zip")
 
 EXCLUDE_DIRS  = {".git", ".github", "__pycache__", "Tests"}

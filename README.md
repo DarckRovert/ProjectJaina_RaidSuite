@@ -1,15 +1,15 @@
-# 🇵🇪 WoW Perú - RaidSuite (v11.2.1 Definitive Edition)
+# 🇵🇪 Project Jaina - RaidSuite (v11.2.1 Definitive Edition)
 
 **Versión:** 11.2.1 (Definitive Edition)  
-**Autor:** DarckRovert (Ingame: Elnazzareno) & WoW Perú Team  
-**Servidor Destino:** [WoW Perú](https://wow-peru.lat/) - Reino Andino  
+**Autor:** DarckRovert (Ingame: Elnazzareno) & Project Jaina Team  
+**Servidor Destino:** [Project Jaina](https://worldofwanos.com/) - Project Jaina  
 **Cliente Compatible:** World of Warcraft 3.3.5a (Build 12340)
 
 ---
 
-[![WoW Client](https://img.shields.io/badge/WoW%20Client-3.3.5a%20(Build%2012340)-blue.svg)](https://wow-peru.lat/)
-[![Servidor](https://img.shields.io/badge/Servidor-WoW%20Perú-gold.svg)](https://wow-peru.lat/)
-[![Version](https://img.shields.io/badge/version-11.2.1-blue.svg)](https://github.com/DarckRovert/WoWPeru_RaidSuite/releases)
+[![WoW Client](https://img.shields.io/badge/WoW%20Client-3.3.5a%20(Build%2012340)-blue.svg)](https://worldofwanos.com/)
+[![Servidor](https://img.shields.io/badge/Servidor-WoW%20Perú-gold.svg)](https://worldofwanos.com/)
+[![Version](https://img.shields.io/badge/version-11.2.1-blue.svg)](https://github.com/DarckRovert/Wanos_RaidSuite/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ---
@@ -93,13 +93,13 @@ Para conocer todos los detalles de cada subsistema, consulta las guías dedicada
 * 📚 [Guía de Uso del Ecosistema (USAGE.md)](USAGE.md) — Manual integral paso a paso para el usuario final.
 * 📜 [Guía de Macros Inteligentes (MACROS.md)](MACROS.md) — Desglose de macros para las 10 clases y 30 especializaciones.
 * ⌨️ [Referencia Completa de Comandos (COMMANDS.md)](COMMANDS.md) — Lista de todos los comandos y alias disponibles.
-* 📦 [Guía de Instalación (INSTALL.md)](INSTALL.md) — Instrucciones paso a paso para instalar en WoW Perú 3.3.5a.
+* 📦 [Guía de Instalación (INSTALL.md)](INSTALL.md) — Instrucciones paso a paso para instalar en Project Jaina 3.3.5a.
 * ❓ [Preguntas Frecuentes (FAQ.md)](FAQ.md) — Respuestas a dudas habituales sobre rendimiento, macros y raid.
 * ⚙️ [Documentación de Módulos (MODULES.md)](MODULES.md) — Detalle técnico de los 77 componentes del addon.
 * 💻 [Especificación de API (API.md)](API.md) — Arquitectura de eventos y funciones públicas para desarrolladores.
 * 🛡️ [Seguridad (SECURITY.md)](SECURITY.md) — Políticas de reporte de vulnerabilidades y seguridad de datos.
 * 🤝 [Gobernanza del Proyecto (GOVERNANCE.md)](GOVERNANCE.md) — Estructura de toma de decisiones y roles.
-* 🌐 [Registro de Ecosistema (ECOSYSTEM_REGISTRY.md)](ECOSYSTEM_REGISTRY.md) — Mapeo de prefijos, tablas y convivencia con otros sistemas de WoW Perú.
+* 🌐 [Registro de Ecosistema (ECOSYSTEM_REGISTRY.md)](ECOSYSTEM_REGISTRY.md) — Mapeo de prefijos, tablas y convivencia con otros sistemas de Project Jaina.
 * 🤖 [Reglas de Agentes IA (AGENTS.md)](AGENTS.md) — Directivas y restricciones de arquitectura para desarrollo asistido.
 * ⚖️ [Licencia MIT (LICENSE)](LICENSE) — Términos legales de distribución y uso.
 * 📝 [Historial de Versiones (CHANGELOG.md)](CHANGELOG.md) — Registro cronológico de cambios y optimizaciones.
@@ -115,7 +115,7 @@ Este proyecto está licenciado bajo los términos de la **Licencia MIT**. Consul
 
 ## 📺 Soporte y Comunidad
 
-¡Únete a la comunidad de **El Sequito del Terror**!
+¡Únete a la comunidad de **Project Jaina**!
 
 - 💜 **Twitch:** [twitch.tv/darckrovert](https://www.twitch.tv/darckrovert)
 - 💚 **Kick:** [kick.com/darckrovert](https://kick.com/darckrovert)
@@ -124,5 +124,5 @@ Este proyecto está licenciado bajo los términos de la **Licencia MIT**. Consul
 
 ---
 
-*Desarrollado por DarckRovert (Ingame: Elnazzareno) & WoW Perú Team.*  
+*Desarrollado por DarckRovert (Ingame: Elnazzareno) & Project Jaina Team.*  
 *World of Warcraft® es una marca registrada de Blizzard Entertainment, Inc.*

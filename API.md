@@ -1,7 +1,7 @@
-# 🔌 API Documentation - WoW Perú RaidSuite
+# 🔌 API Documentation - Project Jaina RaidSuite
 
 **Version:** 10.2.0 (Definitive Edition)  
-**Author:** DarckRovert (Ingame: Elnazzareno) & WoW Perú Team
+**Author:** DarckRovert (Ingame: Elnazzareno) & Project Jaina Team
 
 ---
 
@@ -1344,4 +1344,4 @@ Verifica rápidamente si todos están listos.
 
 ---
 
-**Created by DarckRovert (Ingame: Elnazzareno) & WoW Perú Team**
+**Created by DarckRovert (Ingame: Elnazzareno) & Project Jaina Team**

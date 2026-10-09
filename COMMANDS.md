@@ -1,7 +1,7 @@
-# 💬 Lista Completa de Comandos - WoW Perú RaidSuite
+# 💬 Lista Completa de Comandos - Project Jaina RaidSuite
 
 **Versión:** 10.2.0 (Definitive Edition)  
-**Autor:** DarckRovert (Ingame: Elnazzareno) & WoW Perú Team
+**Autor:** DarckRovert (Ingame: Elnazzareno) & Project Jaina Team
 
 ---
 
@@ -618,4 +618,4 @@ Total muertes: 8 | Interrupts: 5
 
 ---
 
-**Creado por DarckRovert (Ingame: Elnazzareno) & WoW Perú Team**
+**Creado por DarckRovert (Ingame: Elnazzareno) & Project Jaina Team**

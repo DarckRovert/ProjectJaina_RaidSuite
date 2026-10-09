@@ -1,14 +1,14 @@
 --[[
-    WoWPeru_RaidSuite -- EcosystemBridge
-    Puente de Integracion con el Ecosistema WoW Peru
+    Wanos_RaidSuite -- EcosystemBridge
+    Puente de Integracion con el Ecosistema Project Jaina
 
     Conecta RaidSuite con los otros addons:
-    1. -> WoWPeru_BattlePass: reporta logros de combate como progreso de misiones.
-    2. -> WoWPeru_GameModes: lee el modo activo y adapta alertas defensivas.
+    1. -> Jaina_BattlePass: reporta logros de combate como progreso de misiones.
+    2. -> ProjectJaina_GameModes: lee el modo activo y adapta alertas defensivas.
 
     PROTOCOLO: BP_QUEST_PROGRESS:<questId>:<delta>  (< 255 bytes, WHISPER)
     COMPATIBILIDAD: WoW 3.3.5a (Build 12340) | Lua 5.1 puro
-    Copyright (c) 2026 DarckRovert (Ingame: Elnazzareno) & WoW Peru Team
+    Copyright (c) 2026 DarckRovert (Ingame: Elnazzareno) & Project Jaina Team
 ]]--
 
 local addonName, S = ...
@@ -30,15 +30,14 @@ local bossKillCount  = 0
 local dungeonDone    = false
 
 -- ============================================================
--- SECCION 1: PUENTE -> WoWPeru_GameModes
+-- SECCION 1: PUENTE -> ProjectJaina_GameModes
 -- ============================================================
 
 --- Devuelve el modo de juego activo: NORMAL | HARDCORE | IRONMAN
 function Bridge:GetPlayerGameMode()
-    if WoWPeru_GameModes_CharDB
-       and WoWPeru_GameModes_CharDB.hasSelectedMode
-       and WoWPeru_GameModes_CharDB.selectedMode then
-        local mode = WoWPeru_GameModes_CharDB.selectedMode
+    local db = Wanos_GameModes_CharDB or ProjectJaina_GameModes_CharDB
+    if db and db.hasSelectedMode and db.selectedMode then
+        local mode = db.selectedMode
         if mode == "HARDCORE" or mode == "IRONMAN" or mode == "NORMAL" then
             return mode
         end
@@ -62,7 +61,7 @@ function Bridge:GetGameModeBadge()
 end
 
 -- ============================================================
--- SECCION 2: PUENTE -> WoWPeru_BattlePass
+-- SECCION 2: PUENTE -> Jaina_BattlePass
 -- ============================================================
 
 --- Envia progreso de mision al servidor BattlePass (WHISPER, < 255 bytes).
@@ -196,7 +195,7 @@ function Bridge:ApplyGameModeAdaptations()
             S.WipeAnalyzer:SetAutoRecord(true)
         end
         S:Print(string.format(
-            "|cFFFFD100[WoWPeru_RaidSuite]|r Modo: %s -- Alertas reforzadas.",
+            "|cFFFFD100[ProjectJaina_RaidSuite]|r Modo: %s -- Alertas reforzadas.",
             self:GetGameModeBadge()
         ))
     end
@@ -225,4 +224,4 @@ function Bridge:NotifyDungeonComplete()
 end
 
 S.EcosystemBridge = Bridge
-Bridge:Initialize()
+Bridge:Initialize()

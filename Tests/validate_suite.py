@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-Test & Validation Suite for WoWPeru_RaidSuite Addon (World of Warcraft 3.3.5a)
+Test & Validation Suite for ProjectJaina_RaidSuite Addon (World of Warcraft 3.3.5a)
 Validates:
-1. Physical existence of all files listed in WoWPeru_RaidSuite.toc
+1. Physical existence of all files listed in ProjectJaina_RaidSuite.toc
 2. Syntactic integrity of all Lua 5.1 files (block openers/closers balance)
 3. Absence of incompatible Retail/MoP APIs without polyfills (e.g. GROUP_ROSTER_UPDATE, GetSpecialization)
 4. Localization coverage and fallback parity
@@ -19,7 +19,7 @@ def test_toc_integrity():
     if not toc_files:
         print("ERROR: No .toc file found!")
         return False
-    toc_name = "WoWPeru_RaidSuite.toc" if "WoWPeru_RaidSuite.toc" in toc_files else toc_files[0]
+    toc_name = "ProjectJaina_RaidSuite.toc" if "ProjectJaina_RaidSuite.toc" in toc_files else toc_files[0]
     print(f"[1/4] Testing {toc_name} file references...")
     toc_path = os.path.join(REPO_DIR, toc_name)
     

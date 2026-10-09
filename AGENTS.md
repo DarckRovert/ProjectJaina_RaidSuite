@@ -1,8 +1,8 @@
-# 🤖 Reglas de Contexto y Memoria para Agentes de IA - WoWPeru_RaidSuite
+# 🤖 Reglas de Contexto y Memoria para Agentes de IA - Wanos_RaidSuite
 
-> **Repositorio Oficial:** [DarckRovert/WoWPeru_RaidSuite](https://github.com/DarckRovert/WoWPeru_RaidSuite)  
+> **Repositorio Oficial:** [DarckRovert/Wanos_RaidSuite](https://github.com/DarckRovert/Wanos_RaidSuite)  
 > **Líder del Proyecto:** DarckRovert (Ingame: `Elnazzareno`)  
-> **Servidor Destino:** [WoW Perú](https://wow-peru.lat/) - Reino Andino  
+> **Servidor Destino:** [Project Jaina](https://worldofwanos.com/) - Project Jaina  
 > **Entorno:** WotLK 3.3.5a (Build 12340) | Cliente Oficial 3.3.5a  
 
 ---
@@ -56,4 +56,4 @@
 | [Modules/Utility/](Modules/Utility/) | Utilidades: Generador inteligente de macros por clase, monturas, compañeros y calendario. |
 | [Modules/Raid/](Modules/Raid/) | Herramientas de banda: Concilio de botín (Loot Council), sincronización de raid, análisis de wipes e inspectores. |
 | [Modules/PvP/](Modules/PvP/) | Utilidades competitivas: Rastreo de CC, tiempos de recarga de abalorios y alertas defensivas. |
-| [WoWPeru_RaidSuite.toc](WoWPeru_RaidSuite.toc) | Descriptor oficial del addon para el cliente WoW 3.3.5a. |
+| [Wanos_RaidSuite.toc](Wanos_RaidSuite.toc) | Descriptor oficial del addon para el cliente WoW 3.3.5a. |

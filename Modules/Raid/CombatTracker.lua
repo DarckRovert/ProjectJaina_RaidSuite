@@ -365,7 +365,7 @@ function CombatTracker:PrintSummary()
     local chatFrame = DEFAULT_CHAT_FRAME or ChatFrame1
     if not chatFrame then return end
     
-    chatFrame:AddMessage("|cFFD4AF37[WoW Perú]|r |cFF00CCFFResumen de Combate|r |cFF888888(" .. FormatTime(summary.duration) .. ")|r")
+    chatFrame:AddMessage("|cFFD4AF37[Project Jaina]|r |cFF00CCFFResumen de Combate|r |cFF888888(" .. FormatTime(summary.duration) .. ")|r")
     chatFrame:AddMessage(string.format("  Daño: |cFFFF6600%s|r |cFF888888(%.1f DPS)|r | Recibido: |cFFFF3333%s|r", 
         FormatNumber(summary.damage), summary.dps, FormatNumber(summary.damageTaken)))
     

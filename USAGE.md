@@ -1,8 +1,8 @@
-# 📚 Manual de Usuario - WoW Perú RaidSuite
+# 📚 Manual de Usuario - Project Jaina RaidSuite
 
 **Versión:** 10.2.0 (Definitive Edition)  
-**Autor:** DarckRovert (Ingame: Elnazzareno) & WoW Perú Team  
-**Servidor Destino:** [WoW Perú](https://wow-peru.lat/) - Reino Andino  
+**Autor:** DarckRovert (Ingame: Elnazzareno) & Project Jaina Team  
+**Servidor Destino:** [Project Jaina](https://worldofwanos.com/) - Project Jaina  
 **Cliente Compatible:** World of Warcraft 3.3.5a (Build 12340)
 
 ---
@@ -224,4 +224,4 @@ El addon te avisará en el chat para que borres alguna macro vieja que ya no use
 
 ---
 
-*Desarrollado con dedicación para la comunidad de WoW Perú (Reino Andino).*
+*Desarrollado con dedicación para la comunidad de Project Jaina (Project Jaina).*

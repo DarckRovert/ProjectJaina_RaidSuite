@@ -1,7 +1,7 @@
-# 🛠️ Documentación de Módulos - WoW Perú RaidSuite
+# 🛠️ Documentación de Módulos - Project Jaina RaidSuite
 
 **Versión:** 10.2.0 (Definitive Edition)  
-**Autor:** DarckRovert (Ingame: Elnazzareno) & WoW Perú Team
+**Autor:** DarckRovert (Ingame: Elnazzareno) & Project Jaina Team
 
 ---
 

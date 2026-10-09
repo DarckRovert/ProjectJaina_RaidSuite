@@ -112,7 +112,7 @@ Iconos en tablas `RegisterModule` tenían `\\\\` (4 barras) en lugar de `\\` (2 
 - Nuevos slash commands: `/raidsuite`, `/wprs` (además de los originales `/jaina`, `/seq`).
 
 ### 🌉 EcosystemBridge (Core/EcosystemBridge.lua)
-- **Puente BattlePass:** Detecta kills de jefes y mazmorras completadas, reporta via `BP_QUEST_PROGRESS` al servidor Eluna de `Jaina_BattlePass` (Season 2, IDs 201-203).
+- **Puente BattlePass:** Detecta kills de jefes y mazmorras completadas, reporta via `BP_QUEST_PROGRESS` al servidor Eluna de `ProjectJaina_BattlePass` (Season 2, IDs 201-203).
 - **Puente GameModes:** Lee `ProjectJaina_GameModes_CharDB.selectedMode` para adaptar comportamiento:
   - Modo Hardcore/Ironman: `DefensiveAlerts.aggressionLevel = 2`, `WipeAnalyzer` auto-record activado.
   - Badge de modo en mensajes del sistema (`|cFFFF3333[HARDCORE]|r`).

@@ -1,5 +1,5 @@
 --[[
-    Sequito - AutoSync Module
+    Jaina - AutoSync Module
     Sistema de Sincronización Automática por Eventos
     Version: 8.0.0
     
@@ -398,12 +398,12 @@ function AS:OnGuildUpdate()
     if not IsInGuild() then return end
     
     -- Sincronizar notas de guild localmente
-    -- SequitoDB.guildNotes = SequitoDB.guildNotes or {}
+    -- JainaDB.guildNotes = JainaDB.guildNotes or {}
     -- local numGuildMembers = GetNumGuildMembers()
     -- for i = 1, numGuildMembers do
     --     local name, rank, rankIndex, level, class, zone, note, officernote, online, status, classFileName = GetGuildRosterInfo(i)
     --     if name then
-    --         SequitoDB.guildNotes[name] = note
+    --         JainaDB.guildNotes[name] = note
     --     end
     -- end
     -- (Comentado para no spamear DB si no se pide explicitamente, placeholder)
@@ -455,5 +455,5 @@ function AS:ForceSync()
     end
 end
 
--- Registrar en Sequito
+-- Registrar en Jaina
 S.AutoSync = AS

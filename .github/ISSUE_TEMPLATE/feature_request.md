@@ -1,6 +1,6 @@
 ---
 name: Solicitud de Funcionalidad
-about: Proponer una nueva idea, módulo o mejora para Sequito
+about: Proponer una nueva idea, módulo o mejora para Jaina
 title: "[FEATURE] "
 labels: enhancement
 assignees: DarckRovert

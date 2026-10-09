@@ -1,5 +1,5 @@
 --[[
-    Sequito - Void Whispers (Audio FX)
+    Jaina - Void Whispers (Audio FX)
     Modulo v11.0: Feedback auditivo inmersivo.
 ]]
 
@@ -51,7 +51,7 @@ function Audio:Initialize()
         end
     end)
     
-    print("|cFF9900FFSequito Audio|r: Void Whispers listening.")
+    print("|cFF9900FFJaina Audio|r: Void Whispers listening.")
 end
 
 -- ============================================================================

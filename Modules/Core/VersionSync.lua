@@ -1,5 +1,5 @@
 --[[
-    Sequito - VersionSync Module
+    Jaina - VersionSync Module
     Sincronización y auditoría de versiones del addon para WotLK 3.3.5a
     Version: 8.0.0
 ]]
@@ -56,7 +56,7 @@ end
 function VSy:CreateFrame()
     if self.frame then return self.frame end
 
-    local f = CreateFrame("Frame", "SequitoVersionSyncFrame", UIParent)
+    local f = CreateFrame("Frame", "JainaVersionSyncFrame", UIParent)
     self.frame = f
     self.Frame = f
     f:SetSize(360, 320)
@@ -88,7 +88,7 @@ function VSy:CreateFrame()
     
     f.title = f:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     f.title:SetPoint("TOP", 0, -12)
-    f.title:SetText("|cFFD4AF37Sequito - Versiones de Addon|r")
+    f.title:SetText("|cFFD4AF37Jaina - Versiones de Addon|r")
     
     f.close = CreateFrame("Button", nil, f, "UIPanelCloseButton")
     f.close:SetPoint("TOPRIGHT", -4, -4)
@@ -98,7 +98,7 @@ function VSy:CreateFrame()
     f.myVersion:SetPoint("TOPLEFT", 16, -38)
     f.myVersion:SetText("Tu versión: |cFF00FF00" .. self:GetVersion() .. "|r")
     
-    local sf = CreateFrame("ScrollFrame", "SequitoVSScroll", f, "UIPanelScrollFrameTemplate")
+    local sf = CreateFrame("ScrollFrame", "JainaVSScroll", f, "UIPanelScrollFrameTemplate")
     f.scrollFrame = sf
     sf:SetPoint("TOPLEFT", 12, -62)
     sf:SetPoint("BOTTOMRIGHT", -32, 50)
@@ -115,7 +115,7 @@ function VSy:CreateFrame()
     f.refreshBtn:SetScript("OnClick", function()
         VSy:RequestVersions(true)
         local msg = "Solicitando versiones al grupo/hermandad..."
-        if S.Print then S:Print(msg) else print("|cFFFF9900[Sequito]|r " .. msg) end
+        if S.Print then S:Print(msg) else print("|cFFFF9900[Jaina]|r " .. msg) end
     end)
 
     f.closeBottomBtn = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
@@ -307,8 +307,8 @@ function VSy:OnAddonMessage(prefix, msg, channel, sender)
                 local notifyKey = sender .. "_" .. version
                 if not self.notifiedSenders[notifyKey] then
                     self.notifiedSenders[notifyKey] = true
-                    local note = string.format("Una versión más reciente de Sequito RaidSuite está disponible (|cFFFFD100v%s|r por %s).", version, sender)
-                    if S.Print then S:Print(note) else print("|cFFFF9900[Sequito]|r " .. note) end
+                    local note = string.format("Una versión más reciente de Jaina RaidSuite está disponible (|cFFFFD100v%s|r por %s).", version, sender)
+                    if S.Print then S:Print(note) else print("|cFFFF9900[Jaina]|r " .. note) end
                 end
             end
             
@@ -350,8 +350,8 @@ end
 
 function VSy:ShowVersions()
     local myVer = self:GetVersion()
-    local header = "Versiones de Sequito RaidSuite registradas (Tu versión: |cFF00FF00" .. myVer .. "|r):"
-    if S.Print then S:Print(header) else print("|cFFFF9900[Sequito]|r " .. header) end
+    local header = "Versiones de Jaina RaidSuite registradas (Tu versión: |cFF00FF00" .. myVer .. "|r):"
+    if S.Print then S:Print(header) else print("|cFFFF9900[Jaina]|r " .. header) end
     
     local hasAny = false
     for name, ver in pairs(guildVersions) do
@@ -366,7 +366,7 @@ function VSy:ShowVersions()
 end
 
 function VSy:PrintHelp()
-    print("|cFFD4AF37=== Sequito VersionSync - Comandos ===|r")
+    print("|cFFD4AF37=== Jaina VersionSync - Comandos ===|r")
     print("  |cFFFFD100/vs|r : Abre o alterna la interfaz de versiones.")
     print("  |cFFFFD100/vs check|r : Solicita versiones al grupo o hermandad.")
     print("  |cFFFFD100/vs list|r : Muestra en chat las versiones recibidas.")
@@ -380,7 +380,7 @@ function VSy:SlashCommand(msg)
     if lower == "check" or lower == "verificar" then
         self:RequestVersions(true)
         local text = "Solicitando versiones..."
-        if S.Print then S:Print(text) else print("|cFFFF9900[Sequito]|r " .. text) end
+        if S.Print then S:Print(text) else print("|cFFFF9900[Jaina]|r " .. text) end
     elseif lower == "list" or lower == "lista" then
         self:ShowVersions()
     elseif lower == "help" or lower == "ayuda" then

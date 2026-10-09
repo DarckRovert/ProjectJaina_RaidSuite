@@ -7,7 +7,7 @@ Contiene la edición definitiva multiclase del asistente de raid y combate para 
 
 ## 1. Genealogía y Reconocimiento a Obras Precursoras
 * **Inspiración Original:** El legendario addon **Necrosis LDC** (creado originalmente por Lomig y TiLt para brujos en WoW clásico/TBC).
-* **Evolución Sequito:** Expansión conceptual que llevó la mecánica esférica y botones de acción contextual a las 10 clases del juego.
+* **Evolución Jaina:** Expansión conceptual que llevó la mecánica esférica y botones de acción contextual a las 10 clases del juego.
 * **Consolidación y Edición Definitiva Project Jaina:** DarckRovert & Project Jaina Team. Re-ingeniería completa de menús radiales, contadores de componentes, invocaciones y compatibilidad con WotLK 3.3.5a.
 
 ---

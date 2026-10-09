@@ -2,7 +2,7 @@
 
 > **Repositorio Oficial:** [DarckRovert/Wanos_RaidSuite](https://github.com/DarckRovert/Wanos_RaidSuite)  
 > **Líder del Proyecto:** DarckRovert (Ingame: `Elnazzareno`)  
-> **Servidor Destino:** [Project Jaina](https://worldofwanos.com/) - Project Jaina  
+> **Servidor Destino:** [Project Jaina](https://projectjaina.com/) - Project Jaina  
 > **Entorno:** WotLK 3.3.5a (Build 12340) | Cliente Oficial 3.3.5a  
 
 ---
@@ -12,7 +12,7 @@
 1. **Empirismo Estricto:** Antes de editar código o proponer cambios, inspeccionar los archivos reales con `view_file` o `grep_search`. Prohibido asumir que existen librerías de Retail o funciones de versiones posteriores a WotLK 3.3.5a.
 
 2. **Preservación Inmutable de SavedVariables:**
-   - La base de datos persistente del addon utiliza las variables `SequitoDB`, `SequitoPlayerNotesDB`, `SequitoBuildDB`, `SequitoQuickWhisperDB`, `SequitoStatsDB`, `SequitoPositionsDB`, y `SequitoLootDB`.
+   - La base de datos persistente del addon utiliza las variables `JainaDB`, `JainaPlayerNotesDB`, `JainaBuildDB`, `JainaQuickWhisperDB`, `JainaStatsDB`, `JainaPositionsDB`, y `JainaLootDB`.
    - **Queda estrictamente prohibido alterar o renombrar estos identificadores en el motor Lua o en el archivo `.toc`.** Renombrarlos destruiría todas las configuraciones, perfiles y notas guardadas de los jugadores en la carpeta `WTF/`.
 
 3. **Restricciones del Cliente 3.3.5a:**

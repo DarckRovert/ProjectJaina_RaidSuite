@@ -14,9 +14,9 @@
 
 ---
 
-## 🌟 ¿Qué es Sequito?
+## 🌟 ¿Qué es Jaina?
 
-**Sequito** es una plataforma integral de combate, gestión de bandas y colaboración en vivo para World of Warcraft 3.3.5a. Inspirado originalmente en el legendario espíritu visual de *Necrosis*, Sequito evoluciona para dar cobertura a **las 10 clases del juego y sus 30 especializaciones**, proporcionando herramientas reales y automatizaciones tácticas que resuelven las necesidades de jugadores individuales, grupos de mazmorra y hermandades enteras.
+**Jaina** es una plataforma integral de combate, gestión de bandas y colaboración en vivo para World of Warcraft 3.3.5a. Inspirado originalmente en el legendario espíritu visual de *Necrosis*, Jaina evoluciona para dar cobertura a **las 10 clases del juego y sus 30 especializaciones**, proporcionando herramientas reales y automatizaciones tácticas que resuelven las necesidades de jugadores individuales, grupos de mazmorra y hermandades enteras.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -45,7 +45,7 @@ Una ventana moderna de alta definición que centraliza todo lo que necesitas sin
 - **Galería de Botín:** Registro histórico de piezas épicas y legendarias obtenidas por la hermandad.
 
 ### 2. 📜 Motor de Macros Adaptativo de 30 Especializaciones (`SeqRot`)
-Elimina definitivamente las secuencias congeladas (`/castsequence`). Sequito genera una macro inteligente (`SeqRot`) con modificadores (`Shift`, `Ctrl`, `Alt`, `@mouseover`, `[form:1/3]` de Druida) que se recalcula automáticamente cuando cambias de talentos o compras dual spec, sin tocar tus macros personales.
+Elimina definitivamente las secuencias congeladas (`/castsequence`). Jaina genera una macro inteligente (`SeqRot`) con modificadores (`Shift`, `Ctrl`, `Alt`, `@mouseover`, `[form:1/3]` de Druida) que se recalcula automáticamente cuando cambias de talentos o compras dual spec, sin tocar tus macros personales.
 
 ### 3. 🌐 Malla de Clan en Vivo (`ClanMesh`)
 Sincronización continua a través del canal de hermandad (`GUILD`), además de grupo y banda. Los miembros de la hermandad pueden compartir estrategias de jefes, notas de oficiales y avisos tácticos estés en Dalaran, explorando el mundo o dentro de ICC. Incluye protección contra desconexiones (*leaky-bucket throttling*).

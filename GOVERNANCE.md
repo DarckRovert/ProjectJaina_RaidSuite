@@ -3,14 +3,14 @@
 **Versión del Documento:** 1.0.0  
 **Fecha de Entrada en Vigor:** 27 de Septiembre de 2026  
 **Líder del Proyecto / Autor:** DarckRovert (Ingame: Elnazzareno) & Project Jaina Team  
-**Servidor Destino:** [Project Jaina](https://worldofwanos.com/) - Project Jaina  
+**Servidor Destino:** [Project Jaina](https://projectjaina.com/) - Project Jaina  
 **Entorno de Ejecución:** World of Warcraft 3.3.5a (Build 12340)
 
 ---
 
 ## 1. Misión y Alcance
 
-**Sequito** es una suite modular avanzada y de alto rendimiento diseñada para la optimización de incursiones (Raids), sincronización de banda, gestión de combate y herramientas de utilidad para clientes de World of Warcraft 3.3.5a (Wrath of the Lich King).
+**Jaina** es una suite modular avanzada y de alto rendimiento diseñada para la optimización de incursiones (Raids), sincronización de banda, gestión de combate y herramientas de utilidad para clientes de World of Warcraft 3.3.5a (Wrath of the Lich King).
 
 El objetivo primordial del proyecto es ofrecer:
 - **Rendimiento Máximo:** Cero fugas de memoria y mínimo impacto en el Garbage Collector (GC) de Lua 5.1 durante encuentros de alta densidad (25 jugadores heroico).
@@ -21,7 +21,7 @@ El objetivo primordial del proyecto es ofrecer:
 
 ## 2. Estructura de Roles y Responsabilidades
 
-El proyecto Sequito se rige bajo un modelo de **Liderazgo Técnico Centralizado (Benevolent Governance)** con aportes comunitarios guiados.
+El proyecto Jaina se rige bajo un modelo de **Liderazgo Técnico Centralizado (Benevolent Governance)** con aportes comunitarios guiados.
 
 ```
        ┌─────────────────────────────────────────┐
@@ -50,7 +50,7 @@ El proyecto Sequito se rige bajo un modelo de **Liderazgo Técnico Centralizado 
 
 ### 2.2. Core Maintainers (Mantenedores del Core)
 - **Responsabilidades:**
-  - Mantenimiento del ciclo de vida del addon (`Sequito.lua`, `Wanos_RaidSuite.toc`).
+  - Mantenimiento del ciclo de vida del addon (`Jaina.lua`, `Wanos_RaidSuite.toc`).
   - Supervisión de los motores centrales: `CLEUDispatcher`, `AlertHub`, `ProfileManager`, `Theme` y `GUI`.
   - Verificación de ausencia de APIs incompatibles (e.g., funciones de MoP/Retail en cliente 3.3.5a).
   - Revisión y optimización de consumo de memoria y CPU en raids.
@@ -63,7 +63,7 @@ El proyecto Sequito se rige bajo un modelo de **Liderazgo Técnico Centralizado 
 
 ## 3. Toma de Decisiones Técnicas
 
-Las decisiones dentro de Sequito siguen el principio de **Consenso Técnico Fundamentado con Veto del Líder**:
+Las decisiones dentro de Jaina siguen el principio de **Consenso Técnico Fundamentado con Veto del Líder**:
 
 1. **Discusión Abierta:** Los debates técnicos se llevan a cabo de forma transparente en GitHub Issues o Pull Requests.
 2. **Criterio Empírico:** Las decisiones sobre refactorizaciones o inclusiones de librerías deben respaldarse con evidencia medible (tiempos de CPU, memoria asignada, ausencia de taint).
@@ -78,14 +78,14 @@ Para cambios significativos en el addon, se requiere la apertura de una propuest
 ### Casos que requieren RFC previo:
 - Incorporación de una nueva librería de terceros (`Libs/`).
 - Modificación del protocolo de serialización o mensajería de addon (`RaidSync`, `AutoSync`, `VotingSystem`).
-- Reestructuración de la base de datos de perfiles (`SequitoDB`).
-- Rediseño mayor de la interfaz visual (`SequitoSphere`, `Dashboard`, `RaidPanel`).
+- Reestructuración de la base de datos de perfiles (`JainaDB`).
+- Rediseño mayor de la interfaz visual (`JainaSphere`, `Dashboard`, `RaidPanel`).
 
 ---
 
 ## 5. Ciclo de Lanzamientos y Versionado
 
-Sequito utiliza **Versionado Semántico (SemVer)** adaptado al ecosistema de WoW: `MAJOR.MINOR.PATCH`
+Jaina utiliza **Versionado Semántico (SemVer)** adaptado al ecosistema de WoW: `MAJOR.MINOR.PATCH`
 
 - **MAJOR (vX.0.0):** Cambios arquitectónicos profundos, rediseño completo del núcleo o reestructuración de la base de datos de perfiles que requiera migración forzada.
 - **MINOR (vx.Y.0):** Nuevos módulos funcionales (e.g. soporte para nuevas bandas, nuevos modos de inspección o utilidades) manteniendo total retrocompatibilidad.

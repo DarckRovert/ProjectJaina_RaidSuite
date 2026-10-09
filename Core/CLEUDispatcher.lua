@@ -11,7 +11,7 @@ local CLEU = S.CLEU
 CLEU.Subscribers = {}
 CLEU.AllSubscribers = {}
 
-local eventFrame = CreateFrame("Frame", "SequitoCLEUDispatcherFrame", UIParent)
+local eventFrame = CreateFrame("Frame", "JainaCLEUDispatcherFrame", UIParent)
 
 -- Registrar un módulo a un sub-evento específico (ej. "UNIT_DIED", "SPELL_AURA_APPLIED")
 function CLEU:Register(subEvent, callback)

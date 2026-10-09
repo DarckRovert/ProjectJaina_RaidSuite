@@ -13,7 +13,7 @@ local T = S.Theme
 -- ============================================
 
 T.Presets = {
-    -- Demonio: Morado intenso + fuego naranja (default Sequito)
+    -- Demonio: Morado intenso + fuego naranja (default Jaina)
     ["Demonio"] = {
         primary     = {0.60, 0.20, 0.80, 1.0},  -- Morado
         secondary   = {0.40, 0.10, 0.60, 1.0},  -- Morado oscuro
@@ -151,7 +151,7 @@ function T:Initialize()
     if S.ModuleConfig then
         S.ModuleConfig:RegisterModule("Theme", {
             name = "Sistema de Temas",
-            description = "Cambia los colores de toda la interfaz de Sequito.",
+            description = "Cambia los colores de toda la interfaz de Jaina.",
             category = "interface",
             icon = "Interface\\Icons\\INV_Misc_Gem_Variety2",
             options = {

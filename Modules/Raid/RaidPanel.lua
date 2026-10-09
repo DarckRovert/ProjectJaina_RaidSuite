@@ -5,10 +5,10 @@
     Compatible con WotLK 3.3.5a (Build 12340)
 ]]--
 
-local addonName, Sequito = ...
-Sequito.RaidPanel = Sequito.RaidPanel or {}
-local RaidPanel = Sequito.RaidPanel
-local Universal = Sequito.Universal
+local addonName, Jaina = ...
+Jaina.RaidPanel = Jaina.RaidPanel or {}
+local RaidPanel = Jaina.RaidPanel
+local Universal = Jaina.Universal
 
 -- Configuración del panel
 local PANEL_CONFIG = {
@@ -74,15 +74,15 @@ local pendingRosterUpdate = false
 
 -- Helper para obtener configuración
 function RaidPanel:GetOption(key)
-    if Sequito.ModuleConfig then
-        local val = Sequito.ModuleConfig:GetValue("RaidPanel", key)
+    if Jaina.ModuleConfig then
+        local val = Jaina.ModuleConfig:GetValue("RaidPanel", key)
         if val ~= nil then return val end
     end
-    if Sequito.db and Sequito.db.profile then
-        if key == "autoShow" and Sequito.db.profile.RaidPanelAuto ~= nil then return Sequito.db.profile.RaidPanelAuto end
-        if key == "scale" and Sequito.db.profile.RaidPanelScale ~= nil then return Sequito.db.profile.RaidPanelScale end
-        if key == "showHP" and Sequito.db.profile.RaidPanelHP ~= nil then return Sequito.db.profile.RaidPanelHP end
-        if key == "showRoles" and Sequito.db.profile.RaidPanelRoles ~= nil then return Sequito.db.profile.RaidPanelRoles end
+    if Jaina.db and Jaina.db.profile then
+        if key == "autoShow" and Jaina.db.profile.RaidPanelAuto ~= nil then return Jaina.db.profile.RaidPanelAuto end
+        if key == "scale" and Jaina.db.profile.RaidPanelScale ~= nil then return Jaina.db.profile.RaidPanelScale end
+        if key == "showHP" and Jaina.db.profile.RaidPanelHP ~= nil then return Jaina.db.profile.RaidPanelHP end
+        if key == "showRoles" and Jaina.db.profile.RaidPanelRoles ~= nil then return Jaina.db.profile.RaidPanelRoles end
     end
     if key == "enabled" or key == "showHP" or key == "showRoles" then return true end
     if key == "scale" then return 1.0 end
@@ -130,7 +130,7 @@ end
 
 -- Creación de cada fila segura
 local function CreateMemberRow(parent, index)
-    local row = CreateFrame("Button", "SequitoRaidRow" .. index, parent, "SecureUnitButtonTemplate")
+    local row = CreateFrame("Button", "JainaRaidRow" .. index, parent, "SecureUnitButtonTemplate")
     row:SetSize(PANEL_CONFIG.width - 24, PANEL_CONFIG.rowHeight)
     row:EnableMouse(true)
     row:RegisterForClicks("AnyUp")
@@ -191,7 +191,7 @@ end
 local function CreateMainFrame()
     if mainFrame then return mainFrame end
 
-    mainFrame = CreateFrame("Frame", "SequitoRaidPanel", UIParent)
+    mainFrame = CreateFrame("Frame", "JainaRaidPanel", UIParent)
     mainFrame:SetSize(PANEL_CONFIG.width, PANEL_CONFIG.height)
     mainFrame:SetPoint("RIGHT", UIParent, "RIGHT", -20, 0)
     mainFrame:SetMovable(true)
@@ -205,8 +205,8 @@ local function CreateMainFrame()
     end)
     mainFrame:SetScript("OnDragStop", function(self)
         self:StopMovingOrSizing()
-        if Sequito.SmartDefaults then
-            Sequito.SmartDefaults:SavePosition("RaidPanel", self)
+        if Jaina.SmartDefaults then
+            Jaina.SmartDefaults:SavePosition("RaidPanel", self)
         end
     end)
 
@@ -224,7 +224,7 @@ local function CreateMainFrame()
     -- Título
     mainFrame.title = mainFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     mainFrame.title:SetPoint("TOPLEFT", mainFrame, "TOPLEFT", 10, -8)
-    mainFrame.title:SetText("|cFFFFD700Sequito|r - Panel de Banda")
+    mainFrame.title:SetText("|cFFFFD700Jaina|r - Panel de Banda")
 
     -- Botón de cerrar
     mainFrame.closeBtn = CreateFrame("Button", nil, mainFrame, "UIPanelCloseButton")
@@ -264,7 +264,7 @@ local function CreateMainFrame()
     mainFrame.separator:SetVertexColor(0.3, 0.25, 0.4, 0.6)
 
     -- ScrollFrame para la lista de miembros
-    mainFrame.scrollFrame = CreateFrame("ScrollFrame", "SequitoRaidPanelScroll", mainFrame, "UIPanelScrollFrameTemplate")
+    mainFrame.scrollFrame = CreateFrame("ScrollFrame", "JainaRaidPanelScroll", mainFrame, "UIPanelScrollFrameTemplate")
     mainFrame.scrollFrame:SetPoint("TOPLEFT", mainFrame.separator, "BOTTOMLEFT", 0, -4)
     mainFrame.scrollFrame:SetPoint("BOTTOMRIGHT", mainFrame, "BOTTOMRIGHT", -24, 24)
 
@@ -312,8 +312,8 @@ local function CreateMainFrame()
     end)
 
     -- Restaurar posición con SmartDefaults
-    if Sequito.SmartDefaults then
-        Sequito.SmartDefaults:RestorePosition("RaidPanel", mainFrame)
+    if Jaina.SmartDefaults then
+        Jaina.SmartDefaults:RestorePosition("RaidPanel", mainFrame)
     end
 
     mainFrame:Hide()
@@ -335,8 +335,8 @@ local function PopulateMemberData(data, unit)
     data.isOnline = UnitIsConnected(unit)
 
     local role = "DPS"
-    if Sequito.RaidSync and Sequito.RaidSync.RaidData and Sequito.RaidSync.RaidData[data.name] then
-        role = Sequito.RaidSync.RaidData[data.name].role or "DPS"
+    if Jaina.RaidSync and Jaina.RaidSync.RaidData and Jaina.RaidSync.RaidData[data.name] then
+        role = Jaina.RaidSync.RaidData[data.name].role or "DPS"
     elseif UnitIsUnit(unit, "player") and Universal and Universal.GetPlayerRole then
         role = Universal:GetPlayerRole()
     end
@@ -565,8 +565,8 @@ function RaidPanel:Show()
     isVisible = true
 
     self:UpdateMembers(true)
-    if Sequito.Print then
-        Sequito:Print("Panel de Banda visible. Usa |cFFFFD700/srp|r para ocultar.")
+    if Jaina.Print then
+        Jaina:Print("Panel de Banda visible. Usa |cFFFFD700/srp|r para ocultar.")
     end
 end
 
@@ -601,8 +601,8 @@ function RaidPanel:Initialize()
     self:RegisterEvents()
     self:CreateSlashCommands()
 
-    if Sequito.Print then
-        Sequito:Print("[RaidPanel] Panel visual de banda iniciado.")
+    if Jaina.Print then
+        Jaina:Print("[RaidPanel] Panel visual de banda iniciado.")
     end
 end
 
@@ -649,12 +649,12 @@ function RaidPanel:RegisterEvents()
     end)
 end
 
--- Registrar en Sequito
-Sequito.RaidPanel = RaidPanel
+-- Registrar en Jaina
+Jaina.RaidPanel = RaidPanel
 
 -- Registrar módulo en ModuleConfig
-if Sequito.ModuleConfig then
-    Sequito.ModuleConfig:RegisterModule("RaidPanel", {
+if Jaina.ModuleConfig then
+    Jaina.ModuleConfig:RegisterModule("RaidPanel", {
         name = "Panel de Banda",
         description = "Panel visual HUD con información y selección segura de miembros",
         category = "raid",

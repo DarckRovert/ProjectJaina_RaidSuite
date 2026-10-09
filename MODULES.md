@@ -21,11 +21,11 @@
 
 ### Plataforma v10.0 (Core)
 44. [ConnectTab.lua](#connecttablua) - Hive Mind (Control Remoto)
-45. [SequitoDashboard.lua](#sequitodashboardlua) - GUI Unificada
+45. [JainaDashboard.lua](#sequitodashboardlua) - GUI Unificada
 
 ### Nuevos en v10.1 (4)
-46. [SequitoSoulEngine.lua](#sequitosoulenginelua) - Motor de análisis
-47. [SequitoSpy.lua](#sequitospy-lua) - Inteligencia PvP
+46. [JainaSoulEngine.lua](#sequitosoulenginelua) - Motor de análisis
+47. [JainaSpy.lua](#sequitospy-lua) - Inteligencia PvP
 48. [Theme.lua](#themelua) - Sistema de temas
 49. [TheOverlord.lua](#theoverlordlua) - HUD de combate (Reescrito)
 
@@ -34,7 +34,7 @@
 ## 🌐 ConnectTab.lua (Hive Mind)
 
 ### Descripción
-El centro de mando de la plataforma Sequito. Permite a los oficiales controlar la configuración de sus raiders y enviar estrategias en tiempo real.
+El centro de mando de la plataforma Jaina. Permite a los oficiales controlar la configuración de sus raiders y enviar estrategias en tiempo real.
 
 ### Funcionalidades Clave
 
@@ -82,10 +82,10 @@ Ahora genera este nivel de macros para las 10 clases, incluyendo:
 
 ### API del Módulo
 
-#### `Sequito_MacroGenerator_CreateMacros()`
-Llama a la generación completa. Borra macros antiguas de Sequito y crea las nuevas.
+#### `Jaina_MacroGenerator_CreateMacros()`
+Llama a la generación completa. Borra macros antiguas de Jaina y crea las nuevas.
 
-#### `Sequito_MacroGenerator_GetSmartSpell(id)`
+#### `Jaina_MacroGenerator_GetSmartSpell(id)`
 Helper interno que retorna el nombre del hechizo SOLO si está aprendido.
 
 ---
@@ -96,7 +96,7 @@ Helper interno que retorna el nombre del hechizo SOLO si está aprendido.
 ---
 
 ## 🔄 SpecWatcher.lua
-Detecta cuando cambias de talentos (Dual Spec) y desencadena automáticamente `Sequito_MacroGenerator_CreateMacros()` para que tus botones siempre hagan lo correcto.
+Detecta cuando cambias de talentos (Dual Spec) y desencadena automáticamente `Jaina_MacroGenerator_CreateMacros()` para que tus botones siempre hagan lo correcto.
 
 ---
 
@@ -163,7 +163,7 @@ Sistema de Asignaciones Automáticas para Raids.
 
 #### 3. Sincronización
 - Comparte asignaciones con el raid via addon messages
-- Todos los usuarios de Sequito reciben las asignaciones
+- Todos los usuarios de Jaina reciben las asignaciones
 
 ### Comandos
 - `/sequito assign` - Abre panel de asignaciones
@@ -237,7 +237,7 @@ Módulos de soporte que mejoran la calidad de vida.
 ## 🔄 MacroSync.lua 
 
 ### Descripción
-Sistema de sincronización y biblioteca de macros entre usuarios de Sequito.
+Sistema de sincronización y biblioteca de macros entre usuarios de Jaina.
 
 ### Funcionalidades Clave
 
@@ -388,7 +388,7 @@ Analizador de Wipes para raids que ayuda a identificar las causas de los wipes.
 
 ---
 
-## 🧠 SequitoSoulEngine.lua (NUEVO v10.1.0)
+## 🧠 JainaSoulEngine.lua (NUEVO v10.1.0)
 
 ### Descripción
 Motor de análisis de combate con predicción Time-To-Die y captura de estadísticas.
@@ -414,7 +414,7 @@ Motor de análisis de combate con predicción Time-To-Die y captura de estadíst
 
 ---
 
-## 🕵️ SequitoSpy.lua (NUEVO v10.1.0)
+## 🕵️ JainaSpy.lua (NUEVO v10.1.0)
 
 ### Descripción
 Módulo de inteligencia PvP. Detecta, trackea y alerta sobre enemigos cercanos y uso de stealth.
@@ -493,7 +493,7 @@ HUD de combate con alertas de proc, barra de recursos y salud de mascota para to
 
 ---
 
-## 🎭 SequitoHumor.lua (NUEVO v10.2.0)
+## 🎭 JainaHumor.lua (NUEVO v10.2.0)
 
 ### Descripción
 Sistema interactivo de expresiones, frases cómicas e inmersión de hermandad ante actividades clave en mazmorras y bandas.

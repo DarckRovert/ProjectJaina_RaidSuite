@@ -1,5 +1,5 @@
 --[[
-    Sequito - The Coven (Utility & Rituals)
+    Jaina - The Coven (Utility & Rituals)
     Modulo v11.0: Gestion de invos, piedras y maldiciones.
 ]]
 
@@ -306,7 +306,7 @@ function Coven:AssignCurses()
         "Maldición de Debilidad"
     }
     
-    local msg = "Sequito: Asignación de Maldiciones -> "
+    local msg = "Jaina: Asignación de Maldiciones -> "
     for i, lock in ipairs(warlocks) do
         local curse = curses[i] or "Maldición de la Agonía"
         msg = msg .. string.format("[%s: %s] ", lock, curse)
@@ -328,7 +328,7 @@ end
 function Coven:CreateSummonFrame()
     if self.SummonFrame then return self.SummonFrame end
 
-    local f = CreateFrame("Frame", "SequitoSummonFrame", UIParent)
+    local f = CreateFrame("Frame", "JainaSummonFrame", UIParent)
     f:SetSize(320, 310)
     f:SetPoint("CENTER", UIParent, "CENTER", 200, 50)
     f:SetMovable(true)
@@ -354,7 +354,7 @@ function Coven:CreateSummonFrame()
     -- Header
     local title = f:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     title:SetPoint("TOPLEFT", 14, -12)
-    title:SetText("|cFFCC66FFSequito Coven|r - Asistente de Invocación")
+    title:SetText("|cFFCC66FFJaina Coven|r - Asistente de Invocación")
 
     local subtitle = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
     subtitle:SetPoint("TOPLEFT", 14, -30)
@@ -386,7 +386,7 @@ function Coven:CreateSummonFrame()
     f.emptyText = emptyText
 
     -- Bottom Buttons Container
-    local summonBtn = CreateFrame("Button", "SequitoCovenCastBtn", f, "SecureActionButtonTemplate, UIPanelButtonTemplate")
+    local summonBtn = CreateFrame("Button", "JainaCovenCastBtn", f, "SecureActionButtonTemplate, UIPanelButtonTemplate")
     summonBtn:SetSize(140, 26)
     summonBtn:SetPoint("BOTTOMLEFT", 14, 40)
     summonBtn:SetText("Invocar Siguiente")
@@ -427,7 +427,7 @@ end
 function Coven:CreateSummonButton()
     -- Botón flotante independiente si se necesita
     if self.SummonButton then return self.SummonButton end
-    local btn = CreateFrame("Button", "SequitoFloatingSummonBtn", UIParent, "SecureActionButtonTemplate")
+    local btn = CreateFrame("Button", "JainaFloatingSummonBtn", UIParent, "SecureActionButtonTemplate")
     btn:SetAttribute("type", "macro")
     btn:SetSize(36, 36)
     btn:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", -260, 180)

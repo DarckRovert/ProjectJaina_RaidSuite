@@ -1,8 +1,8 @@
 --[[
-    SEQUITO - SequitoHumor (Frases Cómicas y Diálogos de Incursión)
+    SEQUITO - JainaHumor (Frases Cómicas y Diálogos de Incursión)
     Versión: 10.2.0 (Definitive Edition)
     Autor: DarckRovert (Ingame: Elnazzareno) & Project Jaina Team
-    Servidor: Project Jaina - Project Jaina (worldofwanos.com)
+    Servidor: Project Jaina - Project Jaina (projectjaina.com)
     
     Proporciona frases cómicas, ocurrentes y temáticas de hermandad
     cuando el jugador realiza actividades clave en mazmorras y bandas
@@ -106,7 +106,7 @@ H.Quotes = {
     },
     FEAST = {
         "¡Festín de pescado servido! Coman rápido que huele a puerto de Tuercespina y caduca en 5 minutos.",
-        "¡Pescado fresco del Sequito! Tienen 30 segundos para sentarse y masticar antes del pull.",
+        "¡Pescado fresco del Jaina! Tienen 30 segundos para sentarse y masticar antes del pull.",
         "Puse festín. Si alguien hace pull con la comida a medio masticar, lo tiramos por el balcón de ICC.",
     },
     REPAIR = {
@@ -250,7 +250,7 @@ function H:Initialize()
     end
 
     -- Marco de captura de eventos
-    H.Frame = CreateFrame("Frame", "SequitoHumorFrame")
+    H.Frame = CreateFrame("Frame", "JainaHumorFrame")
     H.Frame:RegisterEvent("UNIT_SPELLCAST_SENT")
     H.Frame:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
 
@@ -403,34 +403,34 @@ function H:HandleSlash(msg)
         if H.Quotes[cat] then
             H:TriggerQuote(cat, UnitName("target") or "Elnazzareno")
             if S.Print then
-                S:Print("|cFF00FF00[SequitoHumor]|r Probando frase de categoría: " .. cat)
+                S:Print("|cFF00FF00[JainaHumor]|r Probando frase de categoría: " .. cat)
             end
         else
             if S.Print then
-                S:Print("|cFFFF0000[SequitoHumor]|r Categoría desconocida. Opciones: SUMMON, SOULWELL, DOOM, MAGE_TABLE, PORTAL, BATTLE_REZ, NORMAL_REZ, BLOODLUST, DIVINE_INTERVENTION, MISDIRECTION, FEAST, REPAIR")
+                S:Print("|cFFFF0000[JainaHumor]|r Categoría desconocida. Opciones: SUMMON, SOULWELL, DOOM, MAGE_TABLE, PORTAL, BATTLE_REZ, NORMAL_REZ, BLOODLUST, DIVINE_INTERVENTION, MISDIRECTION, FEAST, REPAIR")
             end
         end
     elseif cmd == "toggle" then
         H.Config.enabled = not H.Config.enabled
         local state = H.Config.enabled and "|cFF00FF00ACTIVADO|r" or "|cFFFF0000DESACTIVADO|r"
         if S.Print then
-            S:Print("|cFF00FF00[SequitoHumor]|r Modo Humor: " .. state)
+            S:Print("|cFF00FF00[JainaHumor]|r Modo Humor: " .. state)
         end
     elseif cmd == "channel" then
         local chan = string.upper(arg or "")
         if chan == "SAY" or chan == "PARTY" or chan == "RAID" or chan == "YELL" then
             H.Config.channel = chan
             if S.Print then
-                S:Print("|cFF00FF00[SequitoHumor]|r Canal configurado a: " .. chan)
+                S:Print("|cFF00FF00[JainaHumor]|r Canal configurado a: " .. chan)
             end
         else
             if S.Print then
-                S:Print("|cFFFF0000[SequitoHumor]|r Canales válidos: SAY, PARTY, RAID, YELL")
+                S:Print("|cFFFF0000[JainaHumor]|r Canales válidos: SAY, PARTY, RAID, YELL")
             end
         end
     else
         if S.Print then
-            S:Print("|cFF00FFFF=== Comandos de SequitoHumor ===|r")
+            S:Print("|cFF00FFFF=== Comandos de JainaHumor ===|r")
             S:Print("/shumor toggle - Activa o desactiva las frases cómicas")
             S:Print("/shumor channel [SAY|PARTY|RAID|YELL] - Cambia el canal de emisión")
             S:Print("/shumor test [CATEGORIA] - Prueba una frase en el chat")

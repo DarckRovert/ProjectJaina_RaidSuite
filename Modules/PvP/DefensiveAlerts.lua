@@ -1,5 +1,5 @@
 --[[
-    Sequito - DefensiveAlerts.lua
+    Jaina - DefensiveAlerts.lua
     Sistema de Llamadas de Defensivos
     Version: 7.3.0
     
@@ -168,7 +168,7 @@ function DA:Initialize()
 end
 
 function DA:CreateFrame()
-    self.Frame = CreateFrame("Frame", "SequitoDefensiveAlertsFrame", UIParent)
+    self.Frame = CreateFrame("Frame", "JainaDefensiveAlertsFrame", UIParent)
     self.Frame:SetSize(180, 220)
     self.Frame:SetPoint("LEFT", UIParent, "LEFT", 20, -100)
     self.Frame:SetMovable(true)
@@ -252,7 +252,7 @@ end
 
 function DA:CreateAlertFrame()
     -- Frame de alerta que aparece cuando alguien del grupo envía una alerta
-    self.AlertDisplay = CreateFrame("Frame", "SequitoDefensiveAlertDisplay", UIParent)
+    self.AlertDisplay = CreateFrame("Frame", "JainaDefensiveAlertDisplay", UIParent)
     self.AlertDisplay:SetSize(300, 50)
     self.AlertDisplay:SetPoint("TOP", UIParent, "TOP", 0, -100)
     self.AlertDisplay:SetFrameStrata("HIGH")
@@ -355,21 +355,21 @@ function DA:SetupKeybinds()
     -- Los keybinds se configuran en Bindings.xml
     -- Aquí solo definimos las funciones globales
     
-    _G.BINDING_HEADER_SEQUITO_DEFENSIVE = "Sequito - Alertas Defensivas"
+    _G.BINDING_HEADER_SEQUITO_DEFENSIVE = "Jaina - Alertas Defensivas"
     _G.BINDING_NAME_SEQUITO_NEED_PEEL = "Necesito Peel"
     _G.BINDING_NAME_SEQUITO_USING_DEFENSIVE = "Usando Defensivo"
     _G.BINDING_NAME_SEQUITO_NEED_HEAL = "Necesito Heal"
     
     -- Funciones globales para keybinds
-    function Sequito_NeedPeel()
+    function Jaina_NeedPeel()
         DA:SendAlert("NEED_PEEL")
     end
     
-    function Sequito_UsingDefensive()
+    function Jaina_UsingDefensive()
         DA:SendAlert("USING_DEFENSIVE")
     end
     
-    function Sequito_NeedHeal()
+    function Jaina_NeedHeal()
         DA:SendAlert("NEED_HEAL")
     end
 end
@@ -395,7 +395,7 @@ function DA:SendAlert(alertType)
     local channel = self:GetChannel()
     
     if channel and self:GetOption("announceToChat") then
-        SendChatMessage(string.format("[Sequito] %s (%d%% HP)", alertData.text, hp), channel)
+        SendChatMessage(string.format("[Jaina] %s (%d%% HP)", alertData.text, hp), channel)
         if S.SendAddonMessage then
             local message = string.format("%s:%s:%d", alertType, playerName, hp)
             S:SendAddonMessage("SEQDA", message, channel)
@@ -416,7 +416,7 @@ end
 function DA:SendDefensiveUsed(spellName)
     local channel = self:GetChannel()
     if channel and self:GetOption("announceToChat") then
-        SendChatMessage(string.format("[Sequito] Usando: %s", spellName), channel)
+        SendChatMessage(string.format("[Jaina] Usando: %s", spellName), channel)
     end
 end
 

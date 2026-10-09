@@ -1,5 +1,5 @@
 --[[
-    Sequito - BuildManager Module
+    Jaina - BuildManager Module
     Perfil de Builds/Specs con UI completa
     Version: 7.3.0
 ]]
@@ -13,12 +13,12 @@ StaticPopupDialogs["SEQUITO_CONFIRM_DELETE_ALL_BUILDS"] = {
     button1 = YES or "Sí",
     button2 = NO or "No",
     OnAccept = function()
-        wipe(SequitoBuildDB)
+        wipe(JainaBuildDB)
         BM:UpdateBuildList()
         if S.Print then
             S:Print("Todos los builds han sido eliminados.")
         else
-            print("|cFFFF9900[Sequito]|r Todos los builds han sido eliminados.")
+            print("|cFFFF9900[Jaina]|r Todos los builds han sido eliminados.")
         end
     end,
     timeout = 0,
@@ -27,7 +27,7 @@ StaticPopupDialogs["SEQUITO_CONFIRM_DELETE_ALL_BUILDS"] = {
     preferredIndex = 3,
 }
 
-SequitoBuildDB = SequitoBuildDB or {}
+JainaBuildDB = JainaBuildDB or {}
 
 -- Helper para obtener configuración
 function BM:GetOption(key)
@@ -51,7 +51,7 @@ function BM:Initialize()
 end
 
 function BM:CreateFrame()
-    local f = CreateFrame("Frame", "SequitoBuildManagerFrame", UIParent)
+    local f = CreateFrame("Frame", "JainaBuildManagerFrame", UIParent)
     self.frame = f
     f:SetSize(350, 350)
     f:SetPoint("CENTER")
@@ -79,7 +79,7 @@ function BM:CreateFrame()
     
     f.title = f:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     f.title:SetPoint("TOP", 0, -12)
-    f.title:SetText("|cff00ff00Sequito|r - Build Manager")
+    f.title:SetText("|cff00ff00Jaina|r - Build Manager")
     
     f.close = CreateFrame("Button", nil, f, "UIPanelCloseButton")
     f.close:SetPoint("TOPRIGHT", -5, -5)
@@ -122,7 +122,7 @@ function BM:CreateFrame()
     f.listLabel:SetPoint("TOPLEFT", 15, -115)
     f.listLabel:SetText("Builds guardados:")
     
-    f.scrollFrame = CreateFrame("ScrollFrame", "SequitoBMScroll", f, "UIPanelScrollFrameTemplate")
+    f.scrollFrame = CreateFrame("ScrollFrame", "JainaBMScroll", f, "UIPanelScrollFrameTemplate")
     f.scrollFrame:SetPoint("TOPLEFT", 10, -135)
     f.scrollFrame:SetPoint("BOTTOMRIGHT", -30, 50)
     
@@ -153,7 +153,7 @@ function BM:UpdateBuildList()
     local index = 1
     local playerClass = select(2, UnitClass("player"))
     
-    for name, data in pairs(SequitoBuildDB) do
+    for name, data in pairs(JainaBuildDB) do
         local row = self.buildRows[index]
         if not row then
             row = CreateFrame("Frame", nil, self.frame.scrollChild)
@@ -234,7 +234,7 @@ function BM:UpdateBuildList()
 end
 
 function BM:LoadBuild(name)
-    if not SequitoBuildDB or not SequitoBuildDB[name] then
+    if not JainaBuildDB or not JainaBuildDB[name] then
         S:Print("Build no encontrado: " .. tostring(name))
         return
     end
@@ -242,7 +242,7 @@ function BM:LoadBuild(name)
 end
 
 function BM:ShowBuildDetails(name)
-    local build = SequitoBuildDB[name]
+    local build = JainaBuildDB[name]
     if not build then return end
     
     S:Print("=== Build: " .. name .. " ===")
@@ -268,7 +268,7 @@ function BM:ShowBuildDetails(name)
 end
 
 function BM:DeleteBuild(name)
-    SequitoBuildDB[name] = nil
+    JainaBuildDB[name] = nil
     S:Print("Build '" .. name .. "' eliminado")
 end
 
@@ -288,19 +288,19 @@ function BM:SaveBuild(name)
         glyphs[i] = glyphID
     end
     
-    SequitoBuildDB[name] = {talents = talents, glyphs = glyphs, class = select(2, UnitClass("player"))}
+    JainaBuildDB[name] = {talents = talents, glyphs = glyphs, class = select(2, UnitClass("player"))}
     S:Print("Build '" .. name .. "' guardado")
 end
 
 function BM:ListBuilds()
     S:Print("Builds guardados:")
-    for name, data in pairs(SequitoBuildDB) do
+    for name, data in pairs(JainaBuildDB) do
         S:Print("  - " .. name .. " (" .. data.class .. ")")
     end
 end
 
 function BM:ShareBuild(name, target)
-    local build = SequitoBuildDB[name]
+    local build = JainaBuildDB[name]
     if not build then
         S:Print("Build no encontrado: " .. tostring(name))
         return
@@ -351,8 +351,8 @@ function BM:OnAddonMessage(prefix, message, channel, sender)
 
         local cleanSender = sender and sender:match("^[^-]+") or "Aliado"
         local saveName = string.format("%s (%s)", rName, cleanSender)
-        SequitoBuildDB = SequitoBuildDB or {}
-        SequitoBuildDB[saveName] = { talents = recTalents, glyphs = recGlyphs, class = rClass }
+        JainaBuildDB = JainaBuildDB or {}
+        JainaBuildDB[saveName] = { talents = recTalents, glyphs = recGlyphs, class = rClass }
         S:Print(string.format("Build '%s' recibido de %s y guardado en tu gestor.", rName, cleanSender))
         if self.frame and self.frame:IsShown() then
             self:UpdateBuildList()

@@ -31,7 +31,7 @@ function S.Logistics:Initialize()
     end
     self.initialized = true
 
-    local f = CreateFrame("Frame", "SequitoLogisticsFrame", UIParent)
+    local f = CreateFrame("Frame", "JainaLogisticsFrame", UIParent)
     self.eventFrame = f
     f:RegisterEvent("MERCHANT_SHOW")
     f:RegisterEvent("TRADE_SHOW")
@@ -119,7 +119,7 @@ function S.Logistics:SellJunk()
 
     if profit > 0 then
         local coinStr = GetCoinTextureString and GetCoinTextureString(profit) or (profit .. " cobre")
-        print("|cFF00FF00[Sequito]|r Basura vendida (" .. countSold .. " objetos) por: " .. coinStr)
+        print("|cFF00FF00[Jaina]|r Basura vendida (" .. countSold .. " objetos) por: " .. coinStr)
     end
 end
 
@@ -132,10 +132,10 @@ function S.Logistics:Repair()
         if money >= cost then
             RepairAllItems()
             local coinStr = GetCoinTextureString and GetCoinTextureString(cost) or (cost .. " cobre")
-            print("|cFF00FF00[Sequito]|r Equipo reparado por: " .. coinStr)
+            print("|cFF00FF00[Jaina]|r Equipo reparado por: " .. coinStr)
         else
             local coinStr = GetCoinTextureString and GetCoinTextureString(cost) or (cost .. " cobre")
-            print("|cFFFF0000[Sequito]|r Fondos insuficientes para reparar (" .. coinStr .. " necesarios).")
+            print("|cFFFF0000[Jaina]|r Fondos insuficientes para reparar (" .. coinStr .. " necesarios).")
         end
     end
 end
@@ -174,7 +174,7 @@ function S.Logistics:OnTradeShow()
                     ClickTradeButton(1)
                     ClearCursor()
                     local itemName = GetItemInfo(itemID) or "Objeto"
-                    print("|cFF00FFFF[Sequito]|r Auto-Trade colocado: " .. itemName)
+                    print("|cFF00FFFF[Jaina]|r Auto-Trade colocado: " .. itemName)
                 end
             end
         end
@@ -248,7 +248,7 @@ function S.Logistics:ManageShards()
         end
 
         if deleted > 0 then
-            print("|cFF888888[Sequito] " .. deleted .. " Fragmentos de Alma purgados (Límite: " .. limit .. ")|r")
+            print("|cFF888888[Jaina] " .. deleted .. " Fragmentos de Alma purgados (Límite: " .. limit .. ")|r")
             PlaySoundFile("Sound\\Spells\\SoulShatter.wav")
             self.lastShardCount = limit
         end
@@ -272,7 +272,7 @@ function S.Logistics:SlashCommand(msg)
             S.ModuleConfig:OpenCategory("Logistics")
         end
     else
-        print("|cFF00FFFF[Sequito Logistics]|r Comandos:")
+        print("|cFF00FFFF[Jaina Logistics]|r Comandos:")
         print("  |cFFFFFFFF/logistics sell|r - Vender objetos basura manualmente")
         print("  |cFFFFFFFF/logistics repair|r - Reparar equipo manualmente")
         print("  |cFFFFFFFF/logistics shards|r - Purgar fragmentos de alma sobrantes (Brujo)")

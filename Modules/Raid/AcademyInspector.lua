@@ -64,7 +64,7 @@ function AI:Initialize()
     self.initialized = true
     self.frame = self:CreateInspectorFrame()
     self:RegisterEvents()
-    print("|cFFFF00FFSequito|r: [Academy] Inspector de Academia iniciado.")
+    print("|cFFFF00FFJaina|r: [Academy] Inspector de Academia iniciado.")
 end
 
 function AI:RegisterEvents()
@@ -229,7 +229,7 @@ end
 -- INTERFAZ (UI)
 -- ===========================================================================
 function AI:CreateInspectorFrame()
-    local f = CreateFrame("Frame", "SequitoInspectorFrame", UIParent)
+    local f = CreateFrame("Frame", "JainaInspectorFrame", UIParent)
     f:SetSize(340, 240)
     f:SetPoint("CENTER")
     f:SetMovable(true)

@@ -17,7 +17,7 @@
 
 ## 📖 Introduction
 
-This document provides complete API documentation for developers who want to integrate with Sequito.
+This document provides complete API documentation for developers who want to integrate with Jaina.
 
 ### Compatibility
 - **WoW Version:** 3.3.5a (WotLK)
@@ -27,50 +27,50 @@ This document provides complete API documentation for developers who want to int
 
 ## 🎯 Core API
 
-### `Sequito_RegisterTab(name, icon, frame)`
-Registers a new tab in the Sequito Dashboard.
+### `Jaina_RegisterTab(name, icon, frame)`
+Registers a new tab in the Jaina Dashboard.
 - **name:** Title of the tab.
 - **icon:** Texture path for the icon.
 - **frame:** The frame to display when the tab is selected.
 
-### `Sequito_ExportReport()`
+### `Jaina_ExportReport()`
 Opens the Export window with the current raid report.
 
 ---
 
 
-### `Sequito_GetVersion()`
+### `Jaina_GetVersion()`
 
-Returns the current version of Sequito.
+Returns the current version of Jaina.
 
 **Returns:**
 - `string`: Version number (e.g., "2.2.0")
 
 **Example:**
 ```lua
-local version = Sequito_GetVersion()
-print("Sequito version: " .. version)
+local version = Jaina_GetVersion()
+print("Jaina version: " .. version)
 ```
 
 ---
 
-### `Sequito_IsLoaded()`
+### `Jaina_IsLoaded()`
 
-Checks if Sequito is fully loaded and initialized.
+Checks if Jaina is fully loaded and initialized.
 
 **Returns:**
 - `boolean`: `true` if loaded, `false` otherwise
 
 **Example:**
 ```lua
-if Sequito_IsLoaded() then
-    print("Sequito is ready!")
+if Jaina_IsLoaded() then
+    print("Jaina is ready!")
 end
 ```
 
 ---
 
-### `Sequito_GetDB()`
+### `Jaina_GetDB()`
 
 Returns the SavedVariables database.
 
@@ -79,30 +79,30 @@ Returns the SavedVariables database.
 
 **Example:**
 ```lua
-local db = Sequito_GetDB()
+local db = Jaina_GetDB()
 print("Macros enabled: " .. tostring(db.settings.macros_enabled))
 ```
 
 ---
 
-### `Sequito_Print(message)`
+### `Jaina_Print(message)`
 
-Prints a message to chat with Sequito prefix.
+Prints a message to chat with Jaina prefix.
 
 **Parameters:**
 - `message` (string): Message to print
 
 **Example:**
 ```lua
-Sequito_Print("Hello from Sequito!")
--- Output: [Sequito] Hello from Sequito!
+Jaina_Print("Hello from Jaina!")
+-- Output: [Jaina] Hello from Jaina!
 ```
 
 ---
 
 ## 🔍 Universal API
 
-### `Sequito_Universal_GetPlayerInfo()`
+### `Jaina_Universal_GetPlayerInfo()`
 
 Gets complete player information.
 
@@ -127,7 +127,7 @@ Gets complete player information.
 
 **Example:**
 ```lua
-local info = Sequito_Universal_GetPlayerInfo()
+local info = Jaina_Universal_GetPlayerInfo()
 if info.class == "WARLOCK" then
     print("You are a Warlock!")
 end
@@ -135,7 +135,7 @@ end
 
 ---
 
-### `Sequito_Universal_GetClass()`
+### `Jaina_Universal_GetClass()`
 
 Gets player's class.
 
@@ -144,12 +144,12 @@ Gets player's class.
 
 **Example:**
 ```lua
-local class = Sequito_Universal_GetClass()
+local class = Jaina_Universal_GetClass()
 ```
 
 ---
 
-### `Sequito_Universal_GetClassLocalized()`
+### `Jaina_Universal_GetClassLocalized()`
 
 Gets player's class in localized language.
 
@@ -158,12 +158,12 @@ Gets player's class in localized language.
 
 **Example:**
 ```lua
-local class = Sequito_Universal_GetClassLocalized()
+local class = Jaina_Universal_GetClassLocalized()
 ```
 
 ---
 
-### `Sequito_Universal_GetSpec()`
+### `Jaina_Universal_GetSpec()`
 
 Gets player's current specialization.
 
@@ -172,7 +172,7 @@ Gets player's current specialization.
 
 **Example:**
 ```lua
-local spec = Sequito_Universal_GetSpec()
+local spec = Jaina_Universal_GetSpec()
 if spec == "Affliction" then
     print("Affliction Warlock detected")
 end
@@ -180,7 +180,7 @@ end
 
 ---
 
-### `Sequito_Universal_GetRole()`
+### `Jaina_Universal_GetRole()`
 
 Gets player's role based on spec.
 
@@ -189,7 +189,7 @@ Gets player's role based on spec.
 
 **Example:**
 ```lua
-local role = Sequito_Universal_GetRole()
+local role = Jaina_Universal_GetRole()
 if role == "Tank" then
     print("You are a tank!")
 end
@@ -197,7 +197,7 @@ end
 
 ---
 
-### `Sequito_Universal_GetClassColor(class)`
+### `Jaina_Universal_GetClassColor(class)`
 
 Gets the color for a specific class.
 
@@ -216,13 +216,13 @@ Gets the color for a specific class.
 
 **Example:**
 ```lua
-local color = Sequito_Universal_GetClassColor("WARLOCK")
+local color = Jaina_Universal_GetClassColor("WARLOCK")
 local r, g, b = color.r, color.g, color.b
 ```
 
 ---
 
-### `Sequito_Universal_GetResource()`
+### `Jaina_Universal_GetResource()`
 
 Gets player's current resource information.
 
@@ -238,7 +238,7 @@ Gets player's current resource information.
 
 **Example:**
 ```lua
-local resource = Sequito_Universal_GetResource()
+local resource = Jaina_Universal_GetResource()
 print(string.format("Mana: %d/%d (%.1f%%)", 
     resource.current, resource.max, resource.percent))
 ```
@@ -247,7 +247,7 @@ print(string.format("Mana: %d/%d (%.1f%%)",
 
 ## 🔧 Macro Generator API
 
-### `Sequito_MacroGenerator_CreateMacros()`
+### `Jaina_MacroGenerator_CreateMacros()`
 
 Generates macros for current class and spec.
 
@@ -256,14 +256,14 @@ Generates macros for current class and spec.
 
 **Example:**
 ```lua
-if Sequito_MacroGenerator_CreateMacros() then
-    Sequito_Print("Macros created successfully!")
+if Jaina_MacroGenerator_CreateMacros() then
+    Jaina_Print("Macros created successfully!")
 end
 ```
 
 ---
 
-### `Sequito_MacroGenerator_GetMacrosForClass(class, spec)`
+### `Jaina_MacroGenerator_GetMacrosForClass(class, spec)`
 
 Gets macro definitions for a specific class and spec.
 
@@ -285,7 +285,7 @@ Gets macro definitions for a specific class and spec.
 
 **Example:**
 ```lua
-local macros = Sequito_MacroGenerator_GetMacrosForClass("WARLOCK", "Affliction")
+local macros = Jaina_MacroGenerator_GetMacrosForClass("WARLOCK", "Affliction")
 for _, macro in ipairs(macros) do
     print("Macro: " .. macro.name)
 end
@@ -293,7 +293,7 @@ end
 
 ---
 
-### `Sequito_MacroGenerator_CreateMacro(name, icon, body)`
+### `Jaina_MacroGenerator_CreateMacro(name, icon, body)`
 
 Creates a single macro.
 
@@ -307,7 +307,7 @@ Creates a single macro.
 
 **Example:**
 ```lua
-local index = Sequito_MacroGenerator_CreateMacro(
+local index = Jaina_MacroGenerator_CreateMacro(
     "[SEQ] Test",
     "Interface\\Icons\\INV_Misc_QuestionMark",
     "/say Hello World!"
@@ -316,7 +316,7 @@ local index = Sequito_MacroGenerator_CreateMacro(
 
 ---
 
-### `Sequito_MacroGenerator_DeleteMacro(name)`
+### `Jaina_MacroGenerator_DeleteMacro(name)`
 
 Deletes a macro by name.
 
@@ -328,7 +328,7 @@ Deletes a macro by name.
 
 **Example:**
 ```lua
-Sequito_MacroGenerator_DeleteMacro("[SEQ] Old Macro")
+Jaina_MacroGenerator_DeleteMacro("[SEQ] Old Macro")
 ```
 
 ---
@@ -419,7 +419,7 @@ S.MacroSync:ImportAllFromLibrary(1) -- Import all Affliction macros
 
 ### `S.MacroSync:RequestMacroList()`
 
-Requests macro list from other Sequito users in your group.
+Requests macro list from other Jaina users in your group.
 
 **Example:**
 ```lua
@@ -430,7 +430,7 @@ S.MacroSync:RequestMacroList()
 
 ## 👥 Raid Sync API
 
-### `Sequito_RaidSync_SendData(dataType, data)`
+### `Jaina_RaidSync_SendData(dataType, data)`
 
 Sends data to raid members.
 
@@ -440,7 +440,7 @@ Sends data to raid members.
 
 **Example:**
 ```lua
-Sequito_RaidSync_SendData("SPEC", {
+Jaina_RaidSync_SendData("SPEC", {
     class = "WARLOCK",
     spec = "Affliction",
     role = "DPS"
@@ -449,7 +449,7 @@ Sequito_RaidSync_SendData("SPEC", {
 
 ---
 
-### `Sequito_RaidSync_SendCommand(command, target)`
+### `Jaina_RaidSync_SendCommand(command, target)`
 
 Sends a tactical command to raid.
 
@@ -460,15 +460,15 @@ Sends a tactical command to raid.
 **Example:**
 ```lua
 -- Send focus command
-Sequito_RaidSync_SendCommand("FOCUS", "Ragnaros")
+Jaina_RaidSync_SendCommand("FOCUS", "Ragnaros")
 
 -- Send alpha strike command
-Sequito_RaidSync_SendCommand("ALPHA")
+Jaina_RaidSync_SendCommand("ALPHA")
 ```
 
 ---
 
-### `Sequito_RaidSync_GetRaidData()`
+### `Jaina_RaidSync_GetRaidData()`
 
 Gets synchronized data from all raid members.
 
@@ -488,7 +488,7 @@ Gets synchronized data from all raid members.
 
 **Example:**
 ```lua
-local raidData = Sequito_RaidSync_GetRaidData()
+local raidData = Jaina_RaidSync_GetRaidData()
 for player, data in pairs(raidData) do
     print(player .. " is " .. data.spec .. " " .. data.class)
 end
@@ -496,7 +496,7 @@ end
 
 ---
 
-### `Sequito_RaidSync_RegisterCallback(dataType, callback)`
+### `Jaina_RaidSync_RegisterCallback(dataType, callback)`
 
 Registers a callback for received data.
 
@@ -510,14 +510,14 @@ Registers a callback for received data.
 
 **Example:**
 ```lua
-Sequito_RaidSync_RegisterCallback("CUSTOM", function(sender, data)
+Jaina_RaidSync_RegisterCallback("CUSTOM", function(sender, data)
     print(sender .. " sent: " .. tostring(data.message))
 end)
 ```
 
 ---
 
-### `Sequito_RaidSync_IsInRaid()`
+### `Jaina_RaidSync_IsInRaid()`
 
 Checks if player is in a raid.
 
@@ -526,7 +526,7 @@ Checks if player is in a raid.
 
 **Example:**
 ```lua
-if Sequito_RaidSync_IsInRaid() then
+if Jaina_RaidSync_IsInRaid() then
     print("You are in a raid!")
 end
 ```
@@ -535,7 +535,7 @@ end
 
 ## 📊 Raid Intel API
 
-### `Sequito_RaidIntel_ScanBuffs()`
+### `Jaina_RaidIntel_ScanBuffs()`
 
 Scans raid for missing buffs.
 
@@ -553,7 +553,7 @@ Scans raid for missing buffs.
 
 **Example:**
 ```lua
-local buffs = Sequito_RaidIntel_ScanBuffs()
+local buffs = Jaina_RaidIntel_ScanBuffs()
 for buffName, info in pairs(buffs) do
     if info.missing > 0 then
         print(buffName .. " missing on " .. info.missing .. " players")
@@ -563,7 +563,7 @@ end
 
 ---
 
-### `Sequito_RaidIntel_GetClassCount()`
+### `Jaina_RaidIntel_GetClassCount()`
 
 Gets count of each class in raid.
 
@@ -585,13 +585,13 @@ Gets count of each class in raid.
 
 **Example:**
 ```lua
-local classes = Sequito_RaidIntel_GetClassCount()
+local classes = Jaina_RaidIntel_GetClassCount()
 print("Warriors in raid: " .. (classes.WARRIOR or 0))
 ```
 
 ---
 
-### `Sequito_RaidIntel_GetRoleCount()`
+### `Jaina_RaidIntel_GetRoleCount()`
 
 Gets count of each role in raid.
 
@@ -606,7 +606,7 @@ Gets count of each role in raid.
 
 **Example:**
 ```lua
-local roles = Sequito_RaidIntel_GetRoleCount()
+local roles = Jaina_RaidIntel_GetRoleCount()
 print("Tanks: " .. roles.Tank)
 print("Healers: " .. roles.Healer)
 print("DPS: " .. roles.DPS)
@@ -614,7 +614,7 @@ print("DPS: " .. roles.DPS)
 
 ---
 
-### `Sequito_RaidIntel_GetAvailableCooldowns()`
+### `Jaina_RaidIntel_GetAvailableCooldowns()`
 
 Gets list of available raid cooldowns.
 
@@ -643,7 +643,7 @@ Gets list of available raid cooldowns.
 
 **Example:**
 ```lua
-local cds = Sequito_RaidIntel_GetAvailableCooldowns()
+local cds = Jaina_RaidIntel_GetAvailableCooldowns()
 for _, cd in ipairs(cds) do
     if cd.ready then
         print(cd.player .. " has " .. cd.spell .. " ready!")
@@ -752,18 +752,18 @@ S.RaidAssist:SetAlertPosition("CENTER")
 
 ## ⚔️ Combat Tracker API
 
-### `Sequito_CombatTracker_Start()`
+### `Jaina_CombatTracker_Start()`
 
 Starts combat tracking.
 
 **Example:**
 ```lua
-Sequito_CombatTracker_Start()
+Jaina_CombatTracker_Start()
 ```
 
 ---
 
-### `Sequito_CombatTracker_Stop()`
+### `Jaina_CombatTracker_Stop()`
 
 Stops combat tracking and generates report.
 
@@ -782,13 +782,13 @@ Stops combat tracking and generates report.
 
 **Example:**
 ```lua
-local report = Sequito_CombatTracker_Stop()
+local report = Jaina_CombatTracker_Stop()
 print("DPS: " .. report.dps)
 ```
 
 ---
 
-### `Sequito_CombatTracker_GetReport()`
+### `Jaina_CombatTracker_GetReport()`
 
 Gets the last combat report.
 
@@ -815,7 +815,7 @@ Gets the last combat report.
 
 **Example:**
 ```lua
-local report = Sequito_CombatTracker_GetReport()
+local report = Jaina_CombatTracker_GetReport()
 if report then
     print("Your DPS: " .. report.personal.dps)
 end
@@ -823,7 +823,7 @@ end
 
 ---
 
-### `Sequito_CombatTracker_IsActive()`
+### `Jaina_CombatTracker_IsActive()`
 
 Checks if combat tracking is active.
 
@@ -832,7 +832,7 @@ Checks if combat tracking is active.
 
 **Example:**
 ```lua
-if Sequito_CombatTracker_IsActive() then
+if Jaina_CombatTracker_IsActive() then
     print("Combat tracking is active")
 end
 ```
@@ -843,18 +843,18 @@ end
 
 ### Custom Events
 
-Sequito fires custom events that other addons can listen to:
+Jaina fires custom events that other addons can listen to:
 
 #### `SEQUITO_LOADED`
 
-Fired when Sequito is fully loaded.
+Fired when Jaina is fully loaded.
 
 **Example:**
 ```lua
 local frame = CreateFrame("Frame")
 frame:RegisterEvent("SEQUITO_LOADED")
 frame:SetScript("OnEvent", function(self, event)
-    print("Sequito is loaded!")
+    print("Jaina is loaded!")
 end)
 ```
 
@@ -1045,14 +1045,14 @@ end)
 ### Example 1: Check Player Class and Generate Macros
 
 ```lua
-local info = Sequito_Universal_GetPlayerInfo()
+local info = Jaina_Universal_GetPlayerInfo()
 
 if info.class == "WARLOCK" then
     print("You are a Warlock!")
     
     if info.spec == "Affliction" then
         print("Affliction spec detected")
-        Sequito_MacroGenerator_CreateMacros()
+        Jaina_MacroGenerator_CreateMacros()
     end
 end
 ```
@@ -1063,13 +1063,13 @@ end
 
 ```lua
 local function CheckRaidComp()
-    if not Sequito_RaidSync_IsInRaid() then
+    if not Jaina_RaidSync_IsInRaid() then
         print("Not in raid")
         return
     end
     
-    local classes = Sequito_RaidIntel_GetClassCount()
-    local roles = Sequito_RaidIntel_GetRoleCount()
+    local classes = Jaina_RaidIntel_GetClassCount()
+    local roles = Jaina_RaidIntel_GetRoleCount()
     
     print("Raid Composition:")
     print("Tanks: " .. roles.Tank)
@@ -1117,10 +1117,10 @@ frame:RegisterEvent("PLAYER_REGEN_ENABLED")
 frame:SetScript("OnEvent", function(self, event)
     if event == "PLAYER_REGEN_DISABLED" then
         -- Combat started
-        Sequito_CombatTracker_Start()
+        Jaina_CombatTracker_Start()
     elseif event == "PLAYER_REGEN_ENABLED" then
         -- Combat ended
-        local report = Sequito_CombatTracker_Stop()
+        local report = Jaina_CombatTracker_Stop()
         if report then
             print(string.format("Combat ended. DPS: %.0f", report.dps))
         end
@@ -1134,12 +1134,12 @@ end)
 
 ```lua
 -- Register callback for custom data
-Sequito_RaidSync_RegisterCallback("CUSTOM", function(sender, data)
+Jaina_RaidSync_RegisterCallback("CUSTOM", function(sender, data)
     print(sender .. " says: " .. data.message)
 end)
 
 -- Send custom data
-Sequito_RaidSync_SendData("CUSTOM", {
+Jaina_RaidSync_SendData("CUSTOM", {
     message = "Hello from my addon!",
     timestamp = time()
 })
@@ -1149,15 +1149,15 @@ Sequito_RaidSync_SendData("CUSTOM", {
 
 ## 🔒 Best Practices
 
-### 1. Check if Sequito is Loaded
+### 1. Check if Jaina is Loaded
 
-Always check if Sequito is loaded before using its API:
+Always check if Jaina is loaded before using its API:
 
 ```lua
-if Sequito_IsLoaded() then
-    -- Use Sequito API
+if Jaina_IsLoaded() then
+    -- Use Jaina API
 else
-    print("Sequito is not loaded!")
+    print("Jaina is not loaded!")
 end
 ```
 
@@ -1168,7 +1168,7 @@ end
 Some functions may return `nil` if data is not available:
 
 ```lua
-local report = Sequito_CombatTracker_GetReport()
+local report = Jaina_CombatTracker_GetReport()
 if report then
     print("DPS: " .. report.dps)
 else
@@ -1185,7 +1185,7 @@ Instead of polling, use events:
 ```lua
 -- Bad: Polling
 local function CheckSpec()
-    local spec = Sequito_Universal_GetSpec()
+    local spec = Jaina_Universal_GetSpec()
     -- Check every second
 end
 
@@ -1204,9 +1204,9 @@ end)
 Check if modules are enabled before using them:
 
 ```lua
-local db = Sequito_GetDB()
+local db = Jaina_GetDB()
 if db.settings.raidsync_enabled then
-    Sequito_RaidSync_SendData("CUSTOM", data)
+    Jaina_RaidSync_SendData("CUSTOM", data)
 end
 ```
 
@@ -1218,20 +1218,20 @@ Tracker de trinkets PvP enemigos.
 
 ### Functions
 
-#### `Sequito.TrinketTracker:Toggle()`
+#### `Jaina.TrinketTracker:Toggle()`
 Abre/cierra el panel de trinkets.
 
-#### `Sequito.TrinketTracker:Show()` / `Sequito.TrinketTracker:Hide()`
+#### `Jaina.TrinketTracker:Show()` / `Jaina.TrinketTracker:Hide()`
 Muestra/oculta el panel.
 
-#### `Sequito.TrinketTracker:GetTrinketStatus(playerName)`
+#### `Jaina.TrinketTracker:GetTrinketStatus(playerName)`
 Retorna el estado del trinket de un enemigo.
 - **Returns:** `status` ("cd"/"ready"/nil), `remaining` (seconds)
 
-#### `Sequito.TrinketTracker:AnnounceAll()`
+#### `Jaina.TrinketTracker:AnnounceAll()`
 Anuncia el estado de todos los trinkets al grupo.
 
-#### `Sequito.TrinketTracker:ClearAll()`
+#### `Jaina.TrinketTracker:ClearAll()`
 Limpia todos los datos del tracker.
 
 ---
@@ -1242,19 +1242,19 @@ Analizador de wipes para raids.
 
 ### Functions
 
-#### `Sequito.WipeAnalyzer:Toggle()`
+#### `Jaina.WipeAnalyzer:Toggle()`
 Abre/cierra el panel de análisis.
 
-#### `Sequito.WipeAnalyzer:Analyze()`
+#### `Jaina.WipeAnalyzer:Analyze()`
 Analiza el último wipe y muestra el panel.
 
-#### `Sequito.WipeAnalyzer:AnnounceAnalysis()`
+#### `Jaina.WipeAnalyzer:AnnounceAnalysis()`
 Anuncia el análisis al raid/party.
 
-#### `Sequito.WipeAnalyzer:ClearCurrent()`
+#### `Jaina.WipeAnalyzer:ClearCurrent()`
 Limpia los datos del combate actual.
 
-#### `Sequito.WipeAnalyzer:ShowHistory()`
+#### `Jaina.WipeAnalyzer:ShowHistory()`
 Muestra el historial de wipes.
 
 ---
@@ -1265,18 +1265,18 @@ Monitor de cooldowns del raid en tiempo real.
 
 ### Functions
 
-#### `Sequito.CooldownMonitor:Toggle()`
+#### `Jaina.CooldownMonitor:Toggle()`
 Abre/cierra el panel de cooldowns.
 
-#### `Sequito.CooldownMonitor:GetAvailableBRes()`
+#### `Jaina.CooldownMonitor:GetAvailableBRes()`
 Retorna lista de Battle Res disponibles.
 - **Returns:** `table` de cooldowns disponibles
 
-#### `Sequito.CooldownMonitor:GetAvailableLust()`
+#### `Jaina.CooldownMonitor:GetAvailableLust()`
 Retorna si Heroism/Bloodlust está disponible.
 - **Returns:** `cooldown` data o `nil`
 
-#### `Sequito.CooldownMonitor:AnnounceAvailable(cdType)`
+#### `Jaina.CooldownMonitor:AnnounceAvailable(cdType)`
 Anuncia cooldowns disponibles de un tipo.
 - **cdType:** "bres", "lust", "raid_cd", "external", "tank_cd"
 
@@ -1288,19 +1288,19 @@ Sistema de asignaciones para raids.
 
 ### Functions
 
-#### `Sequito.Assignments:Toggle()`
+#### `Jaina.Assignments:Toggle()`
 Abre/cierra el panel de asignaciones.
 
-#### `Sequito.Assignments:AutoAssignInterrupts()`
+#### `Jaina.Assignments:AutoAssignInterrupts()`
 Auto-asigna rotación de interrupts basada en clases.
 
-#### `Sequito.Assignments:AnnounceAll()`
+#### `Jaina.Assignments:AnnounceAll()`
 Anuncia todas las asignaciones al raid.
 
-#### `Sequito.Assignments:SyncToRaid()`
-Sincroniza asignaciones con otros usuarios de Sequito.
+#### `Jaina.Assignments:SyncToRaid()`
+Sincroniza asignaciones con otros usuarios de Jaina.
 
-#### `Sequito.Assignments:ClearAll()`
+#### `Jaina.Assignments:ClearAll()`
 Limpia todas las asignaciones.
 
 ---
@@ -1311,16 +1311,16 @@ Chequeo pre-pull mejorado.
 
 ### Functions
 
-#### `Sequito.ReadyChecker:Toggle()`
+#### `Jaina.ReadyChecker:Toggle()`
 Abre/cierra el panel de ready check.
 
-#### `Sequito.ReadyChecker:ScanRaid()`
+#### `Jaina.ReadyChecker:ScanRaid()`
 Escanea el raid en busca de problemas.
 
-#### `Sequito.ReadyChecker:AnnounceProblems()`
+#### `Jaina.ReadyChecker:AnnounceProblems()`
 Anuncia los problemas detectados al raid.
 
-#### `Sequito.ReadyChecker:QuickCheck()`
+#### `Jaina.ReadyChecker:QuickCheck()`
 Verifica rápidamente si todos están listos.
 - **Returns:** `boolean` (true si todos listos)
 
@@ -1329,7 +1329,7 @@ Verifica rápidamente si todos están listos.
 ## 📝 Notes
 
 - All API functions are global and can be called from any addon
-- Functions prefixed with `Sequito_` are public API
+- Functions prefixed with `Jaina_` are public API
 - Internal functions may change without notice
 - Always check return values for `nil`
 - Use events instead of polling when possible

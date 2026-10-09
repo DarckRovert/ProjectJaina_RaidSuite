@@ -6,8 +6,8 @@
 local addonName, S = ...
 S.Dashboard = {}
 local DB = S.Dashboard
-_G.Sequito = _G.Sequito or S
-_G.Sequito.Dashboard = DB
+_G.Jaina = _G.Jaina or S
+_G.Jaina.Dashboard = DB
 
 function DB:Initialize()
     if self.initialized then return end
@@ -33,7 +33,7 @@ function DB:Initialize()
         DB:Toggle()
     end
 
-    print("|cFFFF00FFSequito|r: [GUI] Dashboard 2.0 unificado listo.")
+    print("|cFFFF00FFJaina|r: [GUI] Dashboard 2.0 unificado listo.")
 end
 
 function DB:Toggle()
@@ -51,7 +51,7 @@ end
 function DB:CreateDashboardFrame()
     if self.frame then return self.frame end
 
-    local f = CreateFrame("Frame", "SequitoDashboard", UIParent)
+    local f = CreateFrame("Frame", "JainaDashboard", UIParent)
     f:SetSize(880, 560)
     f:SetPoint("CENTER", UIParent, "CENTER", 0, 10)
     f:SetFrameStrata("HIGH")
@@ -213,7 +213,7 @@ function DB:RegisterTab(name, icon, contentFrame, tooltipDesc)
     local btnSpacing = 3
     local yOffset = -((tabIndex - 1) * (btnHeight + btnSpacing) + 4)
 
-    local btn = CreateFrame("Button", "SequitoDashboardTab" .. tabIndex, self.frame.tabBar)
+    local btn = CreateFrame("Button", "JainaDashboardTab" .. tabIndex, self.frame.tabBar)
     btn:SetSize(76, btnHeight)
     btn:SetPoint("TOPLEFT", self.frame.tabBar, "TOPLEFT", 4, yOffset)
 
@@ -309,7 +309,7 @@ end
 -- ============================================================================
 
 function DB:CreateOverviewTab()
-    local f = CreateFrame("Frame", "SequitoOverviewTab", self.frame.content)
+    local f = CreateFrame("Frame", "JainaOverviewTab", self.frame.content)
 
     -- Panel Izquierdo: Info del Personaje & Hermandad
     local charCard = CreateFrame("Frame", nil, f)
@@ -477,7 +477,7 @@ end
 -- ============================================================================
 
 function DB:CreateAchievementsTab()
-    local f = CreateFrame("Frame", "SequitoDashAchTab", self.frame.content)
+    local f = CreateFrame("Frame", "JainaDashAchTab", self.frame.content)
     
     local title = f:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     title:SetPoint("TOPLEFT", 14, -12)
@@ -485,7 +485,7 @@ function DB:CreateAchievementsTab()
 
     local desc = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
     desc:SetPoint("TOPLEFT", 14, -32)
-    desc:SetText("Sistema interno de gamificación Sequito. Completa hitos y proezas de banda.")
+    desc:SetText("Sistema interno de gamificación Jaina. Completa hitos y proezas de banda.")
     desc:SetTextColor(0.7, 0.7, 0.7)
 
     local btnOpen = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
@@ -497,7 +497,7 @@ function DB:CreateAchievementsTab()
     end)
 
     -- Scroll Area
-    local scroll = CreateFrame("ScrollFrame", "SequitoDashAchScroll", f, "UIPanelScrollFrameTemplate")
+    local scroll = CreateFrame("ScrollFrame", "JainaDashAchScroll", f, "UIPanelScrollFrameTemplate")
     scroll:SetPoint("TOPLEFT", 14, -60)
     scroll:SetPoint("BOTTOMRIGHT", -30, 10)
 
@@ -574,7 +574,7 @@ end
 -- ============================================================================
 
 function DB:CreateRotationTab()
-    local f = CreateFrame("Frame", "SequitoDashRotTab", self.frame.content)
+    local f = CreateFrame("Frame", "JainaDashRotTab", self.frame.content)
 
     local title = f:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     title:SetPoint("TOPLEFT", 14, -12)
@@ -641,7 +641,7 @@ end
 -- ============================================================================
 
 function DB:CreateLootGalleryTab()
-    local f = CreateFrame("Frame", "SequitoDashLootTab", self.frame.content)
+    local f = CreateFrame("Frame", "JainaDashLootTab", self.frame.content)
 
     local title = f:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     title:SetPoint("TOPLEFT", 14, -12)
@@ -652,7 +652,7 @@ function DB:CreateLootGalleryTab()
     desc:SetText("Registro histórico de piezas épicas y legendarias obtenidas en banda.")
     desc:SetTextColor(0.7, 0.7, 0.7)
 
-    local scroll = CreateFrame("ScrollFrame", "SequitoDashLootScroll", f, "UIPanelScrollFrameTemplate")
+    local scroll = CreateFrame("ScrollFrame", "JainaDashLootScroll", f, "UIPanelScrollFrameTemplate")
     scroll:SetPoint("TOPLEFT", 14, -60)
     scroll:SetPoint("BOTTOMRIGHT", -30, 10)
 
@@ -661,7 +661,7 @@ function DB:CreateLootGalleryTab()
     scroll:SetScrollChild(content)
 
     f:SetScript("OnShow", function()
-        local lootList = SequitoLootDB or {}
+        local lootList = JainaLootDB or {}
         local yOffset = 0
         local rowH = 32
 

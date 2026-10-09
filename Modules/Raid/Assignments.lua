@@ -1,5 +1,5 @@
 --[[
-    Sequito - Assignments.lua
+    Jaina - Assignments.lua
     Sistema de Asignaciones Automáticas para Raids
     Version: 7.2.0
 ]]
@@ -59,20 +59,20 @@ function AS:GetOption(key)
 end
 
 function AS:GetAssignmentsData()
-    local profile = (S.db and S.db.profile) or (Sequito and Sequito.db and Sequito.db.profile)
+    local profile = (S.db and S.db.profile) or (Jaina and Jaina.db and Jaina.db.profile)
     if not profile then
-        if not SequitoDB then SequitoDB = {} end
-        if not SequitoDB.profiles then SequitoDB.profiles = {} end
+        if not JainaDB then JainaDB = {} end
+        if not JainaDB.profiles then JainaDB.profiles = {} end
         local key = UnitName("player") .. " - " .. (GetRealmName() or "Realm")
-        local pName = (SequitoDB.profileKeys and SequitoDB.profileKeys[key]) or "Default"
-        if not SequitoDB.profiles[pName] then SequitoDB.profiles[pName] = {} end
-        profile = SequitoDB.profiles[pName]
+        local pName = (JainaDB.profileKeys and JainaDB.profileKeys[key]) or "Default"
+        if not JainaDB.profiles[pName] then JainaDB.profiles[pName] = {} end
+        profile = JainaDB.profiles[pName]
     end
 
-    -- Migración resiliente desde SequitoDB.profile legado si existía
-    if SequitoDB and SequitoDB.profile and SequitoDB.profile.AssignmentsData and not profile.AssignmentsData then
-        profile.AssignmentsData = SequitoDB.profile.AssignmentsData
-        SequitoDB.profile.AssignmentsData = nil
+    -- Migración resiliente desde JainaDB.profile legado si existía
+    if JainaDB and JainaDB.profile and JainaDB.profile.AssignmentsData and not profile.AssignmentsData then
+        profile.AssignmentsData = JainaDB.profile.AssignmentsData
+        JainaDB.profile.AssignmentsData = nil
     end
 
     if not profile.AssignmentsData then
@@ -105,7 +105,7 @@ function AS:Initialize()
     self:CreateFrame()
     self:RegisterComm()
     
-    -- Escuchar cambios dinámicos de perfil de Sequito
+    -- Escuchar cambios dinámicos de perfil de Jaina
     if S.RegisterMessage then
         S:RegisterMessage("SEQUITO_PROFILE_CHANGED", function()
             AS.Current = AS:GetAssignmentsData()
@@ -170,7 +170,7 @@ end
 function AS:CreateFrame()
     if self.Frame then return end
     
-    local f = CreateFrame("Frame", "SequitoAssignments", UIParent)
+    local f = CreateFrame("Frame", "JainaAssignments", UIParent)
     f:SetSize(460, 420)
     f:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
     
@@ -385,7 +385,7 @@ function AS:AnnounceNote(key)
     local text = self.Current[key]
     if type(text) == "string" and text ~= "" and text ~= L["NOTE_PLACEHOLDER"] then
         local title = key == "tanks" and L["TANK_ASSIGNMENTS"] or (key == "healers" and L["HEALER_ASSIGNMENTS"] or (key == "cooldowns" and "Cooldowns" or "Assignments"))
-        self:SendChat("[Sequito] --- " .. title .. " ---")
+        self:SendChat("[Jaina] --- " .. title .. " ---")
         -- Split por líneas para evitar mensajes muy largos
         for line in string.gmatch(text, "[^\r\n]+") do
             self:SendChat(line)
@@ -589,7 +589,7 @@ function AS:AutoAssignInterrupts()
     local interrupters = self:GetRaidInterrupters()
     
     if #interrupters == 0 then
-        print("|cffff0000[Sequito]|r No hay interrupters en el grupo")
+        print("|cffff0000[Jaina]|r No hay interrupters en el grupo")
         return
     end
     
@@ -603,18 +603,18 @@ function AS:AutoAssignInterrupts()
         table.insert(self.Current.interrupts.rotation, int.name)
     end
     
-    print("|cff00ff00[Sequito]|r " .. L["ASSIGN_AUTO_SUCCESS"])
+    print("|cff00ff00[Jaina]|r " .. L["ASSIGN_AUTO_SUCCESS"])
     self:UpdateInterruptersDisplay()
     self:AnnounceInterrupts()
 end
 
 function AS:AnnounceInterrupts()
     if #self.Current.interrupts.rotation == 0 then
-        print("|cffff0000[Sequito]|r No hay rotación de interrupts configurada")
+        print("|cffff0000[Jaina]|r No hay rotación de interrupts configurada")
         return
     end
     
-    local msg = "[Sequito] Rotación de Interrupts: "
+    local msg = "[Jaina] Rotación de Interrupts: "
     for i, name in ipairs(self.Current.interrupts.rotation) do
         msg = msg .. i .. ". " .. name
         if i < #self.Current.interrupts.rotation then
@@ -632,7 +632,7 @@ function AS:AssignTank(tankName, target)
     else
         self.Current.tanks = self.Current.tanks .. "\n" .. entry
     end
-    print(string.format("|cff00ff00[Sequito]|r %s asignado a: %s", tankName, target))
+    print(string.format("|cff00ff00[Jaina]|r %s asignado a: %s", tankName, target))
 end
 
 function AS:AssignHealer(healerName, target)
@@ -642,7 +642,7 @@ function AS:AssignHealer(healerName, target)
     else
         self.Current.healers = self.Current.healers .. "\n" .. entry
     end
-    print(string.format("|cff00ff00[Sequito]|r %s asignado a curar: %s", healerName, target))
+    print(string.format("|cff00ff00[Jaina]|r %s asignado a curar: %s", healerName, target))
 end
 
 function AS:AssignCooldown(playerName, spell, phase)
@@ -652,7 +652,7 @@ function AS:AssignCooldown(playerName, spell, phase)
     else
         self.Current.cooldowns = self.Current.cooldowns .. "\n" .. entry
     end
-    print(string.format("|cff00ff00[Sequito]|r %s usará %s en fase %s", playerName, spell, phase))
+    print(string.format("|cff00ff00[Jaina]|r %s usará %s en fase %s", playerName, spell, phase))
 end
 
 function AS:AssignMark(markIndex, playerName)
@@ -663,7 +663,7 @@ function AS:AssignMark(markIndex, playerName)
     else
         self.Current.marks = self.Current.marks .. "\n" .. entry
     end
-    print(string.format("|cff00ff00[Sequito]|r %s asignado a marcar: %s", playerName, markNames[markIndex] or markIndex))
+    print(string.format("|cff00ff00[Jaina]|r %s asignado a marcar: %s", playerName, markNames[markIndex] or markIndex))
 end
 
 -- Note: AnnounceAll is already defined at line 325. This duplicate has been removed.
@@ -683,7 +683,7 @@ function AS:ClearAll()
             edit:SetText(L["NOTE_PLACEHOLDER"] or "...")
         end
     end
-    print("|cff00ff00[Sequito]|r Todas las asignaciones han sido limpiadas")
+    print("|cff00ff00[Jaina]|r Todas las asignaciones han sido limpiadas")
 end
 
 function AS:RegisterComm()
@@ -705,7 +705,7 @@ end
 function AS:SyncToRaid()
     local channel = self:GetGroupChannel()
     if not channel then
-        print("|cffff0000[Sequito]|r No estás en un grupo")
+        print("|cffff0000[Jaina]|r No estás en un grupo")
         return
     end
     
@@ -716,7 +716,7 @@ function AS:SyncToRaid()
             SendAddonMessage("SEQ_ASSIGN", part, channel)
         end
     end
-    print("|cff00ff00[Sequito]|r Asignaciones sincronizadas con el grupo")
+    print("|cff00ff00[Jaina]|r Asignaciones sincronizadas con el grupo")
 end
 
 function AS:GetSerializedParts()
@@ -781,7 +781,7 @@ function AS:OnCommReceived(msg, sender)
         end
     end
     
-    print("|cff00ff00[Sequito]|r Datos recibidos de " .. sender)
+    print("|cff00ff00[Jaina]|r Datos recibidos de " .. sender)
 end
 
 function AS:StartPullTimer(seconds)

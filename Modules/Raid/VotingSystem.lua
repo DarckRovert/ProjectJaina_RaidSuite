@@ -1,5 +1,5 @@
 --[[
-    Sequito - VotingSystem Module
+    Jaina - VotingSystem Module
     Sistema Democrático de Votaciones para Raid y Grupos
     Version: 8.0.0 (WotLK 3.3.5a Build 12340)
 ]]
@@ -107,7 +107,7 @@ function VS:GetGroupChannel()
 end
 
 function VS:CreateFrame()
-    local f = CreateFrame("Frame", "SequitoVotingFrame", UIParent)
+    local f = CreateFrame("Frame", "JainaVotingFrame", UIParent)
     self.frame = f
     f:SetSize(340, 260)
     f:SetPoint("CENTER", UIParent, "CENTER", 0, 80)
@@ -205,7 +205,7 @@ function VS:CreateFrame()
     cView.lblQuestion:SetPoint("TOPLEFT", 20, -36)
     cView.lblQuestion:SetText("Pregunta:")
 
-    cView.inputQuestion = CreateFrame("EditBox", "SequitoVoteQuestionEdit", cView, "InputBoxTemplate")
+    cView.inputQuestion = CreateFrame("EditBox", "JainaVoteQuestionEdit", cView, "InputBoxTemplate")
     cView.inputQuestion:SetSize(296, 22)
     cView.inputQuestion:SetPoint("TOPLEFT", 24, -54)
     cView.inputQuestion:SetAutoFocus(false)
@@ -251,7 +251,7 @@ function VS:CreateFrame()
 
     -- Campos de opciones personalizadas (1 a 4)
     local function makeOptInput(index, yOffset)
-        local eb = CreateFrame("EditBox", "SequitoVoteOpt" .. index, cView, "InputBoxTemplate")
+        local eb = CreateFrame("EditBox", "JainaVoteOpt" .. index, cView, "InputBoxTemplate")
         eb:SetSize(135, 20)
         eb:SetAutoFocus(false)
         eb:SetMaxLetters(30)
@@ -283,7 +283,7 @@ function VS:CreateFrame()
             if S.Print then
                 S:Print("Debes ingresar una pregunta para la votación.")
             else
-                DEFAULT_CHAT_FRAME:AddMessage("|cFFFF0000[Sequito]|r Debes ingresar una pregunta para la votación.")
+                DEFAULT_CHAT_FRAME:AddMessage("|cFFFF0000[Jaina]|r Debes ingresar una pregunta para la votación.")
             end
             return
         end
@@ -385,7 +385,7 @@ function VS:CreatePoll(question, ...)
     local channel = self:GetGroupChannel()
     if channel then
         SendAddonMessage("SeqVote", msg, channel)
-        SendChatMessage("[Sequito] Votación: " .. question, channel)
+        SendChatMessage("[Jaina] Votación: " .. question, channel)
     end
 
     if self:GetOption("playSound") then
@@ -586,7 +586,7 @@ function VS:ClosePoll()
         if S.Print then
             S:Print(msg)
         else
-            DEFAULT_CHAT_FRAME:AddMessage("|cFFFF0000[Sequito]|r " .. msg)
+            DEFAULT_CHAT_FRAME:AddMessage("|cFFFF0000[Jaina]|r " .. msg)
         end
         return
     end
@@ -628,7 +628,7 @@ function VS:AnnounceResults()
         end
     end
 
-    local msg = string.format("[Sequito] Encuesta: '%s' | Total: %d votos -> ", currentPoll.question, totalVotes)
+    local msg = string.format("[Jaina] Encuesta: '%s' | Total: %d votos -> ", currentPoll.question, totalVotes)
     for i, option in ipairs(currentPoll.options) do
         local c = counts[i] or 0
         local pct = totalVotes > 0 and math.floor((c / totalVotes) * 100) or 0

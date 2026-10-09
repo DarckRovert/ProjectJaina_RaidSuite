@@ -2,7 +2,7 @@
 
 **Versión:** 10.2.0 (Definitive Edition)  
 **Autor:** DarckRovert (Ingame: Elnazzareno) & Project Jaina Team  
-**Servidor Destino:** [Project Jaina](https://worldofwanos.com/) - Project Jaina  
+**Servidor Destino:** [Project Jaina](https://projectjaina.com/) - Project Jaina  
 **Cliente:** World of Warcraft 3.3.5a (Build 12340)
 
 ---
@@ -25,8 +25,8 @@
 
 ## 1. General y Filosofía del Ecosistema
 
-### ¿Qué es exactamente el ecosistema Sequito?
-Sequito no es un simple medidor de DPS ni un botón aislado. Es una **suite modular integral** diseñada para WoW 3.3.5a que unifica:
+### ¿Qué es exactamente el ecosistema Jaina?
+Jaina no es un simple medidor de DPS ni un botón aislado. Es una **suite modular integral** diseñada para WoW 3.3.5a que unifica:
 - Un **Dashboard central** de 4 pestañas (/sdash) con resumen del cónclave, logros, rotación y galería de tesoros.
 - Una **Esfera Central flotante** con menú radial interactivo.
 - Un **motor de macros inteligente** para las 10 clases y 30 especializaciones de Wrath of the Lich King.
@@ -35,14 +35,14 @@ Sequito no es un simple medidor de DPS ni un botón aislado. Es una **suite modu
 - **Malla de Clan (ClanMesh)** que sincroniza a toda la hermandad en vivo por canal GUILD, RAID o PARTY.
 - **Analítica de Wipes** y métricas de rendimiento en combate (CLEU).
 
-### ¿Sequito automatiza las habilidades de mi personaje o es considerado trampa?
-**NO.** Sequito **no es un bot ni automatiza hechizos**. Cumple al 100% con la política y términos de servicio de Blizzard y servidores privados:
+### ¿Jaina automatiza las habilidades de mi personaje o es considerado trampa?
+**NO.** Jaina **no es un bot ni automatiza hechizos**. Cumple al 100% con la política y términos de servicio de Blizzard y servidores privados:
 - No ejecuta hechizos automáticamente en el juego.
 - Genera macros legales nativas de WoW que **tú debes pulsar manualmente con tu teclado o ratón**.
 - Muestra sugerencias visuales de prioridades y alertas de buffs/procs que tú decides cuándo activar.
 
 ### ¿Quién creó el addon y a qué servidor pertenece?
-El proyecto fue creado y desarrollado por **DarckRovert (en el juego: Elnazzareno)** y el equipo técnico de **Project Jaina** para el servidor oficial [Project Jaina](https://worldofwanos.com/) (Project Jaina).
+El proyecto fue creado y desarrollado por **DarckRovert (en el juego: Elnazzareno)** y el equipo técnico de **Project Jaina** para el servidor oficial [Project Jaina](https://projectjaina.com/) (Project Jaina).
 
 ---
 
@@ -51,12 +51,12 @@ El proyecto fue creado y desarrollado por **DarckRovert (en el juego: Elnazzaren
 ### ¿Dónde debo colocar la carpeta del addon?
 La carpeta debe llamarse exactamente `Wanos_RaidSuite` y residir en la ruta de addons de tu cliente:
 ```
-Interface\AddOns\Jaina_RaidSuite\
+Interface\AddOns\ProjectJaina_RaidSuite\
 ```
-Asegúrate de que el archivo Wanos_RaidSuite.toc esté directamente dentro de Interface\AddOns\Jaina_RaidSuite\ y no dentro de subcarpetas anidadas como Wanos_RaidSuite\Wanos_RaidSuite\.
+Asegúrate de que el archivo Wanos_RaidSuite.toc esté directamente dentro de Interface\AddOns\ProjectJaina_RaidSuite\ y no dentro de subcarpetas anidadas como Wanos_RaidSuite\Wanos_RaidSuite\.
 
 ### ¿El addon funciona de inmediato al entrar o requiere configuración compleja?
-Funciona **de inmediato**. Al iniciar sesión, Sequito:
+Funciona **de inmediato**. Al iniciar sesión, Jaina:
 1. Detecta automáticamente tu clase, talentos y especialización activa.
 2. Inicializa la Esfera Central flotante y el icono del minimapa.
 3. Conecta con los canales de hermandad y grupo disponibles.
@@ -72,7 +72,7 @@ Puedes abrirlo de dos formas muy sencillas:
 2. Escribiendo en el chat: /sdash (o /sequito).
 
 ### ¿Cómo muevo la Esfera Central si me tapa parte de la pantalla?
-Mantén presionada la tecla **Shift**, haz **clic izquierdo sobre la esfera y arrástrala** con el ratón a la posición que más te guste. Sequito recordará la ubicación exacta incluso tras cerrar el juego o hacer /reload.
+Mantén presionada la tecla **Shift**, haz **clic izquierdo sobre la esfera y arrástrala** con el ratón a la posición que más te guste. Jaina recordará la ubicación exacta incluso tras cerrar el juego o hacer /reload.
 
 ### ¿Para qué sirve el clic derecho en la Esfera?
 El **clic derecho** despliega el **Menú Radial**, ofreciéndote accesos rápidos en abanico para invocar monturas, activar utilidades de clase, abrir profesiones o iniciar comprobaciones de banda.
@@ -87,10 +87,10 @@ El **clic derecho** despliega el **Menú Radial**, ofreciéndote accesos rápido
 
 ## 4. El Motor de Macros Inteligente (SeqRot)
 
-### ¿Por qué Sequito no utiliza /castsequence en sus macros?
+### ¿Por qué Jaina no utiliza /castsequence en sus macros?
 Las macros clásicas de /castsequence son rígidas y propensas a bloquearse. Si un objetivo se sale de rango o una habilidad no conecta, la secuencia completa queda congelada impidiéndote lanzar cualquier otro ataque.
 
-Sequito soluciona esto mediante un **motor de prioridades con teclas modificadoras ([mod:shift], [mod:ctrl], [mod:alt])**:
+Jaina soluciona esto mediante un **motor de prioridades con teclas modificadoras ([mod:shift], [mod:ctrl], [mod:alt])**:
 - **Pulsación directa (sin modificador):** Ejecuta tu ataque primario o habilidad de relleno (iller), activa el ataque automático (/startattack) y ordena el ataque de tu mascota (/petattack).
 - **Shift:** Lanza DoTs de apertura, finishers o daño explosivo (*burst*).
 - **Ctrl:** Lanza tu habilidad secundaria de alta prioridad o recarga rápida.
@@ -115,11 +115,11 @@ Integran condiciones de postura automáticas:
 - Si estás en **Forma de Oso ([form:1])**, la macro adopta las prioridades de tanqueo (*Magullar*, *Destrozar oso*, *Lacerar*).
 - Si estás en **Forma Felina ([form:3])**, la macro adopta la rotación de daño (*Destrozar gato*, *Destripar*, *Mordedura feroz*).
 
-### ¿Qué macros complementarias genera Sequito?
+### ¿Qué macros complementarias genera Jaina?
 - **SeqInt:** Interrupción de casteo en tu objetivo; si mantienes **Shift**, interrumpe a tu objetivo en **Foco** sin deseleccionar a tu objetivo principal.
 - **SeqCC:** Habilidad de control de masas (*Polimorfia*, *Miedo*, *Ceguera*, *Ciclón*, etc.) con soporte de cursor o foco.
 - **SeqMount:** Invoca automáticamente montura voladora en zonas que lo admiten (Rasganorte/Terrallende), montura terrestre en interiores/mazmorras, o te desmonta al instante si estás en montura.
-- **SeqRacial:** Tu habilidad racial con un grito inmersivo del Sequito.
+- **SeqRacial:** Tu habilidad racial con un grito inmersivo del Jaina.
 
 ---
 
@@ -145,7 +145,7 @@ Selecciona a cualquier jugador y escribe /sinspect:
 ## 6. Concilio de Botín (Loot Council) e Inclusión de Pugs
 
 ### ¿Cómo se inicia una sesión de Concilio de Botín?
-- **Automática:** Al matar a un jefe y abrir su ventana de despojo (`LOOT_OPENED`), Sequito escanea el botín y **encola automáticamente todas las piezas épicas o legendarias**.
+- **Automática:** Al matar a un jefe y abrir su ventana de despojo (`LOOT_OPENED`), Jaina escanea el botín y **encola automáticamente todas las piezas épicas o legendarias**.
 - **Cola de Botín:** Al finalizar de votar un objeto, el concilio pasa de inmediato a la siguiente pieza en cola sin necesidad de reabrir el cadáver ni escribir comandos.
 - **Manual:** Los oficiales pueden abrir el panel en cualquier momento con `/sloot` o `/sequito lc`.
 
@@ -161,18 +161,18 @@ La ventana ofrece 4 botones dedicados:
 - **Marcas de Santificación (Tier Tokens):** Valida si la marca corresponde a la clase del aspirante (*Vencedor*, *Protector*, *Conquistador*), previniendo despojos erróneos de piezas de tier en ICC y ToC.
 
 ### ¿Cómo entrega el botín el Maestro Despojador?
-El Maestro Despojador dispone de un botón verde **`[Dar]`** en la fila de cada candidato. Al presionarlo, Sequito invoca directamente la API de Blizzard `GiveMasterLoot`, pasando el ítem a la mochila del ganador en un solo clic si el cadáver sigue abierto.
+El Maestro Despojador dispone de un botón verde **`[Dar]`** en la fila de cada candidato. Al presionarlo, Jaina invoca directamente la API de Blizzard `GiveMasterLoot`, pasando el ítem a la mochila del ganador en un solo clic si el cadáver sigue abierto.
 
-### ¿Qué pasa si un jugador del grupo o pug NO tiene Sequito instalado?
-**No hay ningún problema.** Sequito está diseñado para la convivencia total en la comunidad:
+### ¿Qué pasa si un jugador del grupo o pug NO tiene Jaina instalado?
+**No hay ningún problema.** Jaina está diseñado para la convivencia total en la comunidad:
 - El addon escucha de fondo el canal del juego (`CHAT_MSG_SYSTEM`).
-- Cuando un jugador escribe `/azar 100` o `/roll` en el chat (soportando clientes en español o inglés), Sequito intercepta su tirada numérica y **lo añade automáticamente a la lista de candidatos con su número exacto obtenido**.
+- Cuando un jugador escribe `/azar 100` o `/roll` en el chat (soportando clientes en español o inglés), Jaina intercepta su tirada numérica y **lo añade automáticamente a la lista de candidatos con su número exacto obtenido**.
 - De este modo, los oficiales pueden tomar decisiones justas considerando a toda la banda, tengan o no el addon instalado.
 
 ### ¿Cómo se garantiza la transparencia y qué pasa en caso de empate?
 - Solo los oficiales con rango verificado (`rank >= 1`) pueden emitir votos.
 - Cada oficial cuenta con **un único voto por objeto**. Si pulsa sobre otro candidato, su voto anterior se retira automáticamente y se traslada al nuevo.
-- **Desempate Automático:** Si dos candidatos quedan empatados en votos oficiales, Sequito compara sus tiradas de dados para desempatar con imparcialidad.
+- **Desempate Automático:** Si dos candidatos quedan empatados en votos oficiales, Jaina compara sus tiradas de dados para desempatar con imparcialidad.
 - **Temporizador Visual:** Cuenta regresiva en pantalla de 60s (ajustable) con anuncio de tiempo agotado.
 
 ---
@@ -180,13 +180,13 @@ El Maestro Despojador dispone de un botón verde **`[Dar]`** en la fila de cada 
 ## 7. Malla de Clan en Vivo (ClanMesh) y Seguridad de Red
 
 ### ¿Cómo funciona la sincronización si los miembros están en sitios distintos?
-A diferencia de addons convencionales que solo sincronizan dentro de la misma banda, Sequito utiliza el canal de hermandad (GUILD):
+A diferencia de addons convencionales que solo sincronizan dentro de la misma banda, Jaina utiliza el canal de hermandad (GUILD):
 - Los avisos estratégicos de jefes, notas de oficiales y marcaciones tácticas se transmiten a todos los miembros conectados de la hermandad.
 - Puedes estar comprando suministros en Dalaran o completando misiones diarias y seguir recibiendo la sincronización táctica de tu clan.
 
-### ¿Por qué Sequito nunca provoca desconexiones por exceso de mensajes (*flood kick*)?
+### ¿Por qué Jaina nunca provoca desconexiones por exceso de mensajes (*flood kick*)?
 El cliente de WoW 3.3.5a desconecta a los jugadores si un addon envía demasiados mensajes en un mismo instante.  
-Sequito incorpora un algoritmo de **transmisión por goteo con cubeta de fugas (*leaky bucket*)**:
+Jaina incorpora un algoritmo de **transmisión por goteo con cubeta de fugas (*leaky bucket*)**:
 - Los mensajes grandes se dividen en fragmentos de tamaño seguro.
 - Cada paquete se transmite con una pausa de 80 milisegundos.
 - Esto garantiza una tasa de transferencia continua y segura, previniendo al 100% las caídas por saturación de red.
@@ -204,7 +204,7 @@ Sequito incorpora un algoritmo de **transmisión por goteo con cubeta de fugas (
 Escribe /sstats o /sequito stats. Muestra el daño por segundo (DPS) y la sanación neta efectiva (HPS), descontando la sobresanación (*overhealing*) gracias al motor de procesamiento de eventos de combate (COMBAT_LOG_EVENT_UNFILTERED).
 
 ### ¿Qué información entrega el Analizador de Wipes (/swipe)?
-Cuando la banda es derrotada, Sequito registra una autopsia precisa del enfrentamiento:
+Cuando la banda es derrotada, Jaina registra una autopsia precisa del enfrentamiento:
 - **Primera Muerte:** Quién fue el primer jugador en morir y qué habilidad o golpe del jefe causó su deceso.
 - **Uso de Recursos Defensivos:** Señala si el jugador murió conservando su Poción de Vida o Piedra de Salud disponible en inventario.
 - **Cortes de Casteo:** Reporta si hubo habilidades mortales del jefe que no fueron interrumpidas a tiempo.
@@ -214,8 +214,8 @@ Cuando la banda es derrotada, Sequito registra una autopsia precisa del enfrenta
 
 ## 9. Rendimiento, Memoria y FPS
 
-### ¿Sequito consume mucha memoria o provocará caídas de FPS en raids de 25 personas?
-**Absolutamente no.** Sequito está construido bajo estrictos estándares de ingeniería para clientes de 32 bits:
+### ¿Jaina consume mucha memoria o provocará caídas de FPS en raids de 25 personas?
+**Absolutamente no.** Jaina está construido bajo estrictos estándares de ingeniería para clientes de 32 bits:
 - Consumo medio de memoria RAM: inferior a 3.5 MB.
 - Las funciones de actualización periódica no se ejecutan en cada cuadro de dibujo (*frame rate* a 144 Hz), sino que cuentan con acumuladores de tiempo restringidos a **20 Hz** (cada 0.05 a 0.2 segundos según el módulo).
 - Todas las tablas de eventos de combate limpian automáticamente los registros de combates anteriores para evitar acumulación de memoria.
@@ -224,13 +224,13 @@ Cuando la banda es derrotada, Sequito registra una autopsia precisa del enfrenta
 
 ## 10. Compatibilidad con Otros Addons y Servidores
 
-### ¿Puedo usar Sequito junto con DBM (Deadly Boss Mods), Recount, Skada o Details?
-**Sí, perfectamente.** Sequito ha sido diseñado como un ciudadano respetuoso del entorno de WoW:
+### ¿Puedo usar Jaina junto con DBM (Deadly Boss Mods), Recount, Skada o Details?
+**Sí, perfectamente.** Jaina ha sido diseñado como un ciudadano respetuoso del entorno de WoW:
 - No sobrescribe variables globales de otros addons.
 - Sus marcos y HUDs están aislados en sus propios estratos de interfaz.
 - Complementa la labor de DBM aportando analítica de hermandad y macros que DBM no provee.
 
-### ¿En qué servidores y clientes de WoW funciona Sequito?
+### ¿En qué servidores y clientes de WoW funciona Jaina?
 Está optimizado principalmente para **Project Jaina (Project Jaina)**, y es 100% compatible con cualquier servidor privado basado en el cliente **World of Warcraft 3.3.5a (Build 12340)**, incluyendo Warmane, Dalaran-WoW, ChromieCraft, etc.
 
 ---

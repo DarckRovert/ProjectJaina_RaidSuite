@@ -1,6 +1,6 @@
 --[[
     SEQUITO - Macro Sync System
-    Sincronización de macros entre usuarios de Sequito
+    Sincronización de macros entre usuarios de Jaina
     Incluye biblioteca de macros por clase
     World of Warcraft 3.3.5a
 ]]--
@@ -29,7 +29,7 @@ S.MacroSync.ClassLibrary = {
 /cast Corrupción
 /targetlasttarget]],
             spec = 1, -- Affliction
-            author = "Sequito",
+            author = "Jaina",
             rating = 5
         },
         {
@@ -38,7 +38,7 @@ S.MacroSync.ClassLibrary = {
             body = [[#showtooltip
 /cast [mod:shift] Maldición de los elementos; Maldición de agonía]],
             spec = 1,
-            author = "Sequito",
+            author = "Jaina",
             rating = 5
         },
         {
@@ -51,7 +51,7 @@ S.MacroSync.ClassLibrary = {
 /cast Metamorfosis
 /cast Aura de inmolación]],
             spec = 2, -- Demonology
-            author = "Sequito",
+            author = "Jaina",
             rating = 5
         },
         {
@@ -61,7 +61,7 @@ S.MacroSync.ClassLibrary = {
 /cast [mod:shift] Conflagrar
 /cast [nomod] Descarga de caos]],
             spec = 3, -- Destruction
-            author = "Sequito",
+            author = "Jaina",
             rating = 4
         },
     },
@@ -75,7 +75,7 @@ S.MacroSync.ClassLibrary = {
 /cast [target=mouseover,harm,exists] Atracción letal; Atracción letal
 /cast Cadenas de hielo]],
             spec = 0, -- All specs
-            author = "Sequito",
+            author = "Jaina",
             rating = 5
         },
         {
@@ -85,7 +85,7 @@ S.MacroSync.ClassLibrary = {
 /cast Orden oscura
 /s ¡TAUNT en %t! ¡Cuidado healers!]],
             spec = 1, -- Blood
-            author = "Sequito",
+            author = "Jaina",
             rating = 4
         },
         {
@@ -94,7 +94,7 @@ S.MacroSync.ClassLibrary = {
             body = [[#showtooltip Explosión aullante
 /cast [mod:shift] Muerte y descomposición; Explosión aullante]],
             spec = 2, -- Frost
-            author = "Sequito",
+            author = "Jaina",
             rating = 5
         },
         {
@@ -104,7 +104,7 @@ S.MacroSync.ClassLibrary = {
 /cast Frenesí necrófago
 /cast [pet] Salto necrófago]],
             spec = 3, -- Unholy
-            author = "Sequito",
+            author = "Jaina",
             rating = 4
         },
     },
@@ -120,7 +120,7 @@ S.MacroSync.ClassLibrary = {
 /s ¡Inmunidad Diplomática!
 /use Piedra de hogar]],
             spec = 0,
-            author = "Sequito",
+            author = "Jaina",
             rating = 5
         },
         {
@@ -132,7 +132,7 @@ S.MacroSync.ClassLibrary = {
 /cast [help] Destello de Luz
 /cast [target=player] Destello de Luz]],
             spec = 1, -- Holy
-            author = "Sequito",
+            author = "Jaina",
             rating = 5
         },
         {
@@ -141,7 +141,7 @@ S.MacroSync.ClassLibrary = {
             body = [[#showtooltip
 /castsequence reset=combat Martillo de rectitud, Escudo de rectitud, Sentencia de sabiduría, Consagración]],
             spec = 2, -- Protection
-            author = "Sequito",
+            author = "Jaina",
             rating = 5
         },
         {
@@ -154,7 +154,7 @@ S.MacroSync.ClassLibrary = {
 /cast Cólera vengadora
 /cast Juicio de Luz]],
             spec = 3, -- Retribution
-            author = "Sequito",
+            author = "Jaina",
             rating = 5
         },
     },
@@ -169,7 +169,7 @@ S.MacroSync.ClassLibrary = {
 /cast [target=mouseover,exists,harm] Robar hechizo
 /cast Robar hechizo]],
             spec = 0,
-            author = "Sequito",
+            author = "Jaina",
             rating = 5
         },
         {
@@ -181,7 +181,7 @@ S.MacroSync.ClassLibrary = {
 /cast [target=mouseover,exists,harm] Contrahechizo
 /cast Contrahechizo]],
             spec = 0,
-            author = "Sequito",
+            author = "Jaina",
             rating = 5
         },
         {
@@ -195,7 +195,7 @@ S.MacroSync.ClassLibrary = {
 /cast Presencia mental
 /cast Explosión Arcana]],
             spec = 1, -- Arcane
-            author = "Sequito",
+            author = "Jaina",
             rating = 5
         },
         {
@@ -205,7 +205,7 @@ S.MacroSync.ClassLibrary = {
 /cast Combustión
 /cast Bola de Fuego]],
             spec = 2, -- Fire
-            author = "Sequito",
+            author = "Jaina",
             rating = 4
         },
     },
@@ -220,7 +220,7 @@ S.MacroSync.ClassLibrary = {
 /cast [target=pet,exists] Redirección
 /s Redirigiendo amenaza...]],
             spec = 0,
-            author = "Sequito",
+            author = "Jaina",
             rating = 5
         },
         {
@@ -230,7 +230,7 @@ S.MacroSync.ClassLibrary = {
 /cast Trampa congelante
 /cast [mod:shift] Separación]],
             spec = 0,
-            author = "Sequito",
+            author = "Jaina",
             rating = 4
         },
         {
@@ -242,7 +242,7 @@ S.MacroSync.ClassLibrary = {
 /petpassive [mod:ctrl]
 /cast [mod:alt] Intimidación]],
             spec = 0,
-            author = "Sequito",
+            author = "Jaina",
             rating = 5
         },
     },
@@ -257,7 +257,7 @@ S.MacroSync.ClassLibrary = {
 /cast [target=targettarget,help] Secretos del oficio
 /s Secretos para %t...]],
             spec = 0,
-            author = "Sequito",
+            author = "Jaina",
             rating = 5
         },
         {
@@ -269,7 +269,7 @@ S.MacroSync.ClassLibrary = {
 /cast [target=mouseover,exists,harm] Patada
 /cast Patada]],
             spec = 0,
-            author = "Sequito",
+            author = "Jaina",
             rating = 5
         },
         {
@@ -280,7 +280,7 @@ S.MacroSync.ClassLibrary = {
 /cast [stealth] Premeditación
 /cast [stealth] Paso de las sombras]],
             spec = 0,
-            author = "Sequito",
+            author = "Jaina",
             rating = 4
         },
     },
@@ -296,7 +296,7 @@ S.MacroSync.ClassLibrary = {
 /cast [help] Suprimir enfermedad
 /cast [harm] Disipar magia]],
             spec = 0,
-            author = "Sequito",
+            author = "Jaina",
             rating = 5
         },
         {
@@ -307,7 +307,7 @@ S.MacroSync.ClassLibrary = {
 /cast [help] Palabra de poder: escudo
 /cast [target=player] Palabra de poder: escudo]],
             spec = 1, -- Discipline
-            author = "Sequito",
+            author = "Jaina",
             rating = 5
         },
         {
@@ -316,7 +316,7 @@ S.MacroSync.ClassLibrary = {
             body = [[#showtooltip
 /castsequence reset=target Toque vampírico, Palabra de las Sombras: dolor, Peste devoradora, Tortura mental]],
             spec = 3, -- Shadow
-            author = "Sequito",
+            author = "Jaina",
             rating = 4
         },
     },
@@ -331,7 +331,7 @@ S.MacroSync.ClassLibrary = {
 /cast [stance:2] Intervenir
 /cast [stance:3] Interceptar]],
             spec = 0,
-            author = "Sequito",
+            author = "Jaina",
             rating = 5
         },
         {
@@ -341,7 +341,7 @@ S.MacroSync.ClassLibrary = {
 /cast Mofa
 /s ¡TAUNT en %t!]],
             spec = 2, -- Protection
-            author = "Sequito",
+            author = "Jaina",
             rating = 4
         },
         {
@@ -353,7 +353,7 @@ S.MacroSync.ClassLibrary = {
 /cast [target=mouseover,exists,harm] Zurrar
 /cast Zurrar]],
             spec = 0,
-            author = "Sequito",
+            author = "Jaina",
             rating = 5
         },
     },
@@ -368,7 +368,7 @@ S.MacroSync.ClassLibrary = {
 /cast Heroísmo
 /y ¡¡LUST/HERO!! ¡A QUEMAR!]],
             spec = 0,
-            author = "Sequito",
+            author = "Jaina",
             rating = 5
         },
         {
@@ -379,7 +379,7 @@ S.MacroSync.ClassLibrary = {
 /cast [target=mouseover,exists,harm] Purgar
 /cast Purgar]],
             spec = 0,
-            author = "Sequito",
+            author = "Jaina",
             rating = 5
         },
         {
@@ -390,7 +390,7 @@ S.MacroSync.ClassLibrary = {
 /cast [help] Sanación en cadena
 /cast [target=player] Sanación en cadena]],
             spec = 3, -- Restoration
-            author = "Sequito",
+            author = "Jaina",
             rating = 5
         },
     },
@@ -405,7 +405,7 @@ S.MacroSync.ClassLibrary = {
 /cast [help,dead] Renacer
 /s ¡Resucitando a %t! ¡Acepta rápido!]],
             spec = 0,
-            author = "Sequito",
+            author = "Jaina",
             rating = 5
         },
         {
@@ -417,7 +417,7 @@ S.MacroSync.ClassLibrary = {
 /cast [target=player] Estimular
 /s ¡Innervate en %t!]],
             spec = 0,
-            author = "Sequito",
+            author = "Jaina",
             rating = 5
         },
         {
@@ -429,7 +429,7 @@ S.MacroSync.ClassLibrary = {
 /cast [nostealth,combo:5] Mordedura feroz
 /cast [nostealth] Triturar]],
             spec = 2, -- Feral
-            author = "Sequito",
+            author = "Jaina",
             rating = 4
         },
         {
@@ -442,7 +442,7 @@ S.MacroSync.ClassLibrary = {
 /cast Fuerza de la Naturaleza
 /cast Fuego estelar]],
             spec = 1, -- Balance
-            author = "Sequito",
+            author = "Jaina",
             rating = 5
         },
     },
@@ -482,7 +482,7 @@ function S.MacroSync:Initialize()
     -- Cargar macros guardados
     self:LoadSavedMacros()
     
-    print("|cFFFF00FFSequito|r: [MacroSync] Sistema de macros compartidos iniciado.")
+    print("|cFFFF00FFJaina|r: [MacroSync] Sistema de macros compartidos iniciado.")
 end
 
 function S.MacroSync:OnEvent(event, ...)
@@ -559,7 +559,7 @@ end
 function S.MacroSync:ShareMacro(macroName)
     local macroID = GetMacroIndexByName(macroName)
     if macroID == 0 then
-        print("|cFFFF0000Sequito|r: Macro '" .. macroName .. "' no encontrado.")
+        print("|cFFFF0000Jaina|r: Macro '" .. macroName .. "' no encontrado.")
         return
     end
     
@@ -572,7 +572,7 @@ function S.MacroSync:ShareMacro(macroName)
     local msg = string.format("SHARE:%s|%s", name, encodedBody)
     
     self:Broadcast(msg)
-    print("|cFFFF00FFSequito|r: Macro '" .. name .. "' compartido con el grupo.")
+    print("|cFFFF00FFJaina|r: Macro '" .. name .. "' compartido con el grupo.")
 end
 
 function S.MacroSync:OnMacroReceived(payload, sender)
@@ -592,7 +592,7 @@ function S.MacroSync:OnMacroReceived(payload, sender)
     -- Guardar en DB
     self:SaveSharedMacro(name, body, sender)
     
-    print(string.format("|cFF00FF00Sequito|r: Macro '%s' recibido de %s. Usa /sequito macro import %s", 
+    print(string.format("|cFF00FF00Jaina|r: Macro '%s' recibido de %s. Usa /sequito macro import %s", 
         name, sender, name))
 end
 
@@ -602,7 +602,7 @@ end
 function S.MacroSync:ImportMacro(macroName)
     local data = self.SharedMacros[macroName]
     if not data then
-        print("|cFFFF0000Sequito|r: Macro '" .. macroName .. "' no encontrado en macros compartidos.")
+        print("|cFFFF0000Jaina|r: Macro '" .. macroName .. "' no encontrado en macros compartidos.")
         return
     end
     
@@ -612,7 +612,7 @@ function S.MacroSync:ImportMacro(macroName)
     else
         CreateMacro(macroName, 1, data.body, 1)
     end
-    print("|cFF00FF00Sequito|r: Macro '" .. macroName .. "' importado exitosamente.")
+    print("|cFF00FF00Jaina|r: Macro '" .. macroName .. "' importado exitosamente.")
 end
 
 function S.MacroSync:ListSharedMacros()
@@ -640,7 +640,7 @@ function S.MacroSync:ListLibraryMacros(class, spec)
     
     local macros = self:GetClassMacros(class)
     if #macros == 0 then
-        print("|cFFFF0000Sequito|r: No hay macros en la biblioteca para " .. class)
+        print("|cFFFF0000Jaina|r: No hay macros en la biblioteca para " .. class)
         return
     end
     
@@ -668,12 +668,12 @@ function S.MacroSync:ImportFromLibrary(macroName)
             else
                 CreateMacro(macro.name, 1, macro.body, 1)
             end
-            print("|cFF00FF00Sequito|r: Macro '" .. macro.name .. "' importado de la biblioteca.")
+            print("|cFF00FF00Jaina|r: Macro '" .. macro.name .. "' importado de la biblioteca.")
             return
         end
     end
     
-    print("|cFFFF0000Sequito|r: Macro '" .. macroName .. "' no encontrado en la biblioteca.")
+    print("|cFFFF0000Jaina|r: Macro '" .. macroName .. "' no encontrado en la biblioteca.")
 end
 
 function S.MacroSync:ImportAllFromLibrary(spec)
@@ -693,7 +693,7 @@ function S.MacroSync:ImportAllFromLibrary(spec)
         end
     end
     
-    print(string.format("|cFF00FF00Sequito|r: %d macros importados de la biblioteca.", count))
+    print(string.format("|cFF00FF00Jaina|r: %d macros importados de la biblioteca.", count))
 end
 
 -- ===========================================================================
@@ -721,7 +721,7 @@ end
 -- ===========================================================================
 function S.MacroSync:RequestMacroList()
     self:Broadcast("LIST:")
-    print("|cFFFF00FFSequito|r: Solicitando lista de macros del grupo...")
+    print("|cFFFF00FFJaina|r: Solicitando lista de macros del grupo...")
 end
 
 function S.MacroSync:OnListRequest(sender)
@@ -744,7 +744,7 @@ end
 
 function S.MacroSync:OnListResponse(payload, sender)
     local macros = {strsplit(",", payload)}
-    print(string.format("|cFF00FFFFSequito|r: Macros de %s:", sender))
+    print(string.format("|cFF00FFFFJaina|r: Macros de %s:", sender))
     for i, name in ipairs(macros) do
         print(string.format("  %d. %s", i, name))
     end
@@ -754,7 +754,7 @@ end
 function S.MacroSync:RequestMacro(macroName, target)
     local msg = "REQUEST:" .. macroName
     self:SendWhisper(msg, target)
-    print("|cFFFF00FFSequito|r: Solicitando macro '" .. macroName .. "' a " .. target)
+    print("|cFFFF00FFJaina|r: Solicitando macro '" .. macroName .. "' a " .. target)
 end
 
 function S.MacroSync:OnMacroRequest(macroName, sender)
@@ -768,7 +768,7 @@ function S.MacroSync:OnMacroRequest(macroName, sender)
     local msg = string.format("SHARE:%s|%s", name, encodedBody)
     self:SendWhisper(msg, sender)
     
-    print("|cFFFF00FFSequito|r: Macro '" .. name .. "' enviado a " .. sender)
+    print("|cFFFF00FFJaina|r: Macro '" .. name .. "' enviado a " .. sender)
 end
 
 -- ===========================================================================
@@ -777,7 +777,7 @@ end
 if S.ModuleConfig then
     S.ModuleConfig:RegisterModule("MacroSync", {
         name = "Sincronización de Macros",
-        description = "Comparte y sincroniza macros con otros jugadores de Sequito. Incluye biblioteca de macros por clase.",
+        description = "Comparte y sincroniza macros con otros jugadores de Jaina. Incluye biblioteca de macros por clase.",
         category = "utility",
         icon = "Interface\\Icons\\INV_Misc_Book_11",
         options = {

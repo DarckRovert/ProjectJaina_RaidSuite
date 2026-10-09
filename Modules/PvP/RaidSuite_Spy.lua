@@ -1,5 +1,5 @@
 --[[
-    Sequito - Spy (PvP Intelligence)
+    Jaina - Spy (PvP Intelligence)
     Detección de sigilo, rastreo de enemigos cercanos y alertas.
     
     Funcionalidades:
@@ -79,7 +79,7 @@ function SP:Initialize()
     self:CreateListFrame()
     self:RegisterEvents()
     
-    print("|cFF00FFFFSequito|r: [Spy] Protocolo de vigilancia activo.")
+    print("|cFF00FFFFJaina|r: [Spy] Protocolo de vigilancia activo.")
 end
 
 function SP:GetOption(key)
@@ -107,7 +107,7 @@ end
 
 -- Frame de lista de enemigos cercanos
 function SP:CreateListFrame()
-    local f = CreateFrame("Frame", "SequitoSpyList", UIParent)
+    local f = CreateFrame("Frame", "JainaSpyList", UIParent)
     f:SetSize(180, 200)
     f:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -20, -200)
     f:SetMovable(true)

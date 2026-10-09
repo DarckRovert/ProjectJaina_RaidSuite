@@ -23,18 +23,18 @@ function SC:Initialize()
     -- Initialize Buffers
     self.tempBuffers = {}
 
-    print("|cFFFF00FFSequito|r: [Connect] Módulo de sincronización listo.")
+    print("|cFFFF00FFJaina|r: [Connect] Módulo de sincronización listo.")
     self:RegisterCommands()
     
     -- Register Tab in Dashboard
     if S.Dashboard and S.Dashboard.RegisterTab then
-        local content = CreateFrame("Frame", "SequitoConnectTab", UIParent)
+        local content = CreateFrame("Frame", "JainaConnectTab", UIParent)
         content:SetSize(100, 100) 
         
         -- Title
         local title = content:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
         title:SetPoint("TOPLEFT", 10, -10)
-        title:SetText("|cff9966ffSequito Connect|r")
+        title:SetText("|cff9966ffJaina Connect|r")
         
         -- SYNC SECTION (Top)
         local syncGroup = CreateFrame("Frame", nil, content)
@@ -50,7 +50,7 @@ function SC:Initialize()
             if IsRaidLeader() or IsRaidOfficer() or IsPartyLeader() then
                 SC:BroadcastConfig()
             else
-                print("|cFFFF0000Sequito:|r Solo el líder puede transmitir configuración.")
+                print("|cFFFF0000Jaina:|r Solo el líder puede transmitir configuración.")
             end
         end)
         
@@ -66,7 +66,7 @@ function SC:Initialize()
         expTitle:SetText("Exportación Manual (Discord/Web):")
         expTitle:SetTextColor(1, 0.8, 0)
 
-        local scrollArea = CreateFrame("ScrollFrame", "SequitoConnectScroll", content, "UIPanelScrollFrameTemplate")
+        local scrollArea = CreateFrame("ScrollFrame", "JainaConnectScroll", content, "UIPanelScrollFrameTemplate")
         scrollArea:SetPoint("TOPLEFT", expTitle, "BOTTOMLEFT", 0, -10)
         scrollArea:SetPoint("BOTTOMRIGHT", -30, 10)
         
@@ -85,7 +85,7 @@ function SC:Initialize()
                 author = UnitName("player"),
                 version = S.Version or "10.1.0",
                 timestamp = time(),
-                config = SequitoDB or {}
+                config = JainaDB or {}
             }
             editBox:SetText(SC:SimpleJSON(data))
             editBox:SetCursorPosition(0)
@@ -116,12 +116,12 @@ end
 function SC:BroadcastConfig()
     local channel = self:GetBroadcastChannel()
     if not channel then
-        print("|cFFFF0000Sequito:|r Debes estar en un grupo o banda para transmitir configuración.")
+        print("|cFFFF0000Jaina:|r Debes estar en un grupo o banda para transmitir configuración.")
         return
     end
 
     -- Serialize CONFIG ONLY (Safety: Don't send entire DB if it has other stuff)
-    local cfg = SequitoDB or {}
+    local cfg = JainaDB or {}
     local serialized = SC:TableToLua(cfg)
     local msgID = tostring(time())
     local chunks = {}
@@ -132,7 +132,7 @@ function SC:BroadcastConfig()
     end
     
     local total = #chunks
-    print("|cFF00FFFFSequito:|r Iniciando transmisión hacia " .. channel .. " ("..total.." paquetes)...")
+    print("|cFF00FFFFJaina:|r Iniciando transmisión hacia " .. channel .. " ("..total.." paquetes)...")
     
     if not self.queueFrame then
         self.queueFrame = CreateFrame("Frame")
@@ -155,7 +155,7 @@ function SC:BroadcastConfig()
                 queueIndex = queueIndex + 1
             else
                 f:SetScript("OnUpdate", nil)
-                print("|cFF00FF00Sequito:|r Transmisión completada exitosamente.")
+                print("|cFF00FF00Jaina:|r Transmisión completada exitosamente.")
             end
         end
     end)
@@ -175,7 +175,7 @@ function SC:OnComm(event, prefix, msg, channel, sender)
     -- Init Buffer
     if not self.tempBuffers[id] then
         self.tempBuffers[id] = { parts = {}, count = 0, total = tot, sender = sender }
-        print("|cFF00FFFFSequito:|r Recibiendo configuración de " .. sender .. "...")
+        print("|cFF00FFFFJaina:|r Recibiendo configuración de " .. sender .. "...")
     end
     
     local buf = self.tempBuffers[id]
@@ -193,7 +193,7 @@ end
 function SC:OfferConfig(dataString, sender)
     -- Show Popup
     StaticPopupDialogs["SEQUITO_CONFIRM_SYNC"] = {
-        text = "|cFF00FFFFSequito|r\n\n" .. sender .. " ha enviado una configuración de Raid.\n¿Deseas aplicarla? (Recargará la UI)",
+        text = "|cFF00FFFFJaina|r\n\n" .. sender .. " ha enviado una configuración de Raid.\n¿Deseas aplicarla? (Recargará la UI)",
         button1 = "Aceptar",
         button2 = "Cancelar",
         OnAccept = function()
@@ -203,13 +203,13 @@ function SC:OfferConfig(dataString, sender)
                 setfenv(func, {}) -- Entorno cerrado sin acceso a _G
                 local ok, newConfig = pcall(func)
                 if ok and newConfig and type(newConfig) == "table" then
-                    SequitoDB = newConfig
+                    JainaDB = newConfig
                     ReloadUI()
                 else
-                    print("|cFFFF0000Sequito:|r Error: Configuración inválida o rechazada.")
+                    print("|cFFFF0000Jaina:|r Error: Configuración inválida o rechazada.")
                 end
             else
-                print("|cFFFF0000Sequito:|r Error: Datos corruptos.")
+                print("|cFFFF0000Jaina:|r Error: Datos corruptos.")
             end
         end,
         timeout = 0,
@@ -246,7 +246,7 @@ function SC:TableToLua(val)
 end
 
 function SC:RegisterCommands()
-    -- Commands handled by global handler in Sequito.lua
+    -- Commands handled by global handler in Jaina.lua
 end
 
 -- ===========================================================================
@@ -277,7 +277,7 @@ function SC:GenerateReport()
         author = UnitName("player"),
         version = S.Version or "10.1.0",
         wipes = S.WipeAnalyzer and S.WipeAnalyzer.Wipes or {},
-        loot = SequitoLootDB or {},
+        loot = JainaLootDB or {},
         attendance = roster,
     }
     self:OpenWindow(S.L["EXPORT_REPORT"] or "Reporte de Raid", self:SimpleJSON(data))
@@ -289,7 +289,7 @@ function SC:ExportConfig()
         author = UnitName("player"),
         version = S.Version or "10.1.0",
         timestamp = time(),
-        config = SequitoDB or {} -- The main config table
+        config = JainaDB or {} -- The main config table
     }
     self:OpenWindow("Perfil de Configuración", self:SimpleJSON(data))
 end
@@ -300,19 +300,19 @@ end
 function SC:OpenWindow(title, text)
     if self.frame then 
         self.frame:Show()
-        self.frame.title:SetText("Sequito Connect - " .. title)
+        self.frame.title:SetText("Jaina Connect - " .. title)
         self.frame.editBox:SetText(text)
         return 
     end
 
-    local f = CreateFrame("Frame", "SequitoExportFrame", UIParent)
+    local f = CreateFrame("Frame", "JainaExportFrame", UIParent)
     f:SetSize(500, 450) -- Taller for buttons
     f:SetPoint("CENTER")
     f:SetBackdrop({bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background", edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border", edgeSize = 16, insets = {left = 4, right = 4, top = 4, bottom = 4}})
     
     f.title = f:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     f.title:SetPoint("TOP", 0, -15)
-    f.title:SetText("Sequito Connect - " .. title)
+    f.title:SetText("Jaina Connect - " .. title)
     
     -- Mode Buttons
     local btnReport = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
@@ -328,7 +328,7 @@ function SC:OpenWindow(title, text)
     btnConfig:SetScript("OnClick", function() SC:ExportConfig() end)
     
     -- Scroll Area
-    local scroll = CreateFrame("ScrollFrame", "SequitoExportScroll", f, "UIPanelScrollFrameTemplate")
+    local scroll = CreateFrame("ScrollFrame", "JainaExportScroll", f, "UIPanelScrollFrameTemplate")
     scroll:SetPoint("TOPLEFT", 20, -80)
     scroll:SetPoint("BOTTOMRIGHT", -40, 50)
     
@@ -385,7 +385,7 @@ end
 -- Registrar
 if S.ModuleConfig then
     S.ModuleConfig:RegisterModule("Connect", {
-        name = "Sequito Connect",
+        name = "Jaina Connect",
         description = "Exportación de datos a web/discord",
         category = "general",
         icon = "Interface\\Icons\\Spell_ChargePositive",

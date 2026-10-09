@@ -8,7 +8,7 @@ local addonName, S = ...
 S.LootGallery = {}
 local LG = S.LootGallery
 
-SequitoLootDB = SequitoLootDB or {}
+JainaLootDB = JainaLootDB or {}
 
 -- ===========================================================================
 -- CONFIGURACIÓN
@@ -19,7 +19,7 @@ function LG:Initialize()
     self.frame = self:CreateGalleryFrame()
     self:RegisterEvents()
     self:RegisterCommands()
-    print("|cFFFF00FFSequito|r: [Gamification] Galería de Loot activa.")
+    print("|cFFFF00FFJaina|r: [Gamification] Galería de Loot activa.")
 end
 
 function LG:RegisterEvents()
@@ -57,13 +57,13 @@ function LG:RecordLoot(itemInput, receiver)
 
     -- Prevenir registros duplicados de la misma pieza en una ventana de 5 segundos
     local now = GetTime()
-    for _, entry in ipairs(SequitoLootDB) do
+    for _, entry in ipairs(JainaLootDB) do
         if entry.link == (itemLink or itemInput) and entry.timestamp and (now - entry.timestamp) < 5 then
             return
         end
     end
 
-    table.insert(SequitoLootDB, {
+    table.insert(JainaLootDB, {
         link = itemLink or itemInput,
         icon = texture or "Interface\\Icons\\INV_Misc_QuestionMark",
         date = date("%d/%m %H:%M"),
@@ -72,12 +72,12 @@ function LG:RecordLoot(itemInput, receiver)
     })
 
     -- Mantener historial limitado a las últimas 50 piezas
-    if #SequitoLootDB > 50 then
-        table.remove(SequitoLootDB, 1)
+    if #JainaLootDB > 50 then
+        table.remove(JainaLootDB, 1)
     end
 
     if S.L and S.L["LOOT_LEGENDARY"] then
-        print(string.format("|cFFFFD700[Sequito] %s: %s|r", S.L["LOOT_LEGENDARY"], itemLink or name or "Objeto"))
+        print(string.format("|cFFFFD700[Jaina] %s: %s|r", S.L["LOOT_LEGENDARY"], itemLink or name or "Objeto"))
     end
 
     if self.frame and self.frame:IsShown() then
@@ -110,7 +110,7 @@ end
 -- UI: GALLERY CON SCROLLCHILD
 -- ===========================================================================
 function LG:CreateGalleryFrame()
-    local f = CreateFrame("Frame", "SequitoGalleryFrame", UIParent)
+    local f = CreateFrame("Frame", "JainaGalleryFrame", UIParent)
     f:SetSize(400, 320)
     f:SetPoint("CENTER")
     f:SetBackdrop({
@@ -131,11 +131,11 @@ function LG:CreateGalleryFrame()
     f.title:SetText(S.L and S.L["LOOT_GALLERY"] or "Galería de Tesoros")
 
     -- ScrollFrame y ScrollChild nativos
-    local scroll = CreateFrame("ScrollFrame", "SequitoGalleryScrollFrame", f, "UIPanelScrollFrameTemplate")
+    local scroll = CreateFrame("ScrollFrame", "JainaGalleryScrollFrame", f, "UIPanelScrollFrameTemplate")
     scroll:SetSize(340, 240)
     scroll:SetPoint("TOP", 0, -40)
 
-    local content = CreateFrame("Frame", "SequitoGalleryContent", scroll)
+    local content = CreateFrame("Frame", "JainaGalleryContent", scroll)
     content:SetSize(340, 240)
     scroll:SetScrollChild(content)
 
@@ -161,8 +161,8 @@ function LG:UpdateGallery()
     for _, btn in ipairs(self.icons) do btn:Hide() end
 
     local idx = 1
-    for i = #SequitoLootDB, 1, -1 do
-        local item = SequitoLootDB[i]
+    for i = #JainaLootDB, 1, -1 do
+        local item = JainaLootDB[i]
         local btn = self.icons[idx]
 
         if not btn then
@@ -199,7 +199,7 @@ function LG:UpdateGallery()
         idx = idx + 1
     end
 
-    local totalRows = math.ceil((#SequitoLootDB) / perRow)
+    local totalRows = math.ceil((#JainaLootDB) / perRow)
     self.frame.content:SetHeight(math.max(240, totalRows * (size + gap) + 12))
 end
 

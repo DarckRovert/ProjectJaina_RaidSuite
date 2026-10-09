@@ -44,7 +44,7 @@ function S.RaidSync:Initialize()
         S.RaidSync:OnEvent(event, ...)
     end)
     
-    print("|cFFFF00FFSequito|r: [RaidSync] Sistema de sincronización iniciado.")
+    print("|cFFFF00FFJaina|r: [RaidSync] Sistema de sincronización iniciado.")
 end
 
 function S.RaidSync:OnEvent(event, ...)
@@ -212,7 +212,7 @@ function S.RaidSync:parseLogic(msg, sender)
         if self:IsOfficer(sender) then
             self:OnRemoteConfig(payload, sender)
         else
-            print("|cFFFF0000[Sequito] Intento de configuración no autorizada de: " .. sender .. "|r")
+            print("|cFFFF0000[Jaina] Intento de configuración no autorizada de: " .. sender .. "|r")
         end
     elseif cmd == "VETO" then
         if self:IsOfficer(sender) then
@@ -275,7 +275,7 @@ function S.RaidSync:OnReadyCheck(payload, sender)
             class = "UNKNOWN",
             spec = 0,
             role = "UNKNOWN",
-            hasSequito = true
+            hasJaina = true
         }
     end
     self.RaidData[sender].ready = (payload == "1" or payload == "READY" or payload == "true")
@@ -291,7 +291,7 @@ end
 -- 1. REMOTE CONFIG & PROFILE SYNC
 function S.RaidSync:BroadcastProfile()
     if not self:IsOfficer(UnitName("player")) then
-        print("|cFFFF0000[Sequito] Solo Oficiales pueden transmitir su perfil.|r")
+        print("|cFFFF0000[Jaina] Solo Oficiales pueden transmitir su perfil.|r")
         return
     end
     
@@ -306,7 +306,7 @@ function S.RaidSync:BroadcastProfile()
     end
     
     self:Broadcast("PROFILE:" .. data)
-    print("|cFF00FF00[Sequito] Perfil transmitido a la raid (Chunking activo).|r")
+    print("|cFF00FF00[Jaina] Perfil transmitido a la raid (Chunking activo).|r")
 end
 
 function S.RaidSync:OnProfileReceived(payload, sender)
@@ -337,7 +337,7 @@ function S.RaidSync:ApplyProfile(data)
         S.db.profile[key] = value
         count = count + 1
     end
-    print("|cFF00FF00[Sequito] Perfil aplicado exitosamente (" .. count .. " valores actualizados).|r")
+    print("|cFF00FF00[Jaina] Perfil aplicado exitosamente (" .. count .. " valores actualizados).|r")
     
     -- Reload UI suggestion
     StaticPopupDialogs["SEQUITO_RELOAD"] = {
@@ -354,13 +354,13 @@ end
 
 function S.RaidSync:SendConfig(module, key, value)
     if not self:IsOfficer(UnitName("player")) then
-        print("|cFFFF0000[Sequito] No tienes rango de Oficial para enviar configuraciones.|r")
+        print("|cFFFF0000[Jaina] No tienes rango de Oficial para enviar configuraciones.|r")
         return
     end
     -- Payload format: Module|Key|Value
     local payload = string.format("%s|%s|%s", module, key, tostring(value))
     self:Broadcast("CONFIG:" .. payload)
-    print("|cFF00FF00[Sequito] Configuración enviada: |r" .. payload)
+    print("|cFF00FF00[Jaina] Configuración enviada: |r" .. payload)
 end
 
 function S.RaidSync:OnRemoteConfig(payload, sender)
@@ -376,7 +376,7 @@ function S.RaidSync:OnRemoteConfig(payload, sender)
             end
             
             S.ModuleConfig:SetValue(module, key, value)
-            print(string.format("|cFF00FFFF[Sequito] Configuración actualizada remotamente por %s: %s -> %s|r", sender, key, tostring(value)))
+            print(string.format("|cFF00FFFF[Jaina] Configuración actualizada remotamente por %s: %s -> %s|r", sender, key, tostring(value)))
         end
     end
 end
@@ -384,7 +384,7 @@ end
 -- 2. BOSS STRATEGIES
 function S.RaidSync:SendBossStrat(bossName, stratText)
     if not self:IsOfficer(UnitName("player")) then
-         print("|cFFFF0000[Sequito] Solo Oficiales pueden enviar estrategias.|r")
+         print("|cFFFF0000[Jaina] Solo Oficiales pueden enviar estrategias.|r")
          return
     end
     -- Payload: BossName|Text
@@ -392,7 +392,7 @@ function S.RaidSync:SendBossStrat(bossName, stratText)
     -- For now simple implementation.
     local payload = string.format("%s|%s", bossName, stratText)
     self:Broadcast("STRAT:" .. payload)
-    print("|cFF00FF00[Sequito] Estrategia enviada para: " .. bossName)
+    print("|cFF00FF00[Jaina] Estrategia enviada para: " .. bossName)
 end
 
 function S.RaidSync:OnBossStrat(payload, sender)
@@ -446,7 +446,7 @@ function S.RaidSync:ScanRaid()
                     class = class,
                     spec = 0,
                     role = "UNKNOWN",
-                    hasSequito = false
+                    hasJaina = false
                 }
             end
         end
@@ -460,7 +460,7 @@ function S.RaidSync:ScanRaid()
                     class = class,
                     spec = 0,
                     role = "UNKNOWN",
-                    hasSequito = false
+                    hasJaina = false
                 }
             end
         end
@@ -471,7 +471,7 @@ function S.RaidSync:ScanRaid()
             class = myClass,
             spec = S.Universal and S.Universal:GetSpec() or 1,
             role = S.PlayerRole or "DPS",
-            hasSequito = true
+            hasJaina = true
         }
     end
 end
@@ -484,7 +484,7 @@ function S.RaidSync:UpdateMemberInfo(name, class, spec, role)
     self.RaidData[name].class = class
     self.RaidData[name].spec = spec
     self.RaidData[name].role = role
-    self.RaidData[name].hasSequito = true
+    self.RaidData[name].hasJaina = true
     
     -- Actualizar UI si existe
     if S.RaidSync.UpdateUI then
@@ -534,14 +534,14 @@ end
 function S.RaidSync:PrintRaidComposition()
     local comp = self:GetRaidComposition()
     
-    print("|cFFFF00FF=== Sequito: Composición de Raid ===")
+    print("|cFFFF00FF=== Jaina: Composición de Raid ===")
     print(string.format("|cFFFFFFFFTotal: %d jugadores|r", comp.total))
     print(string.format("|cFF00FF00Tanks: %d|r - %s", #comp.tanks, table.concat(comp.tanks, ", ")))
     print(string.format("|cFF00FFFFHealers: %d|r - %s", #comp.healers, table.concat(comp.healers, ", ")))
     print(string.format("|cFFFF0000DPS: %d|r - %s", #comp.dps, table.concat(comp.dps, ", ")))
     
     if #comp.unknown > 0 then
-        print(string.format("|cFF888888Sin Sequito: %d|r - %s", #comp.unknown, table.concat(comp.unknown, ", ")))
+        print(string.format("|cFF888888Sin Jaina: %d|r - %s", #comp.unknown, table.concat(comp.unknown, ", ")))
     end
     
     print("|cFFFF00FF--- Por Clase ---|r")
@@ -557,28 +557,28 @@ end
 -- ===========================================================================
 function S.RaidSync:SendFocus(targetName)
     if not self:IsOfficer(UnitName("player")) then
-        print("|cFFFF0000[Sequito]|r Solo Líderes u Oficiales pueden ordenar FOCUS táctico.")
+        print("|cFFFF0000[Jaina]|r Solo Líderes u Oficiales pueden ordenar FOCUS táctico.")
         return
     end
     if not targetName then
         targetName = UnitName("target")
     end
     if not targetName then
-        print("|cFFFF0000[Sequito]|r No hay objetivo seleccionado.")
+        print("|cFFFF0000[Jaina]|r No hay objetivo seleccionado.")
         return
     end
     
     self:Broadcast("FOCUS:" .. targetName)
-    print("|cFFFF00FF[Sequito]|r Orden de FOCUS enviada: " .. targetName)
+    print("|cFFFF00FF[Jaina]|r Orden de FOCUS enviada: " .. targetName)
 end
 
 function S.RaidSync:SendAlphaStrike()
     if not self:IsOfficer(UnitName("player")) then
-        print("|cFFFF0000[Sequito]|r Solo Líderes u Oficiales pueden ordenar ALPHA STRIKE.")
+        print("|cFFFF0000[Jaina]|r Solo Líderes u Oficiales pueden ordenar ALPHA STRIKE.")
         return
     end
     self:Broadcast("ALPHA:NOW")
-    print("|cFFFF00FF[Sequito]|r ¡ALPHA STRIKE enviado!")
+    print("|cFFFF00FF[Jaina]|r ¡ALPHA STRIKE enviado!")
 end
 
 function S.RaidSync:OnAlphaStrike(sender)
@@ -602,7 +602,7 @@ end
 -- FRAME DE ALERTA VISUAL (TACTICAL DISPLAY)
 -- ===========================================================================
 function S.RaidSync:CreateAlertFrame()
-    local f = CreateFrame("Frame", "SequitoTacticalFrame", UIParent)
+    local f = CreateFrame("Frame", "JainaTacticalFrame", UIParent)
     f:SetSize(400, 100)
     f:SetPoint("TOP", UIParent, "TOP", 0, -180) -- Un poco mas abajo que los errores
     f:Hide()

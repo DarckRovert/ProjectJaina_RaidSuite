@@ -1,5 +1,5 @@
 --[[
-    Sequito - PerformanceStats Module
+    Jaina - PerformanceStats Module
     Estadísticas de Rendimiento
     Version: 10.2.0
 ]]
@@ -8,7 +8,7 @@ local addonName, S = ...
 S.PerformanceStats = {}
 local PS = S.PerformanceStats
 
-SequitoStatsDB = SequitoStatsDB or {}
+JainaStatsDB = JainaStatsDB or {}
 
 local currentCombat = nil
 
@@ -32,7 +32,7 @@ function PS:Initialize()
 end
 
 function PS:CreateFrame()
-    local f = CreateFrame("Frame", "SequitoPerformanceStatsFrame", UIParent)
+    local f = CreateFrame("Frame", "JainaPerformanceStatsFrame", UIParent)
     self.frame = f
     f:SetSize(400, 350)
     f:SetPoint("CENTER")
@@ -57,7 +57,7 @@ function PS:CreateFrame()
     f.title:SetPoint("TOP", 0, -10)
     f.title:SetText("Estadísticas de Rendimiento")
     
-    f.scroll = CreateFrame("ScrollFrame", "SequitoPSStatsScroll", f, "UIPanelScrollFrameTemplate")
+    f.scroll = CreateFrame("ScrollFrame", "JainaPSStatsScroll", f, "UIPanelScrollFrameTemplate")
     f.scroll:SetPoint("TOPLEFT", 10, -40)
     f.scroll:SetPoint("BOTTOMRIGHT", -30, 40)
     
@@ -136,10 +136,10 @@ function PS:EndCombat()
                 date = date("%Y-%m-%d %H:%M")
             }
             
-            table.insert(SequitoStatsDB, record)
+            table.insert(JainaStatsDB, record)
             local maxRecords = tonumber(self:GetOption("maxRecords")) or 50
-            while #SequitoStatsDB > maxRecords do
-                table.remove(SequitoStatsDB, 1)
+            while #JainaStatsDB > maxRecords do
+                table.remove(JainaStatsDB, 1)
             end
         end
         currentCombat = nil
@@ -183,7 +183,7 @@ function PS:ProcessCombatLog(...)
 end
 
 function PS:ClearStats()
-    wipe(SequitoStatsDB)
+    wipe(JainaStatsDB)
     if self.statLines then
         for _, fs in ipairs(self.statLines) do
             fs:Hide()
@@ -196,7 +196,7 @@ end
 
 function PS:CompareRaids()
     if S.Print then
-        S:Print("Comparación de combate: registros totales guardados = " .. #SequitoStatsDB)
+        S:Print("Comparación de combate: registros totales guardados = " .. #JainaStatsDB)
     end
     self:ShowStats()
 end
@@ -208,7 +208,7 @@ function PS:ShowStats()
         fs:Hide()
     end
     
-    if #SequitoStatsDB == 0 then
+    if #JainaStatsDB == 0 then
         if not self.emptyText then
             self.emptyText = self.frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
             self.emptyText:SetPoint("TOP", 0, -40)
@@ -224,8 +224,8 @@ function PS:ShowStats()
     local yOffset = 0
     local lineIdx = 1
     local maxDisplay = tonumber(self:GetOption("maxRecords")) or 50
-    for i = #SequitoStatsDB, math.max(1, #SequitoStatsDB - maxDisplay + 1), -1 do
-        local record = SequitoStatsDB[i]
+    for i = #JainaStatsDB, math.max(1, #JainaStatsDB - maxDisplay + 1), -1 do
+        local record = JainaStatsDB[i]
         local text = self.statLines[lineIdx]
         if not text then
             text = self.frame.content:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")

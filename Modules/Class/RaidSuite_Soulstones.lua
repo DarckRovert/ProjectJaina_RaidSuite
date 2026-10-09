@@ -84,7 +84,7 @@ end
 function SS:CreateDisplayFrame()
     if self.Frame then return self.Frame end
 
-    local f = CreateFrame("Frame", "SequitoSSTracker", UIParent)
+    local f = CreateFrame("Frame", "JainaSSTracker", UIParent)
     f:SetSize(170, 50)
     f:SetPoint("CENTER", UIParent, "CENTER", -300, 0)
     f:SetFrameStrata("MEDIUM")
@@ -157,7 +157,7 @@ end
 function SS:CreateWorkerFrame()
     if self.WorkerFrame then return self.WorkerFrame end
 
-    local wf = CreateFrame("Frame", "SequitoSSWorker", UIParent)
+    local wf = CreateFrame("Frame", "JainaSSWorker", UIParent)
     wf:RegisterEvent("UNIT_AURA")
     wf:RegisterEvent("RAID_ROSTER_UPDATE")
     wf:RegisterEvent("PARTY_MEMBERS_CHANGED")
@@ -416,5 +416,5 @@ function SS:CreateSlashCommands()
     end
 end
 
--- Registro en Sequito
+-- Registro en Jaina
 S.Soulstones = SS

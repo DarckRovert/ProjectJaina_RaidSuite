@@ -1,5 +1,5 @@
 --[[
-    Sequito - Radial Menu
+    Jaina - Radial Menu
     Menu circular de acceso rapido (Middle Click)
 ]]
 
@@ -37,7 +37,7 @@ function R:Initialize()
     self.IsVisible = false
     
     -- Main Frame (Invisible, holds buttons)
-    self.Frame = CreateFrame("Frame", "SequitoRadialFrame", UIParent)
+    self.Frame = CreateFrame("Frame", "JainaRadialFrame", UIParent)
     self.Frame:SetFrameStrata("DIALOG")
     self.Frame:SetSize(1, 1)
     self.Frame:Hide()
@@ -57,7 +57,7 @@ end
 
 function R:Show()
     if InCombatLockdown() then 
-        print("|cFFFF0000Sequito:|r No se puede abrir el menu radial en combate.")
+        print("|cFFFF0000Jaina:|r No se puede abrir el menu radial en combate.")
         return 
     end
     
@@ -92,7 +92,7 @@ function R:UpdateButtons()
     for i, action in ipairs(actions) do
         local btn = self.Buttons[i]
         if not btn then
-            btn = CreateFrame("Button", "SequitoRadialBtn"..i, self.Frame, "SecureActionButtonTemplate")
+            btn = CreateFrame("Button", "JainaRadialBtn"..i, self.Frame, "SecureActionButtonTemplate")
             btn:SetSize(BUTTON_SIZE, BUTTON_SIZE)
             
             btn.icon = btn:CreateTexture(nil, "BACKGROUND")

@@ -1,5 +1,5 @@
 --[[
-    Sequito - DungeonTimer.lua
+    Jaina - DungeonTimer.lua
     Timer de Heroic/Daily Dungeons y Lockouts
     Version: 8.0.0 (Bilingual & Ecosystem Sync Edition)
     Compatibilidad: WotLK 3.3.5a (Build 12340) | Español (esES/esMX) & Inglés (enUS)
@@ -66,7 +66,7 @@ function DT:Initialize()
 end
 
 function DT:CreateFrame()
-    local f = CreateFrame("Frame", "SequitoDungeonTimerFrame", UIParent)
+    local f = CreateFrame("Frame", "JainaDungeonTimerFrame", UIParent)
     f:SetSize(300, 370)
     f:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
     f:SetFrameStrata("HIGH")
@@ -133,7 +133,7 @@ function DT:CreateFrame()
     f.dungeonHeader:SetText("|cFF00FFFFHeroicas Completadas Hoy:|r")
     
     -- Lista de dungeons (scroll frame)
-    f.scrollFrame = CreateFrame("ScrollFrame", "SequitoDTListScroll", f, "UIPanelScrollFrameTemplate")
+    f.scrollFrame = CreateFrame("ScrollFrame", "JainaDTListScroll", f, "UIPanelScrollFrameTemplate")
     f.scrollFrame:SetSize(255, 210)
     f.scrollFrame:SetPoint("TOPLEFT", f.dungeonHeader, "BOTTOMLEFT", 0, -5)
     
@@ -236,17 +236,17 @@ function DT:RegisterEvents()
 end
 
 function DT:LoadSavedData()
-    if SequitoDB and SequitoDB.DungeonTimer then
-        self.CompletedDungeons = SequitoDB.DungeonTimer.completed or {}
-        self.DailyReset = SequitoDB.DungeonTimer.dailyReset or 0
+    if JainaDB and JainaDB.DungeonTimer then
+        self.CompletedDungeons = JainaDB.DungeonTimer.completed or {}
+        self.DailyReset = JainaDB.DungeonTimer.dailyReset or 0
     end
 end
 
 function DT:SaveData()
-    SequitoDB = SequitoDB or {}
-    SequitoDB.DungeonTimer = SequitoDB.DungeonTimer or {}
-    SequitoDB.DungeonTimer.completed = self.CompletedDungeons
-    SequitoDB.DungeonTimer.dailyReset = self.DailyReset
+    JainaDB = JainaDB or {}
+    JainaDB.DungeonTimer = JainaDB.DungeonTimer or {}
+    JainaDB.DungeonTimer.completed = self.CompletedDungeons
+    JainaDB.DungeonTimer.dailyReset = self.DailyReset
 end
 
 function DT:CalculateResetTime()

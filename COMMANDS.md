@@ -17,7 +17,7 @@
 
 ## 📝 Comandos Principales
 
-Sequito acepta dos prefijos de comando:
+Jaina acepta dos prefijos de comando:
 - `/sequito [comando]`
 - `/seq [comando]` (atajo)
 
@@ -91,7 +91,7 @@ Rol: DPS
 
 **Salida:**
 ```
-Sequito: Regenerando macros (Necrosis Edition Final) para WARLOCK...
+Jaina: Regenerando macros (Necrosis Edition Final) para WARLOCK...
 ✅ Macro creada: SeqStart
 ✅ Macro creada: SeqHeal
 ✅ Macro creada: SeqPet
@@ -255,7 +255,7 @@ Configura tus monturas favoritas para la macro `SeqMount`.
 **Descripción:** Anuncia los Battle Res disponibles en el raid.
 **Ejemplo de salida:**
 ```
-[Sequito] BRES disponibles: Druid1 (Rebirth), Warlock1 (Soulstone)
+[Jaina] BRES disponibles: Druid1 (Rebirth), Warlock1 (Soulstone)
 ```
 
 ### `/sequito cd lust`
@@ -276,7 +276,7 @@ Configura tus monturas favoritas para la macro `SeqMount`.
 **Descripción:** Auto-asigna rotación de interrupts basada en clases disponibles.
 **Ejemplo de salida:**
 ```
-[Sequito] Rotación de Interrupts: 1. Shaman1 → 2. Rogue1 → 3. Warrior1
+[Jaina] Rotación de Interrupts: 1. Shaman1 → 2. Rogue1 → 3. Warrior1
 ```
 
 ### `/sequito assign tanks`
@@ -289,7 +289,7 @@ Configura tus monturas favoritas para la macro `SeqMount`.
 **Descripción:** Limpia todas las asignaciones.
 
 ### `/sequito assign sync`
-**Descripción:** Sincroniza asignaciones con otros usuarios de Sequito.
+**Descripción:** Sincroniza asignaciones con otros usuarios de Jaina.
 
 ---
 
@@ -303,7 +303,7 @@ Configura tus monturas favoritas para la macro `SeqMount`.
 **Descripción:** Escanea y anuncia problemas al raid.
 **Ejemplo de salida:**
 ```
-[Sequito] Problemas detectados:
+[Jaina] Problemas detectados:
   - Rogue1: Veneno MH, Veneno OH
   - Warlock1: Sin Flask
   - Mage1: Mana: 65%
@@ -404,8 +404,8 @@ Configura tus monturas favoritas para la macro `SeqMount`.
 **Descripción:** Anuncia el estado de todos los trinkets enemigos al grupo.
 **Ejemplo de salida:**
 ```
-[Sequito] Trinkets en CD: Enemigo1 (1:45), Enemigo2 (0:30)
-[Sequito] Trinkets LISTOS: Enemigo3, Enemigo4
+[Jaina] Trinkets en CD: Enemigo1 (1:45), Enemigo2 (0:30)
+[Jaina] Trinkets LISTOS: Enemigo3, Enemigo4
 ```
 
 ---
@@ -420,7 +420,7 @@ Configura tus monturas favoritas para la macro `SeqMount`.
 **Descripción:** Anuncia el análisis del wipe al raid/party.
 **Ejemplo de salida:**
 ```
-[Sequito] === ANÁLISIS DE WIPE ===
+[Jaina] === ANÁLISIS DE WIPE ===
 Primera muerte: Jugador1 (15.3s) - Shadow Bolt de Boss
 Sin poción/healthstone: Jugador2, Jugador3
 Total muertes: 8 | Interrupts: 5
@@ -535,7 +535,7 @@ Total muertes: 8 | Interrupts: 5
 
 ### `/sequito version`
 **Alias:** `/seq ver`
-**Descripción:** Verifica versiones de Sequito en el grupo.
+**Descripción:** Verifica versiones de Jaina en el grupo.
 
 ### `/sequito whisper <template>`
 **Alias:** `/seq qw`
@@ -544,7 +544,7 @@ Total muertes: 8 | Interrupts: 5
 
 ---
 
-## 📜 Lista de Comandos - Sequito v10.0
+## 📜 Lista de Comandos - Jaina v10.0
 > **Nota:** La mayoría de estas funciones ahora son accesibles desde el **Dashboard** (Icono de Minimapa).
 
 ## 🚀 Comandos Principales (v10.0)
@@ -552,7 +552,7 @@ Total muertes: 8 | Interrupts: 5
 | Comando | Descripción |
 |---------|-------------|
 | `/sequito` | Abre el **Dashboard Unificado** (Config, Raid, Tools). |
-| `/sequito report` | Abre **Sequito Connect** (Exportar datos y perfiles). |
+| `/sequito report` | Abre **Jaina Connect** (Exportar datos y perfiles). |
 | `/sequito options` | (Legacy) Abre la pestaña de configuración directamente. |
 | `/sequito panel` | (Legacy) Abre el panel de raid directamente. |
 
@@ -578,7 +578,7 @@ Total muertes: 8 | Interrupts: 5
 
 | Comando | Descripción |
 |---------|-------------|
-| `/sequito spy` | Alterna la interfaz de **SequitoSpy** (detección de sigilo y enemigos). |
+| `/sequito spy` | Alterna la interfaz de **JainaSpy** (detección de sigilo y enemigos). |
 | `/sequito focusfire` (o `/seq ff`) | Abre el panel de Focus Fire sincronizado. |
 | `/sequito ff call` | Llama y marca con calavera al objetivo actual. |
 | `/sequito overlord` (o `/seq hud`) | Abre el configurador del HUD **The Overlord**. |

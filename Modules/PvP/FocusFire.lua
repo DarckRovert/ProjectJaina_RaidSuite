@@ -1,5 +1,5 @@
 --[[
-    Sequito - FocusFire.lua
+    Jaina - FocusFire.lua
     Sistema de Llamadas de Target (Focus Fire)
     Version: 7.3.0
     
@@ -75,7 +75,7 @@ end
 
 function FF:CreateFrames()
     -- Frame principal para tracking
-    self.Frame = CreateFrame("Frame", "SequitoFocusFireFrame", UIParent)
+    self.Frame = CreateFrame("Frame", "JainaFocusFireFrame", UIParent)
     self.Frame:SetSize(200, 60)
     self.Frame:SetPoint("TOP", UIParent, "TOP", 0, -150)
     self.Frame:SetMovable(true)
@@ -142,7 +142,7 @@ function FF:CreateFrames()
 end
 
 function FF:CreateAlertFrame()
-    self.AlertFrame = CreateFrame("Frame", "SequitoFocusFireAlert", UIParent)
+    self.AlertFrame = CreateFrame("Frame", "JainaFocusFireAlert", UIParent)
     self.AlertFrame:SetSize(400, 80)
     self.AlertFrame:SetPoint("CENTER", UIParent, "CENTER", 0, 200)
     self.AlertFrame:SetFrameStrata("HIGH")
@@ -528,7 +528,7 @@ function FF:AnnounceHealth()
     
     local channel = GetFocusFireChannel(false)
     if channel then
-        SendChatMessage(string.format("[Sequito] Focus Target: %s - %.1f%% HP", 
+        SendChatMessage(string.format("[Jaina] Focus Target: %s - %.1f%% HP", 
             self.CurrentTarget, self.CurrentTargetHP), channel)
     end
 end

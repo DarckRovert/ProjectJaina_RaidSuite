@@ -1,5 +1,5 @@
 --[[
-    Sequito - EventCalendar Module
+    Jaina - EventCalendar Module
     Calendario de Eventos y Raids Integrado
     Version: 8.0.0 (WotLK 3.3.5a Build 12340)
 ]]
@@ -89,7 +89,7 @@ function EC:Initialize()
 end
 
 function EC:CreateFrame()
-    local f = CreateFrame("Frame", "SequitoEventCalendarFrame", UIParent)
+    local f = CreateFrame("Frame", "JainaEventCalendarFrame", UIParent)
     self.frame = f
     f:SetSize(380, 360)
     f:SetPoint("CENTER", UIParent, "CENTER", 0, 40)
@@ -107,7 +107,7 @@ function EC:CreateFrame()
     f:Hide()
 
     -- Registrar para cierre nativo con tecla Escape (WotLK 3.3.5a)
-    tinsert(UISpecialFrames, "SequitoEventCalendarFrame")
+    tinsert(UISpecialFrames, "JainaEventCalendarFrame")
 
     if S.Theme and S.Theme.ApplyPanelBackdrop then
         S.Theme:ApplyPanelBackdrop(f)
@@ -168,7 +168,7 @@ function EC:CreateFrame()
     end)
 
     -- Área de Scroll para Eventos
-    f.scroll = CreateFrame("ScrollFrame", "SequitoECEventScroll", f, "UIPanelScrollFrameTemplate")
+    f.scroll = CreateFrame("ScrollFrame", "JainaECEventScroll", f, "UIPanelScrollFrameTemplate")
     f.scroll:SetPoint("TOPLEFT", 12, -70)
     f.scroll:SetPoint("BOTTOMRIGHT", -32, 45)
 
@@ -478,9 +478,9 @@ function EC:CheckReminders()
 
                 local msg
                 if diffMinutes == 0 then
-                    msg = string.format("|cFF00FFFF[Sequito]|r ¡El evento '|cFFFFD100%s|r' comienza AHORA MISMO!", title)
+                    msg = string.format("|cFF00FFFF[Jaina]|r ¡El evento '|cFFFFD100%s|r' comienza AHORA MISMO!", title)
                 else
-                    msg = string.format("|cFF00FFFF[Sequito]|r Recordatorio: '|cFFFFD100%s|r' comienza a las %02d:%02d (en %d min).", title, hour, minute, diffMinutes)
+                    msg = string.format("|cFF00FFFF[Jaina]|r Recordatorio: '|cFFFFD100%s|r' comienza a las %02d:%02d (en %d min).", title, hour, minute, diffMinutes)
                 end
 
                 DEFAULT_CHAT_FRAME:AddMessage(msg)

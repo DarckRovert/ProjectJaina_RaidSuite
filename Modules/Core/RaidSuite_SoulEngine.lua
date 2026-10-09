@@ -1,5 +1,5 @@
 --[[
-    Sequito - Soul Engine (Matemáticas Avanzadas)
+    Jaina - Soul Engine (Matemáticas Avanzadas)
     Motor de predicción para Time-To-Die (TTD) y Snapshots de daño.
     
     TTD usa regresión lineal sobre historial de HP reciente.
@@ -36,7 +36,7 @@ function SE:Initialize()
     
     self:RegisterEvents()
     
-    -- print("|cFF00FFFFSequito|r: [SoulEngine] Motor matemático iniciado.")
+    -- print("|cFF00FFFFJaina|r: [SoulEngine] Motor matemático iniciado.")
 end
 
 function SE:GetOption(key)

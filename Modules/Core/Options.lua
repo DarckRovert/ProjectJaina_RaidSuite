@@ -1,5 +1,5 @@
 --[[
-    Sequito - Options.lua
+    Jaina - Options.lua
     Panel de Configuración Principal
     Version: 8.0.0 (Refactorizado)
     
@@ -111,7 +111,7 @@ end
 
 local function CreateSlider(parent, key, label, x, y, minVal, maxVal, step, tooltip, onChange)
     -- Use a unique global name to access template regions
-    local sliderName = "SequitoOptSlider_" .. key
+    local sliderName = "JainaOptSlider_" .. key
     local slider = CreateFrame("Slider", sliderName, parent, "OptionsSliderTemplate")
     slider:SetPoint("TOPLEFT", parent, "TOPLEFT", x, y)
     slider:SetSize(180, 17)
@@ -155,7 +155,7 @@ local function CreateSlider(parent, key, label, x, y, minVal, maxVal, step, tool
 end
 
 local function CreateDropdown(parent, key, label, x, y, dropdownOptions, tooltip)
-    local dropdown = CreateFrame("Frame", "SequitoOpt_" .. key, parent, "UIDropDownMenuTemplate")
+    local dropdown = CreateFrame("Frame", "JainaOpt_" .. key, parent, "UIDropDownMenuTemplate")
     dropdown:SetPoint("TOPLEFT", parent, "TOPLEFT", x - 15, y)
     
     local labelText = dropdown:CreateFontString(nil, "OVERLAY", "GameFontNormal")
@@ -280,7 +280,7 @@ local function CreateInterfaceContent(parent)
     CreateLabel(content, "|cffffcc00Esfera Principal:|r", 20, -180)
     
     CreateCheckbox(content, "showSphere", "Mostrar Esfera", 20, -205,
-        "Muestra la esfera principal de Sequito", function(v) 
+        "Muestra la esfera principal de Jaina", function(v) 
             S.db.profile.ShowSphere = v
             if S.Sphere then
                 if v then S.Sphere:Show() else S.Sphere:Hide() end
@@ -326,7 +326,7 @@ local function CreateModuleContent(parent, category)
     content.moduleList = moduleList
     
     -- Scroll frame para la lista de módulos
-    local scrollFrame = CreateFrame("ScrollFrame", "SequitoModuleListScroll_" .. category, moduleList, "UIPanelScrollFrameTemplate")
+    local scrollFrame = CreateFrame("ScrollFrame", "JainaModuleListScroll_" .. category, moduleList, "UIPanelScrollFrameTemplate")
     scrollFrame:SetPoint("TOPLEFT", moduleList, "TOPLEFT", 4, -4)
     scrollFrame:SetPoint("BOTTOMRIGHT", moduleList, "BOTTOMRIGHT", -24, 4)
     
@@ -348,7 +348,7 @@ local function CreateModuleContent(parent, category)
     configContainer:SetBackdropColor(0.1, 0.1, 0.15, 0.9)
 
     -- Scroll Frame for Right Panel
-    local configScroll = CreateFrame("ScrollFrame", "SequitoOptionsConfigScroll_" .. category, configContainer, "UIPanelScrollFrameTemplate")
+    local configScroll = CreateFrame("ScrollFrame", "JainaOptionsConfigScroll_" .. category, configContainer, "UIPanelScrollFrameTemplate")
     configScroll:SetPoint("TOPLEFT", configContainer, "TOPLEFT", 6, -6)
     configScroll:SetPoint("BOTTOMRIGHT", configContainer, "BOTTOMRIGHT", -26, 6)
     
@@ -573,10 +573,10 @@ end
 -- CREAR FRAME PRINCIPAL
 -- ============================================
 function Options:Initialize()
-    print("|cFF00FFFFSequito|r: [Options] Iniciando...")
+    print("|cFF00FFFFJaina|r: [Options] Iniciando...")
     
     -- Create options frame
-    self.frame = CreateFrame("Frame", "SequitoOptionsFrame", UIParent)
+    self.frame = CreateFrame("Frame", "JainaOptionsFrame", UIParent)
     self.frame:SetSize(600, 400)
     
     -- Build UI with error protection
@@ -585,13 +585,13 @@ function Options:Initialize()
     end)
     
     if not success then
-        print("|cFFFF0000Sequito ERROR:|r Options:BuildUI falló - " .. tostring(err))
+        print("|cFFFF0000Jaina ERROR:|r Options:BuildUI falló - " .. tostring(err))
         -- Still try to register a minimal frame
     end
     
     -- Register with Dashboard
     if S.Dashboard and S.Dashboard.RegisterTab then
-        print("|cFF00FFFFSequito|r: [Options] Registrando tab en Dashboard...")
+        print("|cFF00FFFFJaina|r: [Options] Registrando tab en Dashboard...")
         
         -- Dashboard Integration Fixes:
         self.frame:SetMovable(false)
@@ -606,9 +606,9 @@ function Options:Initialize()
         if self.frame.header then self.frame.header:Hide() end
         
         S.Dashboard:RegisterTab("Configuración", "Interface\\Icons\\INV_Misc_Gear_01", self.frame)
-        print("|cFF00FF00Sequito|r: [Options] Tab registrado exitosamente!")
+        print("|cFF00FF00Jaina|r: [Options] Tab registrado exitosamente!")
     else
-        print("|cFFFF0000Sequito ERROR:|r Dashboard no disponible para Options")
+        print("|cFFFF0000Jaina ERROR:|r Dashboard no disponible para Options")
         self.frame:SetPoint("CENTER")
         self.frame:Hide()
     end
@@ -895,7 +895,7 @@ function Options:SaveOptions()
 end
 
 function Options:ResetToDefaults()
-    SequitoDB.profile = {}
+    JainaDB.profile = {}
     ReloadUI()
 end
 
@@ -940,5 +940,5 @@ function Options:Set(key, value)
     db[key] = value
 end
 
--- Registrar en Sequito
+-- Registrar en Jaina
 S.Options = Options

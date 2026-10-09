@@ -1,5 +1,5 @@
 --[[
-    Sequito - Academy Rotation Advisor & HUD
+    Jaina - Academy Rotation Advisor & HUD
     Sugiere la rotación óptima basada en clase/spec con HUD visual en tiempo real.
     Parte del sistema "Academy Mode" (v9.0)
 ]]
@@ -256,7 +256,7 @@ end
 function AR:CreateHUD()
     if self.HUDFrame then return self.HUDFrame end
 
-    local f = CreateFrame("Frame", "SequitoRotationHUD", UIParent)
+    local f = CreateFrame("Frame", "JainaRotationHUD", UIParent)
     f:SetSize(270, 72)
     f:SetPoint("CENTER", UIParent, "CENTER", 0, -180)
     f:SetMovable(true)

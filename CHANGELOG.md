@@ -107,8 +107,8 @@ Iconos en tablas `RegisterModule` tenían `\\\\` (4 barras) en lugar de `\\` (2 
 
 ### 🌟 Renaming & Branding
 - Proyecto renombrado de **SEQUITO** a **Wanos_RaidSuite** (branding oficial).
-- 17 archivos Lua internos renombrados de `Sequito*.lua` a `RaidSuite_*.lua`.
-- Tabla global `_G.Sequito` retenida intencionalmente para compatibilidad con 40+ módulos y `SavedVariables` existentes.
+- 17 archivos Lua internos renombrados de `Jaina*.lua` a `RaidSuite_*.lua`.
+- Tabla global `_G.Jaina` retenida intencionalmente para compatibilidad con 40+ módulos y `SavedVariables` existentes.
 - Nuevos slash commands: `/raidsuite`, `/wprs` (además de los originales `/sequito`, `/seq`).
 
 ### 🌉 EcosystemBridge (Core/EcosystemBridge.lua)
@@ -145,7 +145,7 @@ Iconos en tablas `RegisterModule` tenían `\\\\` (4 barras) en lugar de `\\` (2 
 - **Smart Migration**: Automatically migrates your existing global settings to the "Default" profile upon first login.
 - **GUI Management**: Complete management interface integrated into the addon options panel.
 
-#### Sequito Plates (`SequitoPlates`)
+#### Jaina Plates (`JainaPlates`)
 - **New Module**: Lightweight nameplate enhancements designed for 3.3.5.
 - **CC Tracking**: Displays Crowd Control icons (Sheep, Fear, Stun) directly above enemy nameplates.
 - **Threat Indicator**: Visual glow/color change based on threat status.
@@ -164,11 +164,11 @@ Iconos en tablas `RegisterModule` tenían `\\\\` (4 barras) en lugar de `\\` (2 
 - **The Overlord**: Refactored to be lighter; visual alerts now delegated to `AlertHub`.
 - **Spy**: Refactored to use `AlertHub` for stealth detection, maintaining the critical screen flash effect.
 - **SmartDefaults**: Updated to support saving positions for new modules (`AlertHub`, `CooldownMonitor`).
-- **ModuleConfig**: Added configuration panels for `SequitoPlates` and updated `CooldownMonitor`.
+- **ModuleConfig**: Added configuration panels for `JainaPlates` and updated `CooldownMonitor`.
 
 ### ⚠️ Known Issues
 - **Localization**: Some new strings in 10.2.0 might still be in English/Spanish mix; full localization pending next minor patch.
 - **Nameplates**: Due to 3.3.5 API limitations, duplicate unit names (e.g. two "Orc Grunt") may show identical CC icons if one is CC'd.
 
 ---
-_Sequito Dev Team_
+_Jaina Dev Team_

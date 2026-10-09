@@ -1,5 +1,5 @@
 --[[
-    Sequito - HealerTracker.lua
+    Jaina - HealerTracker.lua
     Monitor de Healers Enemigos con Optimización Zero-Heap
     Version: 8.0.0
     Compatibilidad: WotLK 3.3.5a (Build 12340)
@@ -120,7 +120,7 @@ function HT:GetGroupChannel()
 end
 
 function HT:CreateFrame()
-    self.Frame = CreateFrame("Frame", "SequitoHealerTrackerFrame", UIParent)
+    self.Frame = CreateFrame("Frame", "JainaHealerTrackerFrame", UIParent)
     self.Frame:SetSize(220, 180)
     self.Frame:SetPoint("RIGHT", UIParent, "RIGHT", -50, 100)
     self.Frame:SetMovable(true)
@@ -394,7 +394,7 @@ end
 function HT:AnnounceHealer(healer, status)
     local channel = self:GetGroupChannel()
     if channel then
-        SendChatMessage(string.format("[Sequito] Healer %s - Mana %s: %.0f%%", 
+        SendChatMessage(string.format("[Jaina] Healer %s - Mana %s: %.0f%%", 
             healer.name, status, healer.manaPercent), channel)
     end
 end
@@ -474,11 +474,11 @@ function HT:AnnounceAll()
     end
     
     if #parts == 0 then
-        SendChatMessage("[Sequito] No hay healers enemigos detectados.", channel)
+        SendChatMessage("[Jaina] No hay healers enemigos detectados.", channel)
         return
     end
     
-    local msg = "[Sequito] Healers: " .. table.concat(parts, " | ")
+    local msg = "[Jaina] Healers: " .. table.concat(parts, " | ")
     if #msg > 240 then
         msg = msg:sub(1, 237) .. "..."
     end

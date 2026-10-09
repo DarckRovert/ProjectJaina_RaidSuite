@@ -68,7 +68,7 @@ function DT:BuildSpellMap()
 end
 
 function DT:CreateAnchor()
-    local f = CreateFrame("Frame", "SequitoDoTAnchor", UIParent)
+    local f = CreateFrame("Frame", "JainaDoTAnchor", UIParent)
     f:SetSize(200, 40)
     f:SetPoint("CENTER", UIParent, "CENTER", 0, -200)
     f:SetMovable(true)
@@ -121,7 +121,7 @@ function DT:CreateIcons()
         local name, _, icon = GetSpellInfo(data.id)
         icon = icon or data.icon
 
-        local btn = CreateFrame("Frame", "SequitoDoTIcon"..i, self.Anchor)
+        local btn = CreateFrame("Frame", "JainaDoTIcon"..i, self.Anchor)
         btn:SetSize(32, 32)
 
         if prev then
@@ -136,7 +136,7 @@ function DT:CreateIcons()
         btn.icon:SetDesaturated(true)
         btn.icon:SetAlpha(0.4)
 
-        btn.cd = CreateFrame("Cooldown", "SequitoDoTCD"..i, btn, "CooldownFrameTemplate")
+        btn.cd = CreateFrame("Cooldown", "JainaDoTCD"..i, btn, "CooldownFrameTemplate")
         btn.cd:SetAllPoints()
         btn.cd:Hide()
 

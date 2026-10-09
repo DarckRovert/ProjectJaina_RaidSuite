@@ -23,14 +23,14 @@ function PM:Initialize()
     
     self:CreatePetButton()
     self:RegisterEvents()
-    print("|cFFFF00FFSequito|r: [Pets] Gestor táctico de mascotas activo.")
+    print("|cFFFF00FFJaina|r: [Pets] Gestor táctico de mascotas activo.")
 end
 
 function PM:CreatePetButton()
     if self.Button then return end
     
     -- Botón orbital (Satélite especial conectado a S.Sphere)
-    local btn = CreateFrame("Button", "SequitoPetBtn", S.Sphere, "SecureActionButtonTemplate")
+    local btn = CreateFrame("Button", "JainaPetBtn", S.Sphere, "SecureActionButtonTemplate")
     btn:SetSize(36, 36)
     btn:SetPoint("CENTER", S.Sphere, "CENTER", 0, -58)
     
@@ -248,7 +248,7 @@ end
 function PM:UpdateVisibility()
     if not self.Button then return end
     
-    local raBtn = _G["SequitoRaidAssistBtn"]
+    local raBtn = _G["JainaRaidAssistBtn"]
     
     if UnitExists("pet") then
         self.Button:Show()

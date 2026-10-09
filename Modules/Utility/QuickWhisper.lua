@@ -1,5 +1,5 @@
 --[[
-    Sequito - QuickWhisper Module
+    Jaina - QuickWhisper Module
     Mensajes rápidos predefinidos con despacho inteligente y gestión dinámica
     Version: 8.0.0
 ]]
@@ -9,7 +9,7 @@ S.QuickWhisper = S.QuickWhisper or {}
 local QW = S.QuickWhisper
 
 -- Base de datos inicial
-SequitoQuickWhisperDB = SequitoQuickWhisperDB or {}
+JainaQuickWhisperDB = JainaQuickWhisperDB or {}
 
 local DEFAULT_TEMPLATES = {
     {name = "Inv", text = "Inv please"},
@@ -39,16 +39,16 @@ function QW:GetOption(key)
 end
 
 function QW:EnsureDB()
-    if type(SequitoQuickWhisperDB) ~= "table" then
-        SequitoQuickWhisperDB = {}
+    if type(JainaQuickWhisperDB) ~= "table" then
+        JainaQuickWhisperDB = {}
     end
-    if not SequitoQuickWhisperDB.templates or #SequitoQuickWhisperDB.templates == 0 then
-        SequitoQuickWhisperDB.templates = {}
+    if not JainaQuickWhisperDB.templates or #JainaQuickWhisperDB.templates == 0 then
+        JainaQuickWhisperDB.templates = {}
         for _, t in ipairs(DEFAULT_TEMPLATES) do
-            table.insert(SequitoQuickWhisperDB.templates, {name = t.name, text = t.text})
+            table.insert(JainaQuickWhisperDB.templates, {name = t.name, text = t.text})
         end
     end
-    return SequitoQuickWhisperDB
+    return JainaQuickWhisperDB
 end
 
 function QW:Initialize()
@@ -79,7 +79,7 @@ end
 function QW:CreateFrame()
     if self.frame then return self.frame end
 
-    local f = CreateFrame("Frame", "SequitoQuickWhisperFrame", UIParent)
+    local f = CreateFrame("Frame", "JainaQuickWhisperFrame", UIParent)
     self.frame = f
     self.Frame = f
     f:SetSize(340, 360)
@@ -125,7 +125,7 @@ function QW:CreateFrame()
     f.close:SetScript("OnClick", function() f:Hide() end)
 
     -- ScrollFrame de plantillas
-    local sf = CreateFrame("ScrollFrame", "SequitoQWScrollFrame", f, "UIPanelScrollFrameTemplate")
+    local sf = CreateFrame("ScrollFrame", "JainaQWScrollFrame", f, "UIPanelScrollFrameTemplate")
     f.scrollFrame = sf
     sf:SetPoint("TOPLEFT", 14, -52)
     sf:SetPoint("BOTTOMRIGHT", -32, 70)
@@ -146,14 +146,14 @@ function QW:CreateFrame()
     addLabel:SetPoint("TOPLEFT", 16, -298)
     addLabel:SetText("Nueva plantilla:")
 
-    local editName = CreateFrame("EditBox", "SequitoQWEditName", f, "InputBoxTemplate")
+    local editName = CreateFrame("EditBox", "JainaQWEditName", f, "InputBoxTemplate")
     f.editName = editName
     editName:SetSize(75, 20)
     editName:SetPoint("TOPLEFT", 16, -316)
     editName:SetAutoFocus(false)
     editName:SetScript("OnEscapePressed", function(selfEb) selfEb:ClearFocus() end)
 
-    local editText = CreateFrame("EditBox", "SequitoQWEditText", f, "InputBoxTemplate")
+    local editText = CreateFrame("EditBox", "JainaQWEditText", f, "InputBoxTemplate")
     f.editText = editText
     editText:SetSize(160, 20)
     editText:SetPoint("LEFT", editName, "RIGHT", 8, 0)
@@ -198,7 +198,7 @@ function QW:AddTemplateFromUI()
         self.frame.editText:ClearFocus()
     else
         local warn = "Ingresa un nombre y texto válidos para la plantilla."
-        if S.Print then S:Print(warn) else print("|cFFFF9900[Sequito]|r " .. warn) end
+        if S.Print then S:Print(warn) else print("|cFFFF9900[Jaina]|r " .. warn) end
     end
 end
 
@@ -294,11 +294,11 @@ function QW:SendTemplate(index)
             SendChatMessage(msg, "WHISPER", nil, targetName)
             if self:GetOption("showInChat") then
                 local echo = string.format("Susurro a |cFFFFD100%s|r: %s", targetName, msg)
-                if S.Print then S:Print(echo) else print("|cFFFF9900[Sequito]|r " .. echo) end
+                if S.Print then S:Print(echo) else print("|cFFFF9900[Jaina]|r " .. echo) end
             end
         else
             local err = "Modo 'Solo Susurro' activo: Debes tener seleccionado a un jugador."
-            if S.Print then S:Print(err) else print("|cFFFF9900[Sequito]|r " .. err) end
+            if S.Print then S:Print(err) else print("|cFFFF9900[Jaina]|r " .. err) end
         end
         return
     end
@@ -309,7 +309,7 @@ function QW:SendTemplate(index)
             SendChatMessage(msg, groupChannel)
         else
             local err = "Modo 'Solo Grupo' activo: No te encuentras en un grupo o banda."
-            if S.Print then S:Print(err) else print("|cFFFF9900[Sequito]|r " .. err) end
+            if S.Print then S:Print(err) else print("|cFFFF9900[Jaina]|r " .. err) end
         end
         return
     end
@@ -319,13 +319,13 @@ function QW:SendTemplate(index)
         SendChatMessage(msg, "WHISPER", nil, targetName)
         if self:GetOption("showInChat") then
             local echo = string.format("Susurro a |cFFFFD100%s|r: %s", targetName, msg)
-            if S.Print then S:Print(echo) else print("|cFFFF9900[Sequito]|r " .. echo) end
+            if S.Print then S:Print(echo) else print("|cFFFF9900[Jaina]|r " .. echo) end
         end
     elseif groupChannel then
         SendChatMessage(msg, groupChannel)
     else
         local err = "Selecciona a un jugador para susurrar o únete a un grupo/banda."
-        if S.Print then S:Print(err) else print("|cFFFF9900[Sequito]|r " .. err) end
+        if S.Print then S:Print(err) else print("|cFFFF9900[Jaina]|r " .. err) end
     end
 end
 
@@ -334,14 +334,14 @@ function QW:AddTemplate(name, text)
     local maxCount = self:GetOption("maxTemplates") or 15
     if #db.templates >= maxCount then
         local warn = string.format("Límite alcanzado (%d plantillas). Elimina una antes de agregar más.", maxCount)
-        if S.Print then S:Print(warn) else print("|cFFFF9900[Sequito]|r " .. warn) end
+        if S.Print then S:Print(warn) else print("|cFFFF9900[Jaina]|r " .. warn) end
         return
     end
 
     table.insert(db.templates, {name = name, text = text})
     self:UpdateButtons()
     local msg = string.format("Plantilla '|cFFFFD100%s|r' agregada.", name)
-    if S.Print then S:Print(msg) else print("|cFFFF9900[Sequito]|r " .. msg) end
+    if S.Print then S:Print(msg) else print("|cFFFF9900[Jaina]|r " .. msg) end
 end
 
 function QW:DeleteTemplate(index)
@@ -350,7 +350,7 @@ function QW:DeleteTemplate(index)
         local removed = table.remove(db.templates, index)
         self:UpdateButtons()
         local msg = string.format("Plantilla '|cFFFFD100%s|r' eliminada.", removed.name or tostring(index))
-        if S.Print then S:Print(msg) else print("|cFFFF9900[Sequito]|r " .. msg) end
+        if S.Print then S:Print(msg) else print("|cFFFF9900[Jaina]|r " .. msg) end
     end
 end
 
@@ -376,12 +376,12 @@ function QW:ListTemplates()
     local total = #templates
     if total == 0 then
         local msg = "No hay plantillas de whispers guardadas."
-        if S.Print then S:Print(msg) else print("|cFFFF9900[Sequito]|r " .. msg) end
+        if S.Print then S:Print(msg) else print("|cFFFF9900[Jaina]|r " .. msg) end
         return
     end
 
     local header = string.format("Plantillas de Whispers Rápidos (%d):", total)
-    if S.Print then S:Print(header) else print("|cFFFF9900[Sequito]|r " .. header) end
+    if S.Print then S:Print(header) else print("|cFFFF9900[Jaina]|r " .. header) end
 
     for i, t in ipairs(templates) do
         print(string.format("  [%d] |cFFFFD100%s|r: %s", i, t.name, t.text))
@@ -389,7 +389,7 @@ function QW:ListTemplates()
 end
 
 function QW:PrintHelp()
-    print("|cFFD4AF37=== Sequito QuickWhisper - Comandos ===|r")
+    print("|cFFD4AF37=== Jaina QuickWhisper - Comandos ===|r")
     print("  |cFFFFD100/qw|r : Abre o cierra la interfaz de whispers rápidos.")
     print("  |cFFFFD100/qw send <número>|r : Envía la plantilla especificada.")
     print("  |cFFFFD100/qw add <nombre> <texto>|r : Agrega una nueva plantilla.")
@@ -419,21 +419,21 @@ function QW:SlashCommand(msg)
         if name and text then
             self:AddTemplate(name, text)
         else
-            print("|cFFFF9900[Sequito]|r Uso: /qw add <nombre> <texto>")
+            print("|cFFFF9900[Jaina]|r Uso: /qw add <nombre> <texto>")
         end
     elseif lowerCmd == "del" or lowerCmd == "delete" or lowerCmd == "borrar" then
         local index = tonumber(rest:match("^(%d+)"))
         if index then
             self:DeleteTemplate(index)
         else
-            print("|cFFFF9900[Sequito]|r Uso: /qw del <número>")
+            print("|cFFFF9900[Jaina]|r Uso: /qw del <número>")
         end
     elseif lowerCmd == "send" or lowerCmd == "enviar" then
         local index = tonumber(rest:match("^(%d+)"))
         if index then
             self:SendTemplate(index)
         else
-            print("|cFFFF9900[Sequito]|r Uso: /qw send <número>")
+            print("|cFFFF9900[Jaina]|r Uso: /qw send <número>")
         end
     elseif lowerCmd == "list" or lowerCmd == "lista" then
         self:ListTemplates()

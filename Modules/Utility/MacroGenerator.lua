@@ -40,7 +40,7 @@ function S.MacroGen:CreateMacro(name, icon, body, perChar)
         if (isPerChar == 1 and numChar < 18) or (isPerChar ~= 1 and numAccount < 36) then
             return CreateMacro(name, icon or 1, body, isPerChar)
         else
-            print("|cFFFF0000Sequito Error:|r Espacio de macros lleno. No se pudo crear: " .. tostring(name))
+            print("|cFFFF0000Jaina Error:|r Espacio de macros lleno. No se pudo crear: " .. tostring(name))
             return nil
         end
     end
@@ -525,7 +525,7 @@ function S.MacroGen:GetClassMacros(class, spec)
     -- MAGE
     elseif class == "MAGE" then
          local tableSpell = self:GetSmartSpell(43987, "Ritual de refrigerio")
-         table.insert(macros, { Name = "SeqTable", Body = "#showtooltip " .. tableSpell .. "\n/cast " .. tableSpell .. "\n/y ¡Mesita del Sequito! ¡Comed y bebed!" })
+         table.insert(macros, { Name = "SeqTable", Body = "#showtooltip " .. tableSpell .. "\n/cast " .. tableSpell .. "\n/y ¡Mesita del Jaina! ¡Comed y bebed!" })
          local remove = self:GetSmartSpell(475, "Eliminar maldición")
          table.insert(macros, { Name = "SeqDecurse", Body = "#showtooltip " .. remove .. "\n/cast [@mouseover,help,nodead][@player] " .. remove })
 
@@ -575,7 +575,7 @@ function S.MacroGen:GenerateClassMacros(silent)
     if InCombatLockdown() then
         self.pendingGeneration = true
         if not silent then
-            print("|cFFFFFF00Sequito:|r En combate: las macros se sincronizarán automáticamente al salir de combate.")
+            print("|cFFFFFF00Jaina:|r En combate: las macros se sincronizarán automáticamente al salir de combate.")
         end
         return
     end
@@ -593,7 +593,7 @@ function S.MacroGen:GenerateClassMacros(silent)
     local spec = S.Universal and S.Universal:GetSpec() or 1
     
     if not silent then
-        print("|cFFFF00FFSequito:|r Sincronizando macros inteligentes para " .. class .. "...")
+        print("|cFFFF00FFJaina:|r Sincronizando macros inteligentes para " .. class .. "...")
     end
 
     -- 1. Generate Desired Macros List (Target State)
@@ -602,7 +602,7 @@ function S.MacroGen:GenerateClassMacros(silent)
     -- Add Racial
     local racial = self:GetRacialSpell()
     if racial then
-        local rBody = "#showtooltip " .. racial .. "\n/cast " .. racial .. "\n/s ¡Por el Sequito del Terror! (" .. racial .. ")"
+        local rBody = "#showtooltip " .. racial .. "\n/cast " .. racial .. "\n/s ¡Por el Jaina del Terror! (" .. racial .. ")"
         table.insert(desired, { Name = "SeqRacial", Body = rBody })
     end
     
@@ -621,7 +621,7 @@ function S.MacroGen:GenerateClassMacros(silent)
         local name = GetMacroInfo(absIndex)
         if name and name:sub(1,3) == "Seq" and not desiredNames[name] then
             if not silent then
-                print("|cFF999999Sequito:|r Eliminando macro de personaje obsoleta: " .. name)
+                print("|cFF999999Jaina:|r Eliminando macro de personaje obsoleta: " .. name)
             end
             DeleteMacro(absIndex)
         end
@@ -632,7 +632,7 @@ function S.MacroGen:GenerateClassMacros(silent)
         local name = GetMacroInfo(i)
         if name and name:sub(1,3) == "Seq" and not desiredNames[name] then
             if not silent then
-                print("|cFF999999Sequito:|r Limpiando macro global obsoleta: " .. name)
+                print("|cFF999999Jaina:|r Limpiando macro global obsoleta: " .. name)
             end
             DeleteMacro(i)
         end
@@ -663,14 +663,14 @@ function S.MacroGen:GenerateClassMacros(silent)
                 CreateMacro(mac.Name, 1, body, 1) -- 1 = per character
             else
                 if not silent then
-                    print("|cFFFF0000Sequito Error:|r Espacio de macros específico lleno (" .. numChar .. "/18). No se pudo crear: " .. mac.Name)
+                    print("|cFFFF0000Jaina Error:|r Espacio de macros específico lleno (" .. numChar .. "/18). No se pudo crear: " .. mac.Name)
                 end
             end
         end
     end
     
     if not silent then
-        print("|cFF00FF00Sequito:|r Macros sincronizadas y optimizadas.")
+        print("|cFF00FF00Jaina:|r Macros sincronizadas y optimizadas.")
     end
 end
 

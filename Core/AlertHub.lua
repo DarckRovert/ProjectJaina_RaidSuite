@@ -1,5 +1,5 @@
 --[[
-    Sequito - AlertHub.lua
+    Jaina - AlertHub.lua
     Sistema Centralizado de Alertas (Visual & Audio)
     Version: 10.2.0
 ]]
@@ -26,7 +26,7 @@ end
 function AH:CreateFrame()
     if self.Frame then return end
 
-    local f = CreateFrame("Frame", "SequitoAlertFrame", UIParent)
+    local f = CreateFrame("Frame", "JainaAlertFrame", UIParent)
     f:SetSize(400, 100)
     f:SetPoint("TOP", UIParent, "TOP", 0, -200)
 
@@ -143,7 +143,7 @@ end
 
 function AH:FlashScreen()
     if not self.FlashFrame then
-        self.FlashFrame = CreateFrame("Frame", "SequitoFlash", UIParent)
+        self.FlashFrame = CreateFrame("Frame", "JainaFlash", UIParent)
         self.FlashFrame:SetFrameStrata("BACKGROUND")
         self.FlashFrame:SetAllPoints()
         self.FlashFrame.t = self.FlashFrame:CreateTexture(nil, "BACKGROUND")

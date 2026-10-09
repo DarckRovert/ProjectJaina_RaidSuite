@@ -50,13 +50,13 @@ function S.GUI:Initialize()
 end
 
 function S.GUI:CreateSphere()
-    if S.Sphere or _G["SequitoSphere"] then
+    if S.Sphere or _G["JainaSphere"] then
         return
     end
     
     local db = S.db.profile
     
-    local f = CreateFrame("Button", "SequitoSphere", UIParent, "SecureActionButtonTemplate")
+    local f = CreateFrame("Button", "JainaSphere", UIParent, "SecureActionButtonTemplate")
     f:SetSize(64, 64)
     
     if not db.Position then db.Position = {point="CENTER", relativeTo="UIParent", relativePoint="CENTER", x=0, y=0} end
@@ -192,7 +192,7 @@ end
 function S.GUI:CreateBuffMonitor()
     if self.BuffMonitor then return end
     
-    local monitor = CreateFrame("Frame", "SequitoBuffMonitor", S.Sphere)
+    local monitor = CreateFrame("Frame", "JainaBuffMonitor", S.Sphere)
     monitor:SetSize(24, 24)
     monitor:SetPoint("CENTER", S.Sphere, "CENTER", 0, 0) -- Center overlay
     
@@ -375,7 +375,7 @@ function S.GUI:CreateSatellites()
             end
             
             if spellID then
-                local btnName = "SequitoBtn"..i
+                local btnName = "JainaBtn"..i
                 local btn = _G[btnName]
                 if not btn then
                     btn = CreateFrame("Button", btnName, S.Sphere, "SecureActionButtonTemplate")
@@ -464,7 +464,7 @@ function S.GUI:RefreshSatelliteStates()
     end
     
     for i=1, 4 do
-        local btn = _G["SequitoBtn"..i]
+        local btn = _G["JainaBtn"..i]
         if btn and btn.spellOptions then
             -- NUEVO: Si tiene opciones multiples, buscar el mejor hechizo aprendido
             local newSpellID = nil
@@ -543,7 +543,7 @@ function S.GUI:UpdateSatellites()
     if class ~= "WARLOCK" and class ~= "HUNTER" then return end
     
     -- Slot 4 is the dynamic slot (Bottom Left -135deg)
-    local btn = _G["SequitoBtn4"]
+    local btn = _G["JainaBtn4"]
     if not btn then return end
     
     local petSpellID = nil
@@ -633,7 +633,7 @@ function S.GUI:UpdateCooldowns()
     if not config then return end
     
     for i=1, 4 do
-        local btn = _G["SequitoBtn"..i]
+        local btn = _G["JainaBtn"..i]
         if btn and btn.spellID and btn.cooldown then
             local start, duration, enabled = GetSpellCooldown(btn.spellID)
             if enabled == 1 and start > 0 and duration > 0 then
@@ -669,11 +669,11 @@ end
 -- ============================================
 
 function S.GUI:CreateRaidAssistButton()
-    if self.RaidAssistBtn or _G["SequitoRaidAssistBtn"] then
+    if self.RaidAssistBtn or _G["JainaRaidAssistBtn"] then
         return
     end
     
-    local btn = CreateFrame("Button", "SequitoRaidAssistBtn", S.Sphere)
+    local btn = CreateFrame("Button", "JainaRaidAssistBtn", S.Sphere)
     btn:SetSize(28, 28)
     
     -- Posición: abajo de la esfera
@@ -717,7 +717,7 @@ function S.GUI:CreateRaidAssistButton()
             if S.RaidAssist.users then
                 for _ in pairs(S.RaidAssist.users) do userCount = userCount + 1 end
             end
-            GameTooltip:AddLine("Usuarios Sequito: |cFF66FF66" .. userCount .. "|r", 1, 1, 1)
+            GameTooltip:AddLine("Usuarios Jaina: |cFF66FF66" .. userCount .. "|r", 1, 1, 1)
         end
         GameTooltip:Show()
     end)
@@ -749,7 +749,7 @@ function S.GUI:CreateRaidStatusIndicator()
     if self.RaidStatusIndicator then return end
     
     -- Indicador pequeño en la esquina de la esfera
-    local indicator = S.Sphere:CreateTexture("SequitoRaidIndicator", "OVERLAY")
+    local indicator = S.Sphere:CreateTexture("JainaRaidIndicator", "OVERLAY")
     indicator:SetSize(12, 12)
     indicator:SetPoint("TOPRIGHT", S.Sphere, "TOPRIGHT", 2, 2)
     indicator:SetTexture("Interface\\RAIDFRAME\\ReadyCheck-Ready")
@@ -785,7 +785,7 @@ function S.GUI:UpdateRaidStatusIndicator()
     end
 end
 
--- Combat Status Update (Called from Sequito.lua main events)
+-- Combat Status Update (Called from Jaina.lua main events)
 function S.GUI:UpdateCombatStatus(inCombat)
     if not S.Sphere then return end
     

@@ -2,22 +2,22 @@
 
 **Versión:** 10.2.0 (Definitive Edition)  
 **Autor:** DarckRovert (Ingame: Elnazzareno) & Project Jaina Team  
-**Servidor Destino:** [Project Jaina](https://worldofwanos.com/) - Project Jaina  
+**Servidor Destino:** [Project Jaina](https://projectjaina.com/) - Project Jaina  
 **Cliente Compatible:** World of Warcraft 3.3.5a (Build 12340)
 
 ---
 
-## 🌟 Bienvenido a Sequito
+## 🌟 Bienvenido a Jaina
 
-**Sequito** es una suite completa y revolucionaria diseñada para World of Warcraft 3.3.5a. Su objetivo es transformar tu experiencia de juego mediante una arquitectura moderna, fluida y colaborativa que une a jugadores individuales, grupos de mazmorra y hermandades enteras (clanes).
+**Jaina** es una suite completa y revolucionaria diseñada para World of Warcraft 3.3.5a. Su objetivo es transformar tu experiencia de juego mediante una arquitectura moderna, fluida y colaborativa que une a jugadores individuales, grupos de mazmorra y hermandades enteras (clanes).
 
-Olvídate de addons viejos que se traban o que solo sirven para una sola clase. Sequito ofrece **funcionalidad real, cero maquetas y soporte integral para las 10 clases del juego**.
+Olvídate de addons viejos que se traban o que solo sirven para una sola clase. Jaina ofrece **funcionalidad real, cero maquetas y soporte integral para las 10 clases del juego**.
 
 ---
 
 ## 🧭 Los Componentes del Ecosistema
 
-Cuando entras al juego con Sequito activado, dispones de varios elementos interactivos diseñados para no estorbar y responder de inmediato:
+Cuando entras al juego con Jaina activado, dispones de varios elementos interactivos diseñados para no estorbar y responder de inmediato:
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -63,7 +63,7 @@ El Dashboard reúne toda la información vital en una interfaz elegante y modern
 
 ## 📜 Capítulo 2: El Motor de Macros Dinámico (`SeqRot`)
 
-A diferencia de las macros convencionales que usan secuencias rígidas (`/castsequence`) y se congelan si un hechizo falla o está fuera de rango, Sequito implementa un **motor inteligente de prioridades con modificadores**:
+A diferencia de las macros convencionales que usan secuencias rígidas (`/castsequence`) y se congelan si un hechizo falla o está fuera de rango, Jaina implementa un **motor inteligente de prioridades con modificadores**:
 
 ### ¿Cómo usar la macro `SeqRot`?
 1. Escribe `/sequito macros` o abre tu libro de macros (`/m`).
@@ -89,19 +89,19 @@ La macro detecta automáticamente tu forma animal:
 - **`SeqInt` (Interrupción Inteligente):** Presiónala normalmente para cortar el casteo de tu objetivo actual; si mantienes **Shift**, cortará el casteo de tu objetivo en **Foco** sin cambiar de target.
 - **`SeqCC` (Control de Masas):** Aplica Polimorfia, Miedo, Ceguera, Ciclón o Martillo de Justicia con modificador de mouseover o foco.
 - **`SeqMount` (Montura Inteligente):** Invoca automáticamente tu montura voladora si estás en zona donde se permite volar (Rasganorte, Terrallende), montura terrestre si estás en interiores/mazmorras, y te desmonta si estás montado.
-- **`SeqRacial`:** Tu habilidad racial con grito inmersivo por el Sequito.
+- **`SeqRacial`:** Tu habilidad racial con grito inmersivo por el Jaina.
 
 > [!TIP]
-> **Cambio de Talentos:** Cada vez que cambias de talentos o compras la especialización dual, Sequito detecta el cambio automáticamente y adapta tus macros sin tocar tus macros personales.
+> **Cambio de Talentos:** Cada vez que cambias de talentos o compras la especialización dual, Jaina detecta el cambio automáticamente y adapta tus macros sin tocar tus macros personales.
 
 ---
 
 ## 🌐 Capítulo 3: Malla de Clan en Vivo (`ClanMesh`)
 
-Uno de los mayores poderes de Sequito es que **los miembros de una hermandad no necesitan estar en la misma raid para colaborar**:
+Uno de los mayores poderes de Jaina es que **los miembros de una hermandad no necesitan estar en la misma raid para colaborar**:
 
 - **Canal de Hermandad Activo:** El sistema de red sincroniza información a través del canal `GUILD` de manera continua y eficiente.
-- **Tráfico Protegido (Cero Caídas):** Sequito utiliza un sistema de transmisión por goteo que fragmenta los paquetes grandes con pausas seguras de 80 ms. Esto garantiza que nunca seas desconectado del servidor por saturación de chat (*anti-flood protection*).
+- **Tráfico Protegido (Cero Caídas):** Jaina utiliza un sistema de transmisión por goteo que fragmenta los paquetes grandes con pausas seguras de 80 ms. Esto garantiza que nunca seas desconectado del servidor por saturación de chat (*anti-flood protection*).
 - **Órdenes de Banda y Estrategias:**
   - Los oficiales pueden enviar notas tácticas de jefes que aparecen en pantalla grande para todos los miembros con el comando `/sequito sync start`.
   - Comandos de ataque coordinado:
@@ -133,7 +133,7 @@ Abre una pequeña barra flotante que te muestra la secuencia ideal de hechizos s
 La distribución justa, rápida y transparente del botín en bandas de hermandad ahora cuenta con automatización total:
 
 1. **Cola de Múltiples Ítems (Loot Queue):**
-   - Cuando un jefe es derrotado y se abre la ventana de despojo (`LOOT_OPENED`), Sequito escanea automáticamente **todas** las piezas épicas o legendarias caídas y las encola.
+   - Cuando un jefe es derrotado y se abre la ventana de despojo (`LOOT_OPENED`), Jaina escanea automáticamente **todas** las piezas épicas o legendarias caídas y las encola.
    - Al finalizar la votación de una pieza, el addon abre inmediatamente la sesión para el siguiente ítem de la cola sin que el líder tenga que hacer nada manual.
 2. **Respuestas de Jugador Estándar de WotLK:**
    - La ventana ofrece cuatro botones claros para que los miembros de la banda declaren su necesidad:
@@ -150,19 +150,19 @@ La distribución justa, rápida y transparente del botín en bandas de hermandad
 4. **Temporizador Regresivo Visual y Desempate:**
    - Un contador visual en tiempo real muestra los segundos restantes de votación (configurable de 15 a 180s).
    - Al expirar el tiempo, el sistema avisa en el chat de banda al candidato ganador.
-   - **Resolución de Empates:** Si dos candidatos terminan con la misma cantidad de votos de oficiales, Sequito compara automáticamente sus tiradas de dados para desempatar con justicia.
+   - **Resolución de Empates:** Si dos candidatos terminan con la misma cantidad de votos de oficiales, Jaina compara automáticamente sus tiradas de dados para desempatar con justicia.
 5. **Entrega Directa en el Juego (`GiveMasterLoot`):**
-   - El Maestro Despojador dispone de un botón verde **`[Dar]`** en la fila del ganador. Al pulsarlo, Sequito ejecuta la llamada nativa de Blizzard `GiveMasterLoot` para depositar el ítem directamente en la mochila del jugador si el cadáver sigue abierto, o anuncia al ganador en el chat de banda.
+   - El Maestro Despojador dispone de un botón verde **`[Dar]`** en la fila del ganador. Al pulsarlo, Jaina ejecuta la llamada nativa de Blizzard `GiveMasterLoot` para depositar el ítem directamente en la mochila del jugador si el cadáver sigue abierto, o anuncia al ganador en el chat de banda.
 6. **¿Qué pasa con los jugadores que NO tienen el addon?**
-   - ¡Están totalmente incluidos! Sequito intercepta automáticamente los resultados de dados en el chat general (`/azar 100` o `/roll`).
-   - El jugador sin el addon tira sus dados normalmente en el juego y Sequito lo añade de inmediato a la lista de candidatos con su puntuación numérica exacta, permitiendo al concilio deliberar y votar con transparencia.
+   - ¡Están totalmente incluidos! Jaina intercepta automáticamente los resultados de dados en el chat general (`/azar 100` o `/roll`).
+   - El jugador sin el addon tira sus dados normalmente en el juego y Jaina lo añade de inmediato a la lista de candidatos con su puntuación numérica exacta, permitiendo al concilio deliberar y votar con transparencia.
 
 ---
 
 ## 📊 Capítulo 6: Auditoría de Combate y Wipes
 
 - **Estadísticas Reales (`/sequito stats` o `/sstats`):** Registro de combate que extrae con precisión el daño infligido por ataques blancos, hechizos y daño periódico, así como la sanación efectiva (descontando la sobresanación o overhealing).
-- **Analizador de Wipes (`/sequito wipe` o `/swipe`):** Cuando la banda cae en un combate, Sequito realiza una autopsia inmediata:
+- **Analizador de Wipes (`/sequito wipe` o `/swipe`):** Cuando la banda cae en un combate, Jaina realiza una autopsia inmediata:
   - ¿Quién murió primero y qué hechizo o golpe le quitó la vida?
   - ¿Murió sin usar su Poción de Vida o Piedra de Salud?
   - ¿Hubo cortes de casteo fallidos contra el jefe?
@@ -170,9 +170,9 @@ La distribución justa, rápida y transparente del botín en bandas de hermandad
 
 ---
 
-## 🎭 Capítulo 7: Frases Cómicas de Incursión (`SequitoHumor` - `/shumor`)
+## 🎭 Capítulo 7: Frases Cómicas de Incursión (`JainaHumor` - `/shumor`)
 
-Para darle vida, diversión y buen humor a las sesiones de hermandad, Sequito incorpora un sistema inteligente de expresiones automáticas con jerga clásica de WoW y de la comunidad hispana/latina:
+Para darle vida, diversión y buen humor a las sesiones de hermandad, Jaina incorpora un sistema inteligente de expresiones automáticas con jerga clásica de WoW y de la comunidad hispana/latina:
 
 1. **Actividades y Escenarios Soportados:**
    - **Invocaciones de Brujo:** Pide clics con humor (*"¡Uber del Vacío llegando! Denle clic al portal que el brujo no es taxista gratis."*).
@@ -213,14 +213,14 @@ Para darle vida, diversión y buen humor a las sesiones de hermandad, Sequito in
 
 ## ❓ Preguntas Frecuentes para Nuevos Usuarios
 
-**¿Sequito gasta muchos recursos o me bajará los FPS en raid de 25 jugadores?**  
-No. Todo el código de Sequito cuenta con acumuladores de tiempo rígidos (*throttling*) que limitan las comprobaciones visuales a 20 Hz en lugar de saturar tu procesador a 144 Hz. Es extremadamente liviano y seguro para clientes de 32 bits.
+**¿Jaina gasta muchos recursos o me bajará los FPS en raid de 25 jugadores?**  
+No. Todo el código de Jaina cuenta con acumuladores de tiempo rígidos (*throttling*) que limitan las comprobaciones visuales a 20 Hz en lugar de saturar tu procesador a 144 Hz. Es extremadamente liviano y seguro para clientes de 32 bits.
 
-**¿Puedo usar Sequito si juego solo o solo hago mazmorras de 5 personas?**  
+**¿Puedo usar Jaina si juego solo o solo hago mazmorras de 5 personas?**  
 Por supuesto. Las macros adaptativas, el HUD de rotación con procs, el comando de montura y las estadísticas de combate funcionan perfectamente en solitario, en grupos de 5 y en campos de batalla (PvP).
 
 **¿Qué pasa si mi lista de macros está llena (18/18 del personaje)?**  
-El addon te avisará en el chat para que borres alguna macro vieja que ya no uses. Sequito nunca borrará tus macros personales creadas a mano.
+El addon te avisará en el chat para que borres alguna macro vieja que ya no uses. Jaina nunca borrará tus macros personales creadas a mano.
 
 ---
 

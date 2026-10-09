@@ -11,7 +11,7 @@ S.Data.Speech.Summon = {
     "¡Taxi Arcano! Por favor, dadle click al portal o no nos vamos nunca.",
     "Abriendo un agujero en el espacio-tiempo...",
     "¡Venid a mí, esbirros! (Click en el portal)",
-    "Servicio de invocación 'Sequito Express' activo.",
+    "Servicio de invocación 'Jaina Express' activo.",
     "Invocando a los perezosos. ¡Haced click en el armario!",
     "No tengo todo el día, tocad el portal.",
     "He traído el portal. Traed las galletas.",

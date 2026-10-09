@@ -1,5 +1,5 @@
 --[[
-    Sequito - CCCoordinator.lua
+    Jaina - CCCoordinator.lua
     Coordinador de Crowd Control con DR Tracking Canónico WotLK 3.3.5a
     Version: 8.0.0
 ]]
@@ -179,7 +179,7 @@ function CC:Initialize()
 end
 
 function CC:CreateFrame()
-    self.Frame = CreateFrame("Frame", "SequitoCCCoordinatorFrame", UIParent)
+    self.Frame = CreateFrame("Frame", "JainaCCCoordinatorFrame", UIParent)
     self.Frame:SetSize(300, 250)
     self.Frame:SetPoint("LEFT", UIParent, "LEFT", 50, 0)
     self.Frame:SetMovable(true)
@@ -404,7 +404,7 @@ function CC:OnCCBroken(targetGUID, targetName, spellId, spellName, breakerName, 
     if self:GetOption("announce") then
         local channel = self:GetChannel()
         if channel then
-            SendChatMessage(string.format("[Sequito] CC ROTO: %s!", msg), channel)
+            SendChatMessage(string.format("[Jaina] CC ROTO: %s!", msg), channel)
         end
     end
 end

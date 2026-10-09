@@ -322,20 +322,20 @@ function S.Mounts:SetFavorite(mountType, mountName)
     
     if mountType == "flying" then
         S.db.profile.Mounts.FlyingMount = mountName
-        print("|cFFFF00FFSequito|r: Montura voladora favorita: " .. (mountName or "Ninguna"))
+        print("|cFFFF00FFJaina|r: Montura voladora favorita: " .. (mountName or "Ninguna"))
     elseif mountType == "ground" then
         S.db.profile.Mounts.GroundMount = mountName
-        print("|cFFFF00FFSequito|r: Montura terrestre favorita: " .. (mountName or "Ninguna"))
+        print("|cFFFF00FFJaina|r: Montura terrestre favorita: " .. (mountName or "Ninguna"))
     elseif mountType == "aquatic" then
         S.db.profile.Mounts.AquaticMount = mountName
-        print("|cFFFF00FFSequito|r: Montura acuática favorita: " .. (mountName or "Ninguna"))
+        print("|cFFFF00FFJaina|r: Montura acuática favorita: " .. (mountName or "Ninguna"))
     end
     
     self:Refresh()
 end
 
 function S.Mounts:ListMounts()
-    print("|cFFFF00FFSequito|r - Monturas Disponibles:")
+    print("|cFFFF00FFJaina|r - Monturas Disponibles:")
     if self.AvailableMounts.Flying and #self.AvailableMounts.Flying > 0 then
         print("|cFF00FFFFVoladoras:|r")
         for _, name in ipairs(self.AvailableMounts.Flying) do

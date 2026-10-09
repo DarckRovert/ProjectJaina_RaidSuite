@@ -1,5 +1,5 @@
 --[[
-    Sequito - AlertManager.lua
+    Jaina - AlertManager.lua
     Sistema centralizado de alertas y notificaciones
     Version: 8.0.0
 ]]
@@ -46,7 +46,7 @@ AM.Types = {
 
 -- Frame para mensajes flotantes (estilo Blizzard UIErrorsFrame pero propio)
 function AM:Initialize()
-    self.AlertFrame = CreateFrame("MessageFrame", "SequitoAlertMessageFrame", UIParent)
+    self.AlertFrame = CreateFrame("MessageFrame", "JainaAlertMessageFrame", UIParent)
     self.AlertFrame:SetPoint("TOP", 0, -180)
     self.AlertFrame:SetSize(512, 100)
     self.AlertFrame:SetFont("Fonts\\FRIZQT__.TTF", 18, "OUTLINE")
@@ -73,7 +73,7 @@ function AM:Show(text, typeId)
     
     -- 3. Output
     if config.output == "CHAT" then
-        print("|cff9966ffSequito:|r " .. formattedText)
+        print("|cff9966ffJaina:|r " .. formattedText)
         
     elseif config.output == "FRAME" then
         self.AlertFrame:AddMessage(text, 
@@ -83,12 +83,12 @@ function AM:Show(text, typeId)
             1
         )
         -- También al chat para historial
-        print("|cff9966ffSequito:|r " .. formattedText)
+        print("|cff9966ffJaina:|r " .. formattedText)
         
     elseif config.output == "SCREEN" then
         RaidNotice_AddMessage(RaidWarningFrame, text, ChatTypeInfo["RAID_WARNING"])
         -- También al chat
-        print("|cff9966ffSequito:|r " .. formattedText)
+        print("|cff9966ffJaina:|r " .. formattedText)
     end
 end
 

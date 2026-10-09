@@ -33,7 +33,7 @@ function M:Initialize()
     end
     
     -- Dropdown frame creation
-    self.frame = CreateFrame("Frame", "SequitoMenuFrame", UIParent, "UIDropDownMenuTemplate")
+    self.frame = CreateFrame("Frame", "JainaMenuFrame", UIParent, "UIDropDownMenuTemplate")
 end
 
 function M:SetScale(scale)
@@ -50,7 +50,7 @@ function M:Toggle()
     if not self.frame then return end
 
     local menu = {
-        { text = "|cff9966ffSequito v" .. (S.Version or "10.1.0") .. "|r", isTitle = true, notCheckable = true },
+        { text = "|cff9966ffJaina v" .. (S.Version or "10.1.0") .. "|r", isTitle = true, notCheckable = true },
         
         -- Configuración Principal
         { 
@@ -230,7 +230,7 @@ function M:Toggle()
                     checked = S.db.profile.Locked,
                     func = function() 
                         S.db.profile.Locked = not S.db.profile.Locked
-                        print("|cff00ff00Sequito:|r Esfera " .. (S.db.profile.Locked and "Bloqueada" or "Desbloqueada"))
+                        print("|cff00ff00Jaina:|r Esfera " .. (S.db.profile.Locked and "Bloqueada" or "Desbloqueada"))
                     end
                 },
                  {

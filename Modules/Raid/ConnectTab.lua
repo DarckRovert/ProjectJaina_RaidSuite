@@ -1,5 +1,5 @@
 --[[
-    Sequito - ConnectTab.lua (Renombrado: RaidCmd)
+    Jaina - ConnectTab.lua (Renombrado: RaidCmd)
     Pestaña de Comando de Raid (Hive Mind)
     Herramientas de gestión y estrategia para líderes.
 ]]
@@ -15,11 +15,11 @@ function CT:Initialize()
     self.frame = self:CreateFrame()
     S.Dashboard:RegisterTab("Hive Mind", "Interface\\Icons\\Spell_Shadow_Charm", self.frame)
     
-    print("|cFF00FF00Sequito|r: [RaidCmd] Tab Hive Mind registrado.")
+    print("|cFF00FF00Jaina|r: [RaidCmd] Tab Hive Mind registrado.")
 end
 
 function CT:CreateFrame()
-    local f = CreateFrame("Frame", "SequitoHiveMindFrame", UIParent)
+    local f = CreateFrame("Frame", "JainaHiveMindFrame", UIParent)
     f:SetSize(600, 450) -- Tamaño ajustado al Dashboard
     f:Hide()
     
@@ -142,7 +142,7 @@ function CT:CreateFrame()
         if IsRaidLeader() or IsRaidOfficer() or (GetNumPartyMembers() > 0 and IsPartyLeader()) then
             DoReadyCheck()
         else
-            print("|cFFFF0000Sequito:|r Debes ser líder o ayudante para iniciar un Ready Check.")
+            print("|cFFFF0000Jaina:|r Debes ser líder o ayudante para iniciar un Ready Check.")
         end
     end)
     

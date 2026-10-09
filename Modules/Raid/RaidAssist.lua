@@ -1,6 +1,6 @@
 --[[
     SEQUITO - Raid Assist Module
-    Collaborative raid features for guilds using Sequito
+    Collaborative raid features for guilds using Jaina
 ]]--
 
 local addonName, S = ...
@@ -8,12 +8,12 @@ S.RaidAssist = {}
 local RA = S.RaidAssist
 
 -- Constants
-local ADDON_PREFIX = "Sequito"
+local ADDON_PREFIX = "Jaina"
 local VERSION_CHECK_INTERVAL = 300 -- 5 minutes
 local SYNC_INTERVAL = 2 -- 2 seconds for regular updates
 
 -- State
-RA.users = {} -- Players in raid with Sequito
+RA.users = {} -- Players in raid with Jaina
 RA.cooldowns = {} -- Shared cooldowns
 RA.interrupts = {} -- Interrupt rotation
 RA.assignments = {} -- Role assignments
@@ -84,7 +84,7 @@ function RA:Initialize()
     -- Announce presence
     self:AnnouncePresence()
     
-    print(S.L["RA_INITIALIZED"] or "|cFF00FFFFSequito RaidAssist|r: Inicializado")
+    print(S.L["RA_INITIALIZED"] or "|cFF00FFFFJaina RaidAssist|r: Inicializado")
 end
 
 function RA:LoadSpellData()
@@ -740,7 +740,7 @@ function RA:ShowPullTimer(seconds)
     self.pullTimer = seconds
     
     -- Create countdown
-    local frame = self.pullTimerFrame or CreateFrame("Frame", "SequitoPullTimer", UIParent)
+    local frame = self.pullTimerFrame or CreateFrame("Frame", "JainaPullTimer", UIParent)
     self.pullTimerFrame = frame
     
     if not frame.text then
@@ -929,7 +929,7 @@ function RA:ShowAlert(message, alertType, duration)
 end
 
 function RA:CreateAlertFrame()
-    local frame = CreateFrame("Frame", "SequitoRaidAlertFrame", UIParent)
+    local frame = CreateFrame("Frame", "JainaRaidAlertFrame", UIParent)
     frame:SetSize(400, 60)
     
     -- Posición según configuración
@@ -1038,13 +1038,13 @@ function RA:RecordWipe()
 end
 
 function RA:SaveWipeHistory()
-    if not SequitoDB then SequitoDB = {} end
-    SequitoDB.wipeHistory = self.wipeHistory
+    if not JainaDB then JainaDB = {} end
+    JainaDB.wipeHistory = self.wipeHistory
 end
 
 function RA:LoadWipeHistory()
-    if SequitoDB and SequitoDB.wipeHistory then
-        self.wipeHistory = SequitoDB.wipeHistory
+    if JainaDB and JainaDB.wipeHistory then
+        self.wipeHistory = JainaDB.wipeHistory
         self.wipeCount = #self.wipeHistory
     end
 end
@@ -1129,7 +1129,7 @@ end
 if S.ModuleConfig then
     S.ModuleConfig:RegisterModule("RaidAssist", {
         name = "Asistencia de Raid",
-        description = "Sistema colaborativo de raid: sincroniza cooldowns, interrupciones, asignaciones y consumibles entre usuarios de Sequito.",
+        description = "Sistema colaborativo de raid: sincroniza cooldowns, interrupciones, asignaciones y consumibles entre usuarios de Jaina.",
         category = "raid",
         icon = "Interface\\Icons\\Achievement_Boss_Lichking",
         options = {
@@ -1144,7 +1144,7 @@ if S.ModuleConfig then
                 key = "syncCooldowns",
                 type = "checkbox",
                 label = "Sincronizar cooldowns",
-                tooltip = "Comparte cooldowns importantes con otros usuarios de Sequito",
+                tooltip = "Comparte cooldowns importantes con otros usuarios de Jaina",
                 default = true
             },
             {
@@ -1179,7 +1179,7 @@ if S.ModuleConfig then
                 key = "versionCheck",
                 type = "checkbox",
                 label = "Verificar versiones",
-                tooltip = "Verifica que todos tengan la misma versión de Sequito",
+                tooltip = "Verifica que todos tengan la misma versión de Jaina",
                 default = true
             }
         }

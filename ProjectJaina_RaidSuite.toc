@@ -3,7 +3,7 @@
 ## Notes: Suite integral y avanzada de combate, optimización de bandas y utilidades tácticas para el Project Jaina.
 ## Author: DarckRovert (Ingame: Elnazzareno) & Project Jaina Team
 ## Version: 11.2.1
-## SavedVariables: SequitoDB, SequitoPlayerNotesDB, SequitoBuildDB, SequitoQuickWhisperDB, SequitoStatsDB, SequitoPositionsDB, SequitoLootDB
+## SavedVariables: JainaDB, JainaPlayerNotesDB, JainaBuildDB, JainaQuickWhisperDB, JainaStatsDB, JainaPositionsDB, JainaLootDB
 
 # 1. Localizacion
 Locales\enUS.lua

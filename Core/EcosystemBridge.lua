@@ -105,7 +105,7 @@ function Bridge:Initialize()
     bridgeFrame:RegisterEvent("LFG_COMPLETION_REWARD")
     bridgeFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
 
-    -- Integración con CLEU centralizado de Sequito (WotLK 3.3.5a)
+    -- Integración con CLEU centralizado de Jaina (WotLK 3.3.5a)
     if S.CLEU and S.CLEU.Register then
         S.CLEU:Register("UNIT_DIED", function(...)
             Bridge:OnUnitDied(...)

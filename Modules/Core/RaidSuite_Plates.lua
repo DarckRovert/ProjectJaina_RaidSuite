@@ -1,12 +1,12 @@
 --[[
-    Sequito - SequitoPlates.lua
+    Jaina - JainaPlates.lua
     Mejoras ligeras para Nameplates default de Blizzard (3.3.5)
     Version: 10.2.0
 ]]
 
 local addonName, S = ...
 S.Plates = {}
-S.SequitoPlates = S.Plates
+S.JainaPlates = S.Plates
 local P = S.Plates
 
 P.Frame = CreateFrame("Frame")
@@ -22,12 +22,12 @@ function P:Initialize()
         P:OnUpdate(elapsed)
     end)
     
-    print("|cFF00FFFFSequito|r: Plates module initiated.")
+    print("|cFF00FFFFJaina|r: Plates module initiated.")
 end
 
 function P:GetOption(key)
     if S.ModuleConfig then
-        return S.ModuleConfig:GetValue("SequitoPlates", key) or true
+        return S.ModuleConfig:GetValue("JainaPlates", key) or true
     end
     return true
 end
@@ -164,7 +164,7 @@ end
 
 -- Init
 if S.RegisterModule then
-    S:RegisterModule("SequitoPlates", P)
+    S:RegisterModule("JainaPlates", P)
 else
     -- Fallback
     local f = CreateFrame("Frame")

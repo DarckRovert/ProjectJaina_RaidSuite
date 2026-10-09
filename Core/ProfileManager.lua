@@ -1,5 +1,5 @@
 --[[
-    Sequito - ProfileManager.lua
+    Jaina - ProfileManager.lua
     Sistema de gestión de perfiles para v10.2.0
 ]]
 
@@ -9,7 +9,7 @@ local PM = S.ProfileManager
 local L = S.L
 
 -- Estructura de DB esperada:
--- SequitoDB = {
+-- JainaDB = {
 --     profiles = { ["Default"] = { ... }, ["Raid"] = { ... } },
 --     profileKeys = { ["PlayerName - Realm"] = "Default" },
 --     global = { ... }
@@ -32,24 +32,24 @@ local function DeepCopy(orig)
 end
 
 function PM:Initialize()
-    if not SequitoDB then SequitoDB = {} end
+    if not JainaDB then JainaDB = {} end
     
     -- Migración v10.1 -> v10.2
-    if not SequitoDB.profiles then
+    if not JainaDB.profiles then
         -- Crear estructura nueva
-        SequitoDB.profiles = {}
+        JainaDB.profiles = {}
         
         -- Si existe profile antiguo, moverlo a Default
-        if SequitoDB.profile then
-             SequitoDB.profiles["Default"] = SequitoDB.profile
-             SequitoDB.profile = nil -- Limpiar old
-             S:Print("|cFF00FF00Sequito:|r Configuración migrada al perfil 'Default'.")
+        if JainaDB.profile then
+             JainaDB.profiles["Default"] = JainaDB.profile
+             JainaDB.profile = nil -- Limpiar old
+             S:Print("|cFF00FF00Jaina:|r Configuración migrada al perfil 'Default'.")
         else
-             SequitoDB.profiles["Default"] = {}
+             JainaDB.profiles["Default"] = {}
         end
         
         -- Inicializar keys
-        SequitoDB.profileKeys = {}
+        JainaDB.profileKeys = {}
     end
     
     -- Asignar perfil actual
@@ -61,17 +61,17 @@ end
 
 function PM:LoadCurrentProfile()
     local key = UnitName("player") .. " - " .. GetRealmName()
-    local profileName = SequitoDB.profileKeys[key] or "Default"
+    local profileName = JainaDB.profileKeys[key] or "Default"
     
     -- Asegurar que el perfil existe
-    if not SequitoDB.profiles[profileName] then
-        SequitoDB.profiles[profileName] = {} -- Crear vacío si no existe
+    if not JainaDB.profiles[profileName] then
+        JainaDB.profiles[profileName] = {} -- Crear vacío si no existe
     end
     
     -- Apuntar S.db a este perfil
     S.db = {}
-    S.db.profile = SequitoDB.profiles[profileName]
-    S.db.global = SequitoDB.global or {}
+    S.db.profile = JainaDB.profiles[profileName]
+    S.db.global = JainaDB.global or {}
     
     -- Notificar cambio si existe un despachador de eventos
     if S.SendMessage then
@@ -81,8 +81,8 @@ end
 
 function PM:GetProfiles()
     local profiles = {}
-    if SequitoDB and SequitoDB.profiles then
-        for name, _ in pairs(SequitoDB.profiles) do
+    if JainaDB and JainaDB.profiles then
+        for name, _ in pairs(JainaDB.profiles) do
             table.insert(profiles, name)
         end
     end
@@ -92,24 +92,24 @@ end
 
 function PM:GetCurrentProfile()
     local key = UnitName("player") .. " - " .. GetRealmName()
-    return SequitoDB.profileKeys[key] or "Default"
+    return JainaDB.profileKeys[key] or "Default"
 end
 
 function PM:CreateProfile(name, copyFrom)
     if not name or name == "" then return end
-    if SequitoDB.profiles[name] then return end -- Ya existe
+    if JainaDB.profiles[name] then return end -- Ya existe
     
     -- Crear copiando defaults (o source)
     local source
-    if copyFrom and SequitoDB.profiles[copyFrom] then
-        source = SequitoDB.profiles[copyFrom]
+    if copyFrom and JainaDB.profiles[copyFrom] then
+        source = JainaDB.profiles[copyFrom]
     elseif S.defaults and S.defaults.profile then
         source = S.defaults.profile
     else
         source = {} -- Fallback vacio
     end
     
-    SequitoDB.profiles[name] = DeepCopy(source)
+    JainaDB.profiles[name] = DeepCopy(source)
     
     self:SetProfile(name)
 end
@@ -118,16 +118,16 @@ function PM:DeleteProfile(name)
     if name == "Default" then return end -- No borrar Default
     if self:GetCurrentProfile() == name then return end -- No borrar activo
     
-    SequitoDB.profiles[name] = nil
+    JainaDB.profiles[name] = nil
 end
 
 function PM:CopyProfile(sourceName)
-    if not SequitoDB.profiles[sourceName] then return end
+    if not JainaDB.profiles[sourceName] then return end
     
     local current = self:GetCurrentProfile()
     -- Deep copy real
-    local source = SequitoDB.profiles[sourceName]
-    local dest = SequitoDB.profiles[current]
+    local source = JainaDB.profiles[sourceName]
+    local dest = JainaDB.profiles[current]
     
     wipe(dest)
     -- Copia recursiva
@@ -141,9 +141,9 @@ end
 
 function PM:SetProfile(name)
     local key = UnitName("player") .. " - " .. GetRealmName()
-    if not SequitoDB.profiles[name] then return end
+    if not JainaDB.profiles[name] then return end
     
-    SequitoDB.profileKeys[key] = name
+    JainaDB.profileKeys[key] = name
     self:LoadCurrentProfile()
     ReloadUI() -- Necesario para aplicar cambios profundos limpiamente
 end

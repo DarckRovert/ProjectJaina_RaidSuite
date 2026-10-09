@@ -1,5 +1,5 @@
 --[[
-    Sequito - PullGuide.lua
+    Jaina - PullGuide.lua
     Guía de Pulls y Marcado Táctico para Mazmorras y Bandas
     Version: 8.0.0
     Compatibilidad: WotLK 3.3.5a (Build 12340) | Español (esES/esMX) & Inglés (enUS)
@@ -148,7 +148,7 @@ function PG:CanMarkTargets()
 end
 
 function PG:CreateFrame()
-    self.Frame = CreateFrame("Frame", "SequitoPullGuideFrame", UIParent)
+    self.Frame = CreateFrame("Frame", "JainaPullGuideFrame", UIParent)
     self.Frame:SetSize(250, 200)
     self.Frame:SetPoint("RIGHT", UIParent, "RIGHT", -20, 0)
     self.Frame:SetFrameStrata("HIGH")

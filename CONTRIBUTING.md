@@ -7,7 +7,7 @@
 
 ## 👋 Bienvenido
 
-¡Gracias por tu interés en contribuir a Sequito! Este documento proporciona guías y mejores prácticas para contribuir al proyecto.
+¡Gracias por tu interés en contribuir a Jaina! Este documento proporciona guías y mejores prácticas para contribuir al proyecto.
 
 ---
 
@@ -53,7 +53,7 @@ En el interés de fomentar un ambiente abierto y acogedor, nos comprometemos a h
 
 ## 🚀 Cómo Contribuir
 
-Hay muchas formas de contribuir a Sequito:
+Hay muchas formas de contribuir a Jaina:
 
 ### 1. 🐛 Reportar Bugs
 
@@ -61,7 +61,7 @@ Encontraste un bug? ¡Ayúdanos a arreglarlo!
 
 ### 2. 💡 Sugerir Funcionalidades
 
-¿Tienes una idea para mejorar Sequito? ¡Queremos escucharla!
+¿Tienes una idea para mejorar Jaina? ¡Queremos escucharla!
 
 ### 3. 📝 Mejorar Documentación
 
@@ -96,7 +96,7 @@ Incluye la siguiente información:
 
 #### 1. Información del Sistema
 ```
-- Versión de Sequito: 2.2.0
+- Versión de Jaina: 2.2.0
 - Versión de WoW: 3.3.5a
 - Servidor: Project Jaina / Warmane / etc.
 - Otros addons instalados: DBM, Recount, etc.
@@ -116,7 +116,7 @@ Incluye la siguiente información:
 
 #### 4. Mensaje de Error
 ```lua
-[Sequito] Error: MacroGenerator.lua:123: attempt to index nil value
+[Jaina] Error: MacroGenerator.lua:123: attempt to index nil value
 ```
 
 #### 5. Comportamiento Esperado
@@ -133,7 +133,7 @@ Adjunta capturas de pantalla del error.
 
 1. **Verifica el roadmap**: Revisa [CHANGELOG.md](CHANGELOG.md) para ver si ya está planeado
 2. **Busca duplicados**: Verifica si alguien más ya lo sugirió
-3. **Considera el alcance**: ¿Es apropiado para Sequito?
+3. **Considera el alcance**: ¿Es apropiado para Jaina?
 
 ### Cómo Sugerir una Funcionalidad
 
@@ -176,7 +176,7 @@ git clone [URL_DEL_REPO] Wanos_RaidSuite
 ```
 Wanos_RaidSuite/
 ├── Wanos_RaidSuite.toc  # Tabla de contenidos
-├── Sequito.lua          # Core principal
+├── Jaina.lua          # Core principal
 ├── Embeds.xml           # Orden de carga
 ├── Core/                # Módulos core
 ├── Data/                # Datos estáticos
@@ -205,12 +205,12 @@ local MODULE_NAME = "MiModulo"
 local miVariable = {}
 
 -- Función de inicialización
-function Sequito_MiModulo_Init()
-    print("[Sequito] MiModulo inicializado")
+function Jaina_MiModulo_Init()
+    print("[Jaina] MiModulo inicializado")
 end
 
 -- Funciones públicas
-function Sequito_MiModulo_MiFuncion()
+function Jaina_MiModulo_MiFuncion()
     -- Tu código aquí
 end
 
@@ -228,11 +228,11 @@ end
 </Ui>
 ```
 
-#### 3. Inicializar en Sequito.lua
+#### 3. Inicializar en Jaina.lua
 ```lua
-function Sequito_OnLoad()
+function Jaina_OnLoad()
     -- ... otras inicializaciones ...
-    Sequito_MiModulo_Init()
+    Jaina_MiModulo_Init()
 end
 ```
 
@@ -244,7 +244,7 @@ end
 
 #### Funciones Públicas
 ```lua
-function Sequito_ModuleName_FunctionName()
+function Jaina_ModuleName_FunctionName()
     -- CamelCase después del prefijo
 end
 ```
@@ -339,9 +339,9 @@ end
 
 #### 2. Validar Parámetros
 ```lua
-function Sequito_MyFunction(name)
+function Jaina_MyFunction(name)
     if not name or name == "" then
-        Sequito_Print("Error: nombre inválido")
+        Jaina_Print("Error: nombre inválido")
         return false
     end
     
@@ -352,14 +352,14 @@ end
 
 #### 3. Manejar Errores
 ```lua
-function Sequito_SafeFunction()
+function Jaina_SafeFunction()
     local success, result = pcall(function()
         -- Código que puede fallar
         return RiskyOperation()
     end)
     
     if not success then
-        Sequito_Print("Error: " .. tostring(result))
+        Jaina_Print("Error: " .. tostring(result))
         return nil
     end
     
@@ -371,7 +371,7 @@ end
 ```lua
 --- Genera macros para la clase y spec actual
 -- @return boolean - true si se generaron exitosamente
-function Sequito_MacroGenerator_CreateMacros()
+function Jaina_MacroGenerator_CreateMacros()
     -- code
 end
 ```
@@ -536,7 +536,7 @@ Si tienes preguntas sobre cómo contribuir:
 
 ## 📝 Licencia
 
-Al contribuir a Sequito, aceptas que tus contribuciones serán licenciadas bajo la misma licencia que el proyecto.
+Al contribuir a Jaina, aceptas que tus contribuciones serán licenciadas bajo la misma licencia que el proyecto.
 
 Ver [LICENSE](LICENSE) para detalles.
 
@@ -544,7 +544,7 @@ Ver [LICENSE](LICENSE) para detalles.
 
 ## 🙏 Agradecimientos
 
-¡Gracias por contribuir a Sequito! Tu ayuda hace que este proyecto sea mejor para toda la comunidad.
+¡Gracias por contribuir a Jaina! Tu ayuda hace que este proyecto sea mejor para toda la comunidad.
 
 ---
 

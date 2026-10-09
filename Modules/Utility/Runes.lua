@@ -63,7 +63,7 @@ function R:CreateRunes()
     local angles = {30, 60, 90, 120, 150, 180} -- Arco amplio superior
     
     for i=1, 6 do
-        local f = CreateFrame("Frame", "SequitoRune"..i, S.Sphere)
+        local f = CreateFrame("Frame", "JainaRune"..i, S.Sphere)
         f:SetSize(16, 16)
         
         -- Posición Polar
@@ -80,7 +80,7 @@ function R:CreateRunes()
         f.bg:SetVertexColor(0.5, 0.5, 0.5)
         
         -- Cooldown (Fill)
-        f.cd = CreateFrame("Cooldown", "SequitoRuneCD"..i, f, "CooldownFrameTemplate")
+        f.cd = CreateFrame("Cooldown", "JainaRuneCD"..i, f, "CooldownFrameTemplate")
         f.cd:SetAllPoints()
         f.cd:SetReverse(true) -- Se llena cuando está lista? No, CD standard.
         

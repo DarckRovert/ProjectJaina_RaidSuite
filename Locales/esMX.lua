@@ -7,7 +7,7 @@ S.L = S.L or {}
 
 -- Si el cliente es esMX o esES
 -- if GetLocale() == "esMX" or GetLocale() == "esES" then
-    S.L["INITIALIZED"] = "Sequito: Sistema iniciado."
+    S.L["INITIALIZED"] = "Jaina: Sistema iniciado."
     S.L["OPTIONS"] = "Opciones"
     S.L["LOCKED"] = "Posición Bloqueada"
     S.L["UNLOCKED"] = "Posición Desbloqueada"
@@ -39,7 +39,7 @@ S.L = S.L or {}
     S.L["MODE_FARM_TEXT"] = "Farm (menos avisos)"
     S.L["MODE_PROGRESSION_TEXT"] = "Progresión (más ayuda)"
     S.L["FEATURE_SETTINGS"] = "Funcionalidades:"
-    S.L["RAIDASSIST_INFO"] = "Raid Assist funciona mejor cuando varios miembros del raid tienen Sequito instalado. Usa |cff00ff00/sequito ra|r para abrir el panel principal."
+    S.L["RAIDASSIST_INFO"] = "Raid Assist funciona mejor cuando varios miembros del raid tienen Jaina instalado. Usa |cff00ff00/sequito ra|r para abrir el panel principal."
     S.L["INTERRUPT_DESC"] = "Rastrea y sugiere turnos de interrupción"
     S.L["COOLDOWN_DESC"] = "Sincroniza cooldowns importantes del raid"
     S.L["MARKERS_DESC"] = "Distribuye objetivos entre DPS automáticamente"
@@ -49,12 +49,12 @@ S.L = S.L or {}
     S.L["ANNOUNCEMENTS_DESC"] = "Anuncia fases de boss y mecánicas importantes"
     
     -- UI Elements - RaidAssistUI
-    S.L["SEQUITO_RAIDASSIST"] = "Sequito Asistente de Raid"
+    S.L["SEQUITO_RAIDASSIST"] = "Jaina Asistente de Raid"
     S.L["TAB_STATUS"] = "Estado"
     S.L["TAB_COOLDOWNS"] = "Cooldowns"
     S.L["TAB_ASSIGNMENTS"] = "Asignaciones"
     S.L["TAB_STATS"] = "Estadísticas"
-    S.L["USERS_WITH_SEQUITO"] = "Usuarios con Sequito:"
+    S.L["USERS_WITH_SEQUITO"] = "Usuarios con Jaina:"
     S.L["CONSUMABLES_STATUS"] = "Estado de Consumibles:"
     S.L["UPDATE"] = "Actualizar"
     S.L["IMPORTANT_COOLDOWNS"] = "Cooldowns Importantes:"
@@ -73,7 +73,7 @@ S.L = S.L or {}
     S.L["ALL_HAVE_CONSUMABLES"] = "¡Todos tienen consumibles!"
     
     -- RaidAssist Messages
-    S.L["RA_INITIALIZED"] = "|cFF00FFFFSequito RaidAssist|r: Inicializado"
+    S.L["RA_INITIALIZED"] = "|cFF00FFFFJaina RaidAssist|r: Inicializado"
     S.L["YOUR_ASSIGNED_TARGET"] = "Tu objetivo asignado:"
     S.L["PHASE_ANNOUNCED"] = "¡FASE %s!"
     S.L["PHASE_BY_PLAYER"] = "¡FASE %s! (anunciado por %s)"
@@ -100,8 +100,8 @@ S.L = S.L or {}
     S.L["ASSIGNMENTS_PANEL"] = "Panel de Asignaciones"
     
     -- v10.0 Strings
-    S.L["DASHBOARD_TITLE"] = "Sequito Dashboard"
-    S.L["CONNECT_TITLE"] = "Sequito Connect"
+    S.L["DASHBOARD_TITLE"] = "Jaina Dashboard"
+    S.L["CONNECT_TITLE"] = "Jaina Connect"
     S.L["COACH_TITLE"] = "Smart Coach"
     S.L["EXPORT_REPORT"] = "Reporte Raid"
     S.L["EXPORT_PROFILE"] = "Exportar Perfil"
@@ -185,7 +185,7 @@ S.L = S.L or {}
     
 -- else (merged)
     -- Fallback English
-    S.L["INITIALIZED"] = "Sequito: System started."
+    S.L["INITIALIZED"] = "Jaina: System started."
     S.L["OPTIONS"] = "Options"
     S.L["LOCKED"] = "Position Locked"
     S.L["UNLOCKED"] = "Position Unlocked"
@@ -217,7 +217,7 @@ S.L = S.L or {}
     S.L["MODE_FARM_TEXT"] = "Farm (less warnings)"
     S.L["MODE_PROGRESSION_TEXT"] = "Progression (more help)"
     S.L["FEATURE_SETTINGS"] = "Features:"
-    S.L["RAIDASSIST_INFO"] = "RaidAssist works best when multiple raid members have Sequito installed. Use |cff00ff00/sequito ra|r to open main panel."
+    S.L["RAIDASSIST_INFO"] = "RaidAssist works best when multiple raid members have Jaina installed. Use |cff00ff00/sequito ra|r to open main panel."
     S.L["INTERRUPT_DESC"] = "Track and suggest interrupt rotations"
     S.L["COOLDOWN_DESC"] = "Synchronize important raid cooldowns"
     S.L["MARKERS_DESC"] = "Distribute targets among DPS automatically"
@@ -227,12 +227,12 @@ S.L = S.L or {}
     S.L["ANNOUNCEMENTS_DESC"] = "Announce boss phases and important mechanics"
     
     -- UI Elements - RaidAssistUI
-    S.L["SEQUITO_RAIDASSIST"] = "Sequito Raid Assist"
+    S.L["SEQUITO_RAIDASSIST"] = "Jaina Raid Assist"
     S.L["TAB_STATUS"] = "Status"
     S.L["TAB_COOLDOWNS"] = "Cooldowns"
     S.L["TAB_ASSIGNMENTS"] = "Assignments"
     S.L["TAB_STATS"] = "Statistics"
-    S.L["USERS_WITH_SEQUITO"] = "Users with Sequito:"
+    S.L["USERS_WITH_SEQUITO"] = "Users with Jaina:"
     S.L["CONSUMABLES_STATUS"] = "Consumables Status:"
     S.L["UPDATE"] = "Update"
     S.L["IMPORTANT_COOLDOWNS"] = "Important Cooldowns:"
@@ -251,7 +251,7 @@ S.L = S.L or {}
     S.L["ALL_HAVE_CONSUMABLES"] = "Everyone has consumables!"
     
     -- RaidAssist Messages
-    S.L["RA_INITIALIZED"] = "|cFF00FFFFSequito RaidAssist|r: Initialized"
+    S.L["RA_INITIALIZED"] = "|cFF00FFFFJaina RaidAssist|r: Initialized"
     S.L["YOUR_ASSIGNED_TARGET"] = "Your assigned target:"
     S.L["PHASE_ANNOUNCED"] = "PHASE %s!"
     S.L["PHASE_BY_PLAYER"] = "PHASE %s! (announced by %s)"
@@ -335,7 +335,7 @@ S.L = S.L or {}
     S.L["CM_TIMELINE_MODE"] = "Modo Cronograma"
     S.L["CM_COMPACT_MODE"] = "Modo Compacto"
     S.L["CM_CLASS_COLOR"] = "Color por Clase"
-    S.L["SEQUITO_PLATES"] = "Sequito Plates"
+    S.L["SEQUITO_PLATES"] = "Jaina Plates"
     S.L["SHOW_CC"] = "Mostrar CC"
     S.L["SHOW_THREAT"] = "Mostrar Amenaza"
     S.L["SCALE"] = "Escala"
@@ -516,7 +516,7 @@ S.L = S.L or {}
 -- Redundant English keys removed to favor Spanish definitions above
     
     -- Register Global Binding Strings (for WoW Menu)
-    _G["BINDING_HEADER_SEQUITO"] = "Sequito"
+    _G["BINDING_HEADER_SEQUITO"] = "Jaina"
     _G["BINDING_NAME_SEQUITO_MOUNT"] = "Montura Inteligente"
     _G["BINDING_NAME_SEQUITO_TARGET"] = "Atacar/Targetear"
     _G["BINDING_NAME_SEQUITO_PEEL"] = "Pedir Peel"
@@ -541,7 +541,7 @@ S.L = S.L or {}
 
     -- Gamification & Achievements
     S.L["ACH_INITIATE"] = "Iniciado"
-    S.L["ACH_INITIATE_DESC"] = "Inicia sesión con el addon Sequito activo en tu hermandad."
+    S.L["ACH_INITIATE_DESC"] = "Inicia sesión con el addon Jaina activo en tu hermandad."
     S.L["ACH_MACRO_MASTER"] = "Maestro de Macros"
     S.L["ACH_MACRO_MASTER_DESC"] = "Genera un conjunto de macros automáticas optimizadas para tu clase."
     S.L["ACH_WIPE_SAVIOR"] = "Salvador de Banda"

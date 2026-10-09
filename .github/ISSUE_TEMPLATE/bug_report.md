@@ -1,6 +1,6 @@
 ---
 name: Reporte de Bug
-about: Notificar un error, fallo o comportamiento inesperado en Sequito
+about: Notificar un error, fallo o comportamiento inesperado en Jaina
 title: "[BUG] "
 labels: bug
 assignees: DarckRovert
@@ -22,7 +22,7 @@ Una descripción clara y concisa de lo que ocurrió.
 3. Ver el error que se produce
 
 ### 🖥️ Entorno de Juego
-- **Versión de Sequito:** (ej. 9.0.0 Definitive Edition)
+- **Versión de Jaina:** (ej. 9.0.0 Definitive Edition)
 - **Cliente de WoW:** 3.3.5a (Build 12340)
 - **Idioma del Cliente:** [esMX / enUS / otro]
 - **Servidor / Realm:** (ej. UltimoWoW)

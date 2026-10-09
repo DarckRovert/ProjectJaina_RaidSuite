@@ -8,16 +8,16 @@
     - Sincronizacion de raid (hasta 40 jugadores)
     - Datos estrategicos en tiempo real
     
-    NOTA: La tabla global `Sequito` se mantiene intencionalmente para
+    NOTA: La tabla global `Jaina` se mantiene intencionalmente para
     garantizar compatibilidad con todos los modulos internos y los
-    SavedVariables existentes de los jugadores (SequitoDB, etc.).
+    SavedVariables existentes de los jugadores (JainaDB, etc.).
     
     Copyright (c) 2026 DarckRovert (Ingame: Elnazzareno) & Project Jaina Team
 ]]--
 
 -- Namespace principal del addon
 local addonName, S = ...
-_G.Sequito = S -- Tabla global interna (nombre legacy mantenido por compatibilidad)
+_G.Jaina = S -- Tabla global interna (nombre legacy mantenido por compatibilidad)
 
 -- Version
 S.Version = "11.2.1"
@@ -125,7 +125,7 @@ end)
 
 function S:OnInitialize()
     -- Initialize Database safely
-    if not SequitoDB then SequitoDB = {} end
+    if not JainaDB then JainaDB = {} end
     
     -- v10.2.0 Profile System
     if S.ProfileManager then
@@ -133,7 +133,7 @@ function S:OnInitialize()
         -- S.db is now set by ProfileManager
     else
         -- Fallback for safety (should not happen if ProfileManager is loaded)
-        self.db = SequitoDB
+        self.db = JainaDB
         if not self.db.profile then self.db.profile = {} end
     end
 
@@ -147,7 +147,7 @@ function S:OnInitialize()
     end
     
     -- Mensaje de carga
-    print(string.format("|cFFFF00FFSequito|r v%s |cFF888888%s|r cargando...", self.Version, self.Build))
+    print(string.format("|cFFFF00FFJaina|r v%s |cFF888888%s|r cargando...", self.Version, self.Build))
 end
 
 function S:OnEnable()
@@ -171,10 +171,10 @@ function S:OnEnable()
     
     -- 2. Inicializar GUI (Esfera) - Ahora seguro porque ModuleConfig está listo
     if S.GUI and S.GUI.Initialize then
-        print("|cFF00FFFFSequito|r: Creando Interfaz...")
+        print("|cFF00FFFFJaina|r: Creando Interfaz...")
         S.GUI:Initialize()
     else
-        print("|cFFFF0000Sequito Error|r: Modulo GUI no encontrado.")
+        print("|cFFFF0000Jaina Error|r: Modulo GUI no encontrado.")
     end
     
     -- 3. Generar Macros (Silencioso en arranque)
@@ -214,7 +214,7 @@ function S:OnEnable()
         -- PvP & Class Extras
         "Spy", "Runes", "SpecWatcher",
         -- Smart Coach UI & Automation
-        "RaidPanel", "RaidAssistUI", "SequitoPlates", "CombatTracker",
+        "RaidPanel", "RaidAssistUI", "JainaPlates", "CombatTracker",
         "AutoSync", "ContextEngine", "SmartDefaults",
         -- Ecosistema Project Jaina (debe iniciar tras ContextEngine)
         "EcosystemBridge"
@@ -235,7 +235,7 @@ function S:OnEnable()
         elseif S[moduleName] and S[moduleName].Initialize then
             local status, err = pcall(function() S[moduleName]:Initialize() end)
             if not status then
-                print("|cFFFF0000Sequito Error|r: Fallo al iniciar modulo " .. moduleName .. ": " .. tostring(err))
+                print("|cFFFF0000Jaina Error|r: Fallo al iniciar modulo " .. moduleName .. ": " .. tostring(err))
             end
         end
     end
@@ -249,11 +249,11 @@ function S:OnEnable()
             S.Sphere:ClearAllPoints()
             S.Sphere:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
             S.Sphere:Show()
-            print("|cFF00FF00Sequito|r: Posicion de esfera restaurada.")
+            print("|cFF00FF00Jaina|r: Posicion de esfera restaurada.")
         end
     end
     
-    print("|cFFFF00FFSequito|r: Sistema listo. (/sequito help)")
+    print("|cFFFF00FFJaina|r: Sistema listo. (/sequito help)")
     if S.db.profile.ShowSpeech then
         PlaySoundFile("Sound\\Creature\\HeadlessHorseman\\Horseman_Laugh_01.wav")
     end
@@ -342,7 +342,7 @@ SlashCmdList["SEQUITO"] = function(msg)
     elseif cmd == "spec" then
         if S.SpecWatcher then
             local info = S.SpecWatcher:GetInfo()
-            print("|cFFFF00FF=== Sequito: Especializacion ===")
+            print("|cFFFF00FF=== Jaina: Especializacion ===")
             print(string.format("Clase: |cFFFFFFFF%s|r", info.class))
             print(string.format("Spec: |cFFFFFFFF%s|r (Arbol %d)", info.specName, info.spec))
             print(string.format("Grupo de Talentos: |cFFFFFFFF%d|r", info.talentGroup))
@@ -355,14 +355,14 @@ SlashCmdList["SEQUITO"] = function(msg)
         end
     elseif cmd == "lock" then
         S.db.profile.Locked = not S.db.profile.Locked
-        print("|cFFFF00FFSequito|r: Posicion " .. (S.db.profile.Locked and "bloqueada" or "desbloqueada"))
+        print("|cFFFF00FFJaina|r: Posicion " .. (S.db.profile.Locked and "bloqueada" or "desbloqueada"))
     elseif cmd == "reset" or cmd == "resetpos" then
         S.db.profile.Position = S.defaults.profile.Position
         if S.Sphere then
             S.Sphere:ClearAllPoints()
             S.Sphere:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
         end
-        print("|cFFFF00FFSequito|r: Posicion reiniciada.")
+        print("|cFFFF00FFJaina|r: Posicion reiniciada.")
     elseif cmd == "mounts" or cmd == "monturas" then
         if S.Mounts then
             S.Mounts:ListMounts()
@@ -795,12 +795,12 @@ SlashCmdList["SEQUITO"] = function(msg)
             if S.LootGallery.UpdateGallery then S.LootGallery:UpdateGallery() end
         end
     else
-        print("|cFFFF00FFSequito|r: Comando desconocido. Usa /sequito help")
+        print("|cFFFF00FFJaina|r: Comando desconocido. Usa /sequito help")
     end
 end
 
 function S:PrintHelp()
-    print("|cFFFF00FF=== Sequito v" .. self.Version .. " - Comandos ===")
+    print("|cFFFF00FF=== Jaina v" .. self.Version .. " - Comandos ===")
     print("|cFFFFFFFF/sequito macros|r - Genera macros para tu clase")
     print("|cFFFFFFFF/sequito raid|r - Muestra composicion de raid")
     print("|cFFFFFFFF/sequito buffs|r - Escanea buffs faltantes")
@@ -885,7 +885,7 @@ function S:PrintPlayerInfo()
     local r, g, b = S.Universal:GetClassColor(info.class)
     local count, resType = S.Universal:GetResourceCount()
     
-    print("|cFFFF00FF=== Sequito: Tu Informacion ===")
+    print("|cFFFF00FF=== Jaina: Tu Informacion ===")
     print(string.format("Nombre: |cFFFFFFFF%s|r", info.name))
     print(string.format("Clase: |cFF%02x%02x%02x%s|r", r*255, g*255, b*255, info.class))
     print(string.format("Raza: |cFFFFFFFF%s|r", info.race))
@@ -908,11 +908,11 @@ function S:Msg(text, msgType)
     else
         -- Fallback si AlertManager no cargó
         if msgType == "ERROR" then
-            print("|cFFFF0000Sequito Error:|r " .. text)
+            print("|cFFFF0000Jaina Error:|r " .. text)
         elseif msgType == "WARNING" then
-            print("|cFFFFFF00Sequito:|r " .. text)
+            print("|cFFFFFF00Jaina:|r " .. text)
         else
-            print("|cFFFF00FFSequito:|r " .. text)
+            print("|cFFFF00FFJaina:|r " .. text)
         end
     end
 end
@@ -1072,7 +1072,7 @@ function S:RegisterMainEvents()
             -- Necrosis Style Death Sound ("I'll be back...")
             if S.db and S.db.profile and S.db.profile.DeathSound then
                 PlaySoundFile("Sound\\Creature\\LordMarrowgar\\IC_Marrowgar_Slay01.wav")
-                print("|cFFFF0000Sequito:|r La muerte es solo el principio...")
+                print("|cFFFF0000Jaina:|r La muerte es solo el principio...")
             end
             if S.GUI then S.GUI:UpdateCombatStatus(false) end
         elseif event == "CHAT_MSG_ADDON" then

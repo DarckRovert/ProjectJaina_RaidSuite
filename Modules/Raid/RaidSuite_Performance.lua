@@ -20,7 +20,7 @@ SP.Data = {
 -- ===========================================================================
 function SP:Initialize()
     self:RegisterEvents()
-    print("|cFFFF00FFSequito|r: [Academy] Auditor de rendimiento activo.")
+    print("|cFFFF00FFJaina|r: [Academy] Auditor de rendimiento activo.")
 end
 
 function SP:RegisterEvents()
@@ -92,7 +92,7 @@ function SP:Report()
     -- Solo reportar si hay datos significativos y es el líder/oficial quien lo tiene activo
     -- (Para evitar spam si todos lo tienen). Por ahora, print local.
     
-    print("|cFFFF00FF=== Sequito: Auditoría de Combate ===|r")
+    print("|cFFFF00FF=== Jaina: Auditoría de Combate ===|r")
     
     -- Top Interrupts
     local maxInt = 0

@@ -1,5 +1,5 @@
 --[[
-    Sequito - ReadyChecker.lua
+    Jaina - ReadyChecker.lua
     Chequeo Pre-Pull Mejorado de Bandas y Grupos
     Version: 8.5.0 (WotLK 3.3.5a Build 12340)
 
@@ -317,7 +317,7 @@ end
 function RC:CreateFrame()
     if self.Frame then return self.Frame end
 
-    local f = CreateFrame("Frame", "SequitoReadyChecker", UIParent)
+    local f = CreateFrame("Frame", "JainaReadyChecker", UIParent)
     f:SetSize(360, 420)
     f:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
     f:SetBackdrop({
@@ -344,7 +344,7 @@ function RC:CreateFrame()
     -- Título
     local title = f:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     title:SetPoint("TOP", f, "TOP", 0, -12)
-    title:SetText("|cFF00FF00Sequito|r - Ready Check Mejorado")
+    title:SetText("|cFF00FF00Jaina|r - Ready Check Mejorado")
 
     -- Botón cerrar
     local closeBtn = CreateFrame("Button", nil, f, "UIPanelCloseButton")
@@ -359,7 +359,7 @@ function RC:CreateFrame()
     scanBtn:SetScript("OnClick", function() RC:ScanRaid(false) end)
 
     -- Scroll frame para resultados
-    local scrollFrame = CreateFrame("ScrollFrame", "SequitoRCScroll", f, "UIPanelScrollFrameTemplate")
+    local scrollFrame = CreateFrame("ScrollFrame", "JainaRCScroll", f, "UIPanelScrollFrameTemplate")
     scrollFrame:SetPoint("TOPLEFT", f, "TOPLEFT", 12, -70)
     scrollFrame:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -32, 48)
 
@@ -624,7 +624,7 @@ function RC:AnnounceProblems(forceManual)
     end
 
     if #problems == 0 then
-        local msg = "[Sequito] ¡Todos los miembros están listos para el pull!"
+        local msg = "[Jaina] ¡Todos los miembros están listos para el pull!"
         if channel then
             SendChatMessage(msg, channel)
         else
@@ -635,7 +635,7 @@ function RC:AnnounceProblems(forceManual)
 
     if channel then
         -- Despacho seguro bajo el límite inviolable de 255 bytes (Ley III)
-        local header = string.format("[Sequito] %d miembro(s) con faltantes: ", #problems)
+        local header = string.format("[Jaina] %d miembro(s) con faltantes: ", #problems)
         local line = header
         for _, problem in ipairs(problems) do
             if #(line .. problem .. "; ") > 230 then
@@ -649,7 +649,7 @@ function RC:AnnounceProblems(forceManual)
             SendChatMessage(line, channel)
         end
     else
-        local title = string.format("|cFFFF3333[Sequito]|r %d miembros con problemas detectados:", #problems)
+        local title = string.format("|cFFFF3333[Jaina]|r %d miembros con problemas detectados:", #problems)
         if S.Print then S:Print(title) else DEFAULT_CHAT_FRAME:AddMessage(title) end
         for _, problem in ipairs(problems) do
             local line = "  - " .. problem

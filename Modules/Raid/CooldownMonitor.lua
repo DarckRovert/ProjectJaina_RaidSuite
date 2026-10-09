@@ -1,5 +1,5 @@
 --[[
-    Sequito - CooldownMonitor.lua
+    Jaina - CooldownMonitor.lua
     Monitor de Cooldowns del Raid en tiempo real
     Version: 7.2.0
 ]]
@@ -128,7 +128,7 @@ end
 function CM:CreateFrame()
     if self.Frame then return end
     
-    local f = CreateFrame("Frame", "SequitoCooldownMonitor", UIParent)
+    local f = CreateFrame("Frame", "JainaCooldownMonitor", UIParent)
     f:SetSize(280, 400) -- Más alto para ver más barras
     f:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 100, -200)
     f:SetFrameStrata("HIGH") -- Ensure visibility
@@ -210,7 +210,7 @@ function CM:CreateFrame()
     end
     
     -- Contenedor de scroll
-    local scrollFrame = CreateFrame("ScrollFrame", "SequitoCMScroll", f, "UIPanelScrollFrameTemplate")
+    local scrollFrame = CreateFrame("ScrollFrame", "JainaCMScroll", f, "UIPanelScrollFrameTemplate")
     scrollFrame:SetPoint("TOPLEFT", f, "TOPLEFT", 8, -52)
     scrollFrame:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -28, 8)
     
@@ -454,7 +454,7 @@ function CM:StartCooldown(playerName, class, cdInfo)
     if cdInfo.type == "bres" or cdInfo.type == "lust" then
         local channel = self:GetGroupChannel()
         if channel then
-            SendChatMessage(string.format("[Sequito] %s usó %s - CD: %s", 
+            SendChatMessage(string.format("[Jaina] %s usó %s - CD: %s", 
                 playerName, cdInfo.name, self:FormatTime(cdInfo.duration)), channel)
         end
     end
@@ -609,14 +609,14 @@ function CM:UpdateTimers()
             -- Alertas cuando están listos (si está habilitado)
             if self:GetOption("alerts") then
                 local msg = string.format("%s: %s " .. L["CD_READY"] .. "!", cd.player, cd.spell)
-                print("|cff00ff00[Sequito]|r " .. msg)
+                print("|cff00ff00[Jaina]|r " .. msg)
             end
             
             -- Anunciar BRes listos en raid (si está habilitado)
             if cd.type == "bres" and self:GetOption("announceReady") then
                 local channel = self:GetGroupChannel()
                 if channel then
-                    SendChatMessage(string.format("[Sequito] %s: %s disponible!", cd.player, cd.spell), channel)
+                    SendChatMessage(string.format("[Jaina] %s: %s disponible!", cd.player, cd.spell), channel)
                 end
             end
         end
@@ -782,7 +782,7 @@ function CM:AnnounceAvailable(cdType)
     end
     
     if #available > 0 then
-        local msg = "[Sequito] " .. cdType:upper() .. " disponibles: " .. table.concat(available, ", ")
+        local msg = "[Jaina] " .. cdType:upper() .. " disponibles: " .. table.concat(available, ", ")
         local channel = self:GetGroupChannel()
         if channel then
             if #msg > 250 then
@@ -793,7 +793,7 @@ function CM:AnnounceAvailable(cdType)
             print(msg)
         end
     else
-        print("|cffff0000[Sequito]|r No hay " .. cdType .. " disponibles")
+        print("|cffff0000[Jaina]|r No hay " .. cdType .. " disponibles")
     end
 end
 

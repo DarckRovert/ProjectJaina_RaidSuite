@@ -1,5 +1,5 @@
 --[[
-    Sequito - ModuleConfig.lua
+    Jaina - ModuleConfig.lua
     Sistema de Configuración Modular
     Version: 8.0.0
     
@@ -165,7 +165,7 @@ end
 
 -- Crear un dropdown para configuración
 function MC:CreateDropdown(parent, key, label, x, y, options, tooltip, defaultValue)
-    local dropdown = CreateFrame("Frame", "SequitoMC_" .. key, parent, "UIDropDownMenuTemplate")
+    local dropdown = CreateFrame("Frame", "JainaMC_" .. key, parent, "UIDropDownMenuTemplate")
     dropdown:SetPoint("TOPLEFT", parent, "TOPLEFT", x - 15, y)
     
     local labelText = dropdown:CreateFontString(nil, "OVERLAY", "GameFontNormal")
@@ -229,7 +229,7 @@ end
 function MC:CreateConfigFrame()
     if self.ConfigFrame then return self.ConfigFrame end
     
-    local f = CreateFrame("Frame", "SequitoModuleConfigFrame", UIParent)
+    local f = CreateFrame("Frame", "JainaModuleConfigFrame", UIParent)
     f:SetSize(500, 450)
     f:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
     f:SetMovable(true)
@@ -259,7 +259,7 @@ function MC:CreateConfigFrame()
     -- Título
     f.title = f:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     f.title:SetPoint("TOP", f, "TOP", 0, -10)
-    f.title:SetText("|cff9966ffSequito|r - Configuración de Módulo")
+    f.title:SetText("|cff9966ffJaina|r - Configuración de Módulo")
     
     -- Botón cerrar
     f.closeBtn = CreateFrame("Button", nil, f, "UIPanelCloseButton")
@@ -279,7 +279,7 @@ function MC:CreateConfigFrame()
     f.moduleList:SetBackdropColor(0.1, 0.1, 0.1, 0.8)
     
     -- Scroll para lista de módulos
-    f.moduleScroll = CreateFrame("ScrollFrame", "SequitoMCModuleScroll", f.moduleList, "UIPanelScrollFrameTemplate")
+    f.moduleScroll = CreateFrame("ScrollFrame", "JainaMCModuleScroll", f.moduleList, "UIPanelScrollFrameTemplate")
     f.moduleScroll:SetPoint("TOPLEFT", f.moduleList, "TOPLEFT", 4, -4)
     f.moduleScroll:SetPoint("BOTTOMRIGHT", f.moduleList, "BOTTOMRIGHT", -24, 4)
     
@@ -301,7 +301,7 @@ function MC:CreateConfigFrame()
     f.configPanel:SetBackdropColor(0.1, 0.1, 0.1, 0.8)
     
     -- Scroll para panel de config (Force clipping)
-    f.configScroll = CreateFrame("ScrollFrame", "SequitoMCConfigScroll", f.configPanel, "UIPanelScrollFrameTemplate")
+    f.configScroll = CreateFrame("ScrollFrame", "JainaMCConfigScroll", f.configPanel, "UIPanelScrollFrameTemplate")
     if f.configScroll.SetClipsChildren then
         f.configScroll:SetClipsChildren(true)
     end
@@ -779,12 +779,12 @@ function MC:RegisterAllModules()
             {type = "checkbox", key = "compact", label = "Modo Compacto", default = false, tooltip = "Usa una visualización más pequeña"},
             {type = "checkbox", key = "classColor", label = "Color por Clase", default = true, tooltip = "Colorear barras por clase en lugar de tipo"},
             {type = "checkbox", key = "alerts", label = "Alertas de CD listos", default = true, tooltip = "Alerta cuando CDs importantes están disponibles"},
-            {type = "checkbox", key = "sync", label = "Sincronizar con raid", default = true, tooltip = "Comparte información de CDs con otros Sequito"},
+            {type = "checkbox", key = "sync", label = "Sincronizar con raid", default = true, tooltip = "Comparte información de CDs con otros Jaina"},
         }
     })
     
-    self:RegisterModule("SequitoPlates", {
-        name = "Sequito Plates",
+    self:RegisterModule("JainaPlates", {
+        name = "Jaina Plates",
         category = "interface",
         description = "Mejoras para Nameplates: CC, Threat y Ejecución.",
         options = {
@@ -1287,11 +1287,11 @@ function MC:GetModuleCount()
     return count
 end
 
--- Registrar en Sequito
+-- Registrar en Jaina
 S.ModuleConfig = MC
 
 -- Alias global para registro temprano
 function S:RegisterModule(name, data)
-    S[name] = data -- Register module instance for Sequito.lua
+    S[name] = data -- Register module instance for Jaina.lua
     MC:RegisterModule(name, data) -- Register config
 end

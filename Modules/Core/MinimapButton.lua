@@ -8,7 +8,7 @@ S.MinimapButton = S.MinimapButton or {}
 local MB = S.MinimapButton
 
 -- DB for position
-SequitoPositionsDB = SequitoPositionsDB or {}
+JainaPositionsDB = JainaPositionsDB or {}
 
 function MB:Initialize()
     self:CreateButton()
@@ -28,18 +28,18 @@ function MB:UpdateVisibility()
 end
 
 function MB:CreateButton()
-    if self.frame or _G["SequitoMinimapButton"] then
-        self.frame = self.frame or _G["SequitoMinimapButton"]
+    if self.frame or _G["JainaMinimapButton"] then
+        self.frame = self.frame or _G["JainaMinimapButton"]
         return self.frame
     end
 
-    local btn = CreateFrame("Button", "SequitoMinimapButton", Minimap)
+    local btn = CreateFrame("Button", "JainaMinimapButton", Minimap)
     btn:SetSize(32, 32)
     btn:SetFrameStrata("MEDIUM")
     btn:SetFrameLevel(8)
     btn:SetHighlightTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight")
     
-    -- Icono oficial Sequito Eye
+    -- Icono oficial Jaina Eye
     btn.icon = btn:CreateTexture(nil, "BACKGROUND")
     btn.icon:SetTexture("Interface\\Icons\\Spell_Holy_MagicalSentry")
     btn.icon:SetSize(20, 20)
@@ -71,7 +71,7 @@ function MB:CreateButton()
     
     btn:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_LEFT")
-        GameTooltip:SetText("|cFFFFD437Sequito|r v" .. (S.Version or "11.2"))
+        GameTooltip:SetText("|cFFFFD437Jaina|r v" .. (S.Version or "11.2"))
         GameTooltip:AddLine("Click Izquierdo: Abrir Dashboard", 1, 1, 1)
         GameTooltip:AddLine("Click Derecho: Menú Rápido", 1, 1, 1)
         GameTooltip:Show()
@@ -107,12 +107,12 @@ function MB:CreateButton()
     btn:SetScript("OnDragStop", function(self)
         self:UnlockHighlight()
         self:SetScript("OnUpdate", nil)
-        if not SequitoPositionsDB.Minimap then SequitoPositionsDB.Minimap = {} end
-        SequitoPositionsDB.Minimap.angle = self.angle
+        if not JainaPositionsDB.Minimap then JainaPositionsDB.Minimap = {} end
+        JainaPositionsDB.Minimap.angle = self.angle
     end)
     
     -- Restaurar posición guardada o anclar en posición inicial (15 grados)
-    local angle = (SequitoPositionsDB.Minimap and SequitoPositionsDB.Minimap.angle) or math.rad(15)
+    local angle = (JainaPositionsDB.Minimap and JainaPositionsDB.Minimap.angle) or math.rad(15)
     local radius = 80
     local x = math.cos(angle) * radius
     local y = math.sin(angle) * radius

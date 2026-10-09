@@ -11,7 +11,7 @@ function SC:Initialize()
     self.frame = self:CreateHintFrame()
     self:RegisterEvents()
     self.lastHint = 0
-    print("|cFFFF00FFSequito|r: [Coach] Entrenador inteligente activo.")
+    print("|cFFFF00FFJaina|r: [Coach] Entrenador inteligente activo.")
 end
 
 function SC:RegisterEvents()
@@ -105,7 +105,7 @@ end
 -- UI: HINT FRAME (Heads Up Display)
 -- ===========================================================================
 function SC:CreateHintFrame()
-    local f = CreateFrame("Frame", "SequitoCoachFrame", UIParent)
+    local f = CreateFrame("Frame", "JainaCoachFrame", UIParent)
     f:SetSize(300, 50)
     f:SetPoint("CENTER", 0, 150) -- Above character
     f:Hide()

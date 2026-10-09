@@ -89,7 +89,7 @@ function S.RaidIntel:PrintBuffReport()
     local missing = self:ScanBuffs()
     local allGood = true
     
-    print("|cFFFF00FF=== Sequito: Reporte de Buffs ===")
+    print("|cFFFF00FF=== Jaina: Reporte de Buffs ===")
     
     local buffLabels = {
         Kings = "Reyes/Santuario",
@@ -186,7 +186,7 @@ function S.RaidIntel:OnImportantCD(caster, cdInfo)
     end
     
     -- Print to chat as log
-    print("|cFFFFD700[Sequito]|r " .. msg)
+    print("|cFFFFD700[Jaina]|r " .. msg)
     
     -- Show on Screen (Big Text)
     if RaidWarningFrame then
@@ -231,7 +231,7 @@ end
 function S.RaidIntel:PrintClassCount()
     local counts = self:GetClassCount()
     
-    print("|cFFFF00FF=== Sequito: Clases en Raid ===")
+    print("|cFFFF00FF=== Jaina: Clases en Raid ===")
     
     for class, count in pairs(counts) do
         local r, g, b = S.Universal:GetClassColor(class)
@@ -257,7 +257,7 @@ function S.RaidIntel:Initialize()
     end
     
     self:RegisterCombatEvents()
-    print("|cFFFF00FFSequito|r: [RaidIntel] Sistema de inteligencia iniciado.")
+    print("|cFFFF00FFJaina|r: [RaidIntel] Sistema de inteligencia iniciado.")
 end
 
 -- Registrar módulo en ModuleConfig

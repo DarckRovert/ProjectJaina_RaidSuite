@@ -1,5 +1,5 @@
 --[[
-    Sequito - WipeAnalyzer.lua
+    Jaina - WipeAnalyzer.lua
     Analizador de Wipes para Raids
     Version: 7.2.0
     
@@ -144,7 +144,7 @@ end
 function WA:CreateFrame()
     if self.Frame then return end
     
-    local f = CreateFrame("Frame", "SequitoWipeAnalyzer", UIParent)
+    local f = CreateFrame("Frame", "JainaWipeAnalyzer", UIParent)
     f:SetSize(500, 450) -- Un poco más ancho
     f:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
     f:SetFrameStrata("HIGH") -- Ensure visibility
@@ -208,7 +208,7 @@ function WA:CreateFrame()
     f.summary = summary
     
     -- Scroll frame para detalles
-    local scrollFrame = CreateFrame("ScrollFrame", "SequitoWAScroll", f, "UIPanelScrollFrameTemplate")
+    local scrollFrame = CreateFrame("ScrollFrame", "JainaWAScroll", f, "UIPanelScrollFrameTemplate")
     scrollFrame:SetPoint("TOPLEFT", f, "TOPLEFT", 10, -80)
     scrollFrame:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -30, 45)
     
@@ -371,7 +371,7 @@ function WA:OnCombatEnd()
             if self:GetOption("announceResults") then
                 self:AnnounceAnalysis()
             end
-            print("|cffff0000[Sequito]|r ¡Wipe detectado! Usa /sequito analyze para ver el análisis")
+            print("|cffff0000[Jaina]|r ¡Wipe detectado! Usa /sequito analyze para ver el análisis")
         end
     end
 end
@@ -882,9 +882,9 @@ end
 function WA:AnnounceAnalysis()
     if not self.LastAnalysis then
         if S.Print then
-            S:Print("|cffff0000[Sequito]|r No hay análisis disponible")
+            S:Print("|cffff0000[Jaina]|r No hay análisis disponible")
         else
-            print("|cffff0000[Sequito]|r No hay análisis disponible")
+            print("|cffff0000[Jaina]|r No hay análisis disponible")
         end
         return
     end
@@ -902,7 +902,7 @@ function WA:AnnounceAnalysis()
         end
     end
     
-    send("[Sequito] === ANÁLISIS DE WIPE ===")
+    send("[Jaina] === ANÁLISIS DE WIPE ===")
     
     if analysis.firstDeath then
         send(string.format("Primera muerte: %s (%.1fs) - %s de %s",
@@ -955,17 +955,17 @@ function WA:ClearCurrent()
         healing = {}
     }
     self.LastAnalysis = nil
-    print("|cff00ff00[Sequito]|r Análisis limpiado")
+    print("|cff00ff00[Jaina]|r Análisis limpiado")
     self:Hide()
 end
 
 function WA:ShowHistory()
     if #self.FightHistory == 0 then
-        print("|cffff0000[Sequito]|r No hay historial de wipes")
+        print("|cffff0000[Jaina]|r No hay historial de wipes")
         return
     end
     
-    print("|cff00ccff[Sequito]|r Historial de wipes:")
+    print("|cff00ccff[Jaina]|r Historial de wipes:")
     for i, fight in ipairs(self.FightHistory) do
         local name = fight.encounterName or "Combate"
         print(string.format("  %d. %s - %d muertes (%.1fs)", 
@@ -1023,7 +1023,7 @@ function WA:Analyze()
         self:AnalyzeWipe()
         self:Show()
     else
-        print("|cffff0000[Sequito]|r No hay datos de wipe para analizar")
+        print("|cffff0000[Jaina]|r No hay datos de wipe para analizar")
     end
 end
 

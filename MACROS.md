@@ -6,7 +6,7 @@
 
 ---
 
-**Sequito** genera macros inteligentes inspiradas en Necrosis. Estas macros se adaptan dinámicamente a tu clase, especialización activa (las 30 ramas de talentos de WotLK 3.3.5a) y hechizos aprendidos, garantizando fluidez sin bloqueos de secuencia.
+**Jaina** genera macros inteligentes inspiradas en Necrosis. Estas macros se adaptan dinámicamente a tu clase, especialización activa (las 30 ramas de talentos de WotLK 3.3.5a) y hechizos aprendidos, garantizando fluidez sin bloqueos de secuencia.
 
 ---
 
@@ -15,7 +15,7 @@
 Estas macros están disponibles o se adaptan a todas las clases del juego:
 
 ### [SeqRot] (Macro de Rotación Inteligente Adaptativa)
-Es la joya del sistema de combate de Sequito. Genera una macro multifunción que se adapta a las **30 especializaciones de las 10 clases**:
+Es la joya del sistema de combate de Jaina. Genera una macro multifunción que se adapta a las **30 especializaciones de las 10 clases**:
 - **Pulsación directa:** Lanza el hechizo principal o filler de la rotación (con `/startattack` y `/petattack` integrados).
 - **Shift:** Lanza el DoT principal, finisher o habilidad de daño burst.
 - **Ctrl:** Lanza el hechizo secundario de prioridad o control de daño.
@@ -25,7 +25,7 @@ Es la joya del sistema de combate de Sequito. Genera una macro multifunción que
 
 ### [SeqRacial] (Macro Racial)
 Utiliza la habilidad racial activa de tu personaje con un grito de batalla inmersivo:
-- **Orc**: Furia Sangrienta (*"¡Por el Sequito del Terror!"*)
+- **Orc**: Furia Sangrienta (*"¡Por el Jaina del Terror!"*)
 - **Troll**: Rabiar
 - **Human**: Sálvese quien pueda
 - **Undead**: Voluntad de los Renegados
@@ -176,7 +176,7 @@ Aplica el CC principal de tu clase manteniendo el control del combate:
 
 ## 🔄 MacroSync - Sistema de Macros Compartidos
 
-**Sequito** permite compartir y sincronizar macros de forma bidireccional entre usuarios de la hermandad, banda o grupo:
+**Jaina** permite compartir y sincronizar macros de forma bidireccional entre usuarios de la hermandad, banda o grupo:
 
 ### Comandos de MacroSync
 
@@ -195,9 +195,9 @@ Aplica el CC principal de tu clase manteniendo el control del combate:
 ## ❓ Preguntas Frecuentes
 
 **¿Se actualizan solas las macros al cambiar de talentos?**  
-Sí. Al cambiar de especialización dual o aprender nuevas habilidades (`PLAYER_TALENT_UPDATE` y `LEARNED_SPELL_IN_TAB`), Sequito recalcula y regenera tus macros `Seq*` automáticamente para adaptarlas a tu nueva especialización y rangos máximos.
+Sí. Al cambiar de especialización dual o aprender nuevas habilidades (`PLAYER_TALENT_UPDATE` y `LEARNED_SPELL_IN_TAB`), Jaina recalcula y regenera tus macros `Seq*` automáticamente para adaptarlas a tu nueva especialización y rangos máximos.
 
-**¿Puede Sequito borrar mis macros personales?**  
+**¿Puede Jaina borrar mis macros personales?**  
 No. El motor de gestión de macros solo inspecciona y administra las macros creadas por el propio addon (prefijo `Seq`). Tus macros personales nunca son eliminadas ni modificadas.
 
 **¿Qué pasa si mi espacio de macros está lleno (18/18 por personaje)?**  

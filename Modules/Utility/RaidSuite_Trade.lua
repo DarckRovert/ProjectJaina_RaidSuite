@@ -65,7 +65,7 @@ function T:HandleWarlockTrade()
                         -- Poner en el primer slot de trade
                         PickupContainerItem(bag, slot)
                         ClickTradeButton(1)
-                        print("|cFF9900FFSequito:|r Piedra de Salud ofrecida.")
+                        print("|cFF9900FFJaina:|r Piedra de Salud ofrecida.")
                         return
                     end
                 end

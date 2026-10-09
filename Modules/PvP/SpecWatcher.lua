@@ -4,11 +4,11 @@
     Actualiza las macros automaticamente al cambiar de spec (Dual Spec WotLK)
 ]]--
 
-local addonName, Sequito = ...
-Sequito.SpecWatcher = Sequito.SpecWatcher or {}
+local addonName, Jaina = ...
+Jaina.SpecWatcher = Jaina.SpecWatcher or {}
 
-local SpecWatcher = Sequito.SpecWatcher
-local MacroGen = Sequito.MacroGen
+local SpecWatcher = Jaina.SpecWatcher
+local MacroGen = Jaina.MacroGen
 
 -- Variables de estado
 local currentSpec = 0
@@ -77,7 +77,7 @@ local function OnSpecChanged(newSpec, newTalentGroup)
     local specName = GetSpecName(class, newSpec)
     
     if SpecWatcher:GetOption("showNotification") then
-        Sequito:Print(string.format(
+        Jaina:Print(string.format(
             "|cff00ff00Cambio de especializacion detectado!|r %s (Grupo %d)",
             specName, newTalentGroup
         ))
@@ -88,14 +88,14 @@ local function OnSpecChanged(newSpec, newTalentGroup)
     -- if CONFIG.autoUpdateMacros and MacroGen then
     --    C_Timer.After(CONFIG.delay, function()
     --        MacroGen:GenerateClassMacros()
-    --        Sequito:Print("|cff00ffffMacros actualizadas para " .. specName .. "|r")
+    --        Jaina:Print("|cff00ffffMacros actualizadas para " .. specName .. "|r")
     --    end)
     -- end
     
     -- Guardar en SavedVariables
-    if SequitoDB then
-        SequitoDB.lastSpec = newSpec
-        SequitoDB.lastTalentGroup = newTalentGroup
+    if JainaDB then
+        JainaDB.lastSpec = newSpec
+        JainaDB.lastTalentGroup = newTalentGroup
     end
 end
 
@@ -172,7 +172,7 @@ end
 -- Activar/desactivar auto-update
 function SpecWatcher:SetAutoUpdate(enabled)
     CONFIG.autoUpdateMacros = enabled
-    Sequito:Print("Auto-update de macros: " .. (enabled and "Activado" or "Desactivado"))
+    Jaina:Print("Auto-update de macros: " .. (enabled and "Activado" or "Desactivado"))
 end
 
 -- Activar/desactivar notificaciones
@@ -196,8 +196,8 @@ end
 
 -- Helper para obtener configuración
 function SpecWatcher:GetOption(key)
-    if Sequito.ModuleConfig then
-        return Sequito.ModuleConfig:GetValue("SpecWatcher", key)
+    if Jaina.ModuleConfig then
+        return Jaina.ModuleConfig:GetValue("SpecWatcher", key)
     end
     return true
 end
@@ -208,20 +208,20 @@ function SpecWatcher:Initialize()
     end
     
     -- Cargar configuracion guardada
-    if SequitoDB and SequitoDB.specWatcher then
-        CONFIG.autoUpdateMacros = SequitoDB.specWatcher.autoUpdate ~= false
-        CONFIG.showNotification = SequitoDB.specWatcher.showNotification ~= false
+    if JainaDB and JainaDB.specWatcher then
+        CONFIG.autoUpdateMacros = JainaDB.specWatcher.autoUpdate ~= false
+        CONFIG.showNotification = JainaDB.specWatcher.showNotification ~= false
     end
     
-    Sequito:Print("SpecWatcher cargado - Deteccion automatica de spec activa")
+    Jaina:Print("SpecWatcher cargado - Deteccion automatica de spec activa")
 end
 
--- Registrar en Sequito
-Sequito.SpecWatcher = SpecWatcher
+-- Registrar en Jaina
+Jaina.SpecWatcher = SpecWatcher
 
 -- Registrar módulo en ModuleConfig
-if Sequito.ModuleConfig then
-    Sequito.ModuleConfig:RegisterModule("SpecWatcher", {
+if Jaina.ModuleConfig then
+    Jaina.ModuleConfig:RegisterModule("SpecWatcher", {
         name = "Spec Watcher",
         description = "Detecta cambios de especialización y actualiza macros automáticamente",
         category = "utility",

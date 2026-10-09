@@ -8,7 +8,7 @@
 
 ## 📋 Descripción
 
-RaidAssist es un sistema colaborativo que permite a toda la guild coordinar mejor en raids cuando todos usan Sequito. Comparte información automáticamente entre jugadores para mejorar la coordinación.
+RaidAssist es un sistema colaborativo que permite a toda la guild coordinar mejor en raids cuando todos usan Jaina. Comparte información automáticamente entre jugadores para mejorar la coordinación.
 
 ---
 
@@ -58,7 +58,7 @@ S.RaidAssist:AssignTargets({"Skull", "Cross", "Square"})
 ```
 /sequito phase 2
 ```
-Todos los jugadores con Sequito verán: "¡FASE 2!"
+Todos los jugadores con Jaina verán: "¡FASE 2!"
 
 ---
 
@@ -158,7 +158,7 @@ S.RaidAssist:AnalyzeWipe()
 ### Panel Principal (`/sequito ra`)
 Tiene 4 pestañas:
 
-1. **Estado**: Muestra quién tiene Sequito y estado de consumibles
+1. **Estado**: Muestra quién tiene Jaina y estado de consumibles
 2. **Cooldowns**: Lista de CDs importantes del raid
 3. **Asignaciones**: Tareas asignadas a cada jugador
 4. **Estadísticas**: Wipes, modo actual, etc.
@@ -176,8 +176,8 @@ Panel compacto con botones rápidos:
 
 El sistema funciona automáticamente cuando:
 1. Estás en un grupo/raid
-2. Otros jugadores también tienen Sequito instalado
-3. El addon detecta automáticamente quién tiene Sequito
+2. Otros jugadores también tienen Jaina instalado
+3. El addon detecta automáticamente quién tiene Jaina
 
 **No requiere configuración manual.**
 
@@ -202,7 +202,7 @@ El sistema funciona automáticamente cuando:
 
 **No veo a otros jugadores en la lista:**
 - Asegúrate de estar en grupo/raid
-- Verifica que ellos también tengan Sequito instalado
+- Verifica que ellos también tengan Jaina instalado
 - Espera unos segundos - la sincronización toma tiempo
 
 **Los cooldowns no se actualizan:**
@@ -211,7 +211,7 @@ El sistema funciona automáticamente cuando:
 
 **El pull timer no aparece:**
 - Verifica que el raid leader haya usado el comando
-- Asegúrate de tener Sequito actualizado a v10.2.0+
+- Asegúrate de tener Jaina actualizado a v10.2.0+
 
 ---
 
@@ -272,4 +272,4 @@ El sistema funciona automáticamente cuando:
 
 **Versión:** 10.2.0 (Definitive Edition)  
 **Autor:** DarckRovert (Ingame: Elnazzareno) & Project Jaina Team  
-**Servidor:** Project Jaina (worldofwanos.com)
+**Servidor:** Project Jaina (projectjaina.com)

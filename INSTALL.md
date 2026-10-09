@@ -29,12 +29,12 @@
 
 **Ruta típica en Windows:**
 ```
-World of Warcraft\Interface\AddOns\Jaina_RaidSuite\
+World of Warcraft\Interface\AddOns\ProjectJaina_RaidSuite\
 ```
 
 **Para Project Jaina:**
 ```
-[Directorio de Project Jaina]\Interface\AddOns\Jaina_RaidSuite\
+[Directorio de Project Jaina]\Interface\AddOns\ProjectJaina_RaidSuite\
 ```
 
 ### Paso 4: Verificar Estructura
@@ -52,7 +52,7 @@ Asegúrate de que la estructura sea:
 AddOns/
 └── Wanos_RaidSuite/
     ├── Wanos_RaidSuite.toc
-    ├── Sequito.lua
+    ├── Jaina.lua
     ├── Embeds.xml
     ├── Core/
     ├── Data/
@@ -76,7 +76,7 @@ En el chat del juego, escribe:
 /sequito
 ```
 
-Deberías ver el mensaje de bienvenida de Sequito.
+Deberías ver el mensaje de bienvenida de Jaina.
 
 ---
 
@@ -118,16 +118,16 @@ Muestra información en tiempo real de tu raid.
 ### Desde una Versión Anterior
 
 1. **Respalda tu configuración** (opcional):
-   - Copia `WTF/Account/TU_CUENTA/SavedVariables/Sequito.lua`
+   - Copia `WTF/Account/TU_CUENTA/SavedVariables/Jaina.lua`
 
 2. **Elimina la versión anterior**:
-   - Borra la carpeta `AddOns/Sequito/`
+   - Borra la carpeta `AddOns/Jaina/`
 
 3. **Instala la nueva versión**:
    - Sigue los pasos de instalación normal
 
 4. **Restaura configuración** (si respaldaste):
-   - Copia de vuelta el archivo `Sequito.lua` a SavedVariables
+   - Copia de vuelta el archivo `Jaina.lua` a SavedVariables
 
 5. **Recarga la interfaz**:
    ```
@@ -140,7 +140,7 @@ Muestra información en tiempo real de tu raid.
 
 ### El addon no aparece en la lista
 
-**Problema:** Sequito no aparece en el menú de AddOns.
+**Problema:** Jaina no aparece en el menú de AddOns.
 
 **Solución:**
 1. Verifica que la carpeta se llame exactamente `Wanos_RaidSuite`
@@ -193,12 +193,12 @@ Muestra información en tiempo real de tu raid.
 
 **Windows:**
 ```
-WTF\Account\TU_CUENTA\SavedVariables\Sequito.lua
+WTF\Account\TU_CUENTA\SavedVariables\Jaina.lua
 ```
 
 **Por Personaje:**
 ```
-WTF\Account\TU_CUENTA\SERVIDOR\PERSONAJE\SavedVariables\Sequito.lua
+WTF\Account\TU_CUENTA\SERVIDOR\PERSONAJE\SavedVariables\Jaina.lua
 ```
 
 ### Resetear Configuración
@@ -206,9 +206,9 @@ WTF\Account\TU_CUENTA\SERVIDOR\PERSONAJE\SavedVariables\Sequito.lua
 Para resetear completamente la configuración:
 
 1. Cierra WoW
-2. Elimina `SavedVariables/Sequito.lua`
+2. Elimina `SavedVariables/Jaina.lua`
 3. Inicia WoW
-4. Sequito usará configuración por defecto
+4. Jaina usará configuración por defecto
 
 ---
 

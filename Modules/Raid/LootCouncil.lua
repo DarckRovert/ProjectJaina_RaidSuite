@@ -2,7 +2,7 @@
     SEQUITO - LootCouncil Module (Definitive Edition)
     Versión: 10.2.0 (Definitive Edition)
     Autor: DarckRovert (Ingame: Elnazzareno) & Project Jaina Team
-    Servidor: Project Jaina - Project Jaina (worldofwanos.com)
+    Servidor: Project Jaina - Project Jaina (projectjaina.com)
     
     Sistema integral de Concilio de Botín para World of Warcraft 3.3.5a:
     - Cola automática de múltiples piezas épicas (Loot Queue).
@@ -201,7 +201,7 @@ end
 -- INTERFAZ VISUAL MODERNA Y ROBUSTA
 -- ============================================================================
 function LC:CreateFrame()
-    local f = CreateFrame("Frame", "SequitoLootCouncilFrame", UIParent)
+    local f = CreateFrame("Frame", "JainaLootCouncilFrame", UIParent)
     f:SetSize(480, 360)
     f:SetPoint("CENTER")
     f:SetBackdrop({
@@ -220,7 +220,7 @@ function LC:CreateFrame()
     -- Título
     f.title = f:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     f.title:SetPoint("TOP", 0, -12)
-    f.title:SetText("|cFFFFD100Sequito Loot Council|r")
+    f.title:SetText("|cFFFFD100Jaina Loot Council|r")
     
     -- Icono del Ítem con Tooltip
     f.itemIcon = CreateFrame("Button", nil, f)
@@ -250,7 +250,7 @@ function LC:CreateFrame()
     f.statusText:SetText("")
     
     -- Scroll frame para candidatos
-    f.scroll = CreateFrame("ScrollFrame", "SequitoLCLootScroll", f, "UIPanelScrollFrameTemplate")
+    f.scroll = CreateFrame("ScrollFrame", "JainaLCLootScroll", f, "UIPanelScrollFrameTemplate")
     f.scroll:SetPoint("TOPLEFT", 18, -95)
     f.scroll:SetPoint("BOTTOMRIGHT", -35, 75)
     
@@ -345,9 +345,9 @@ function LC:OnUpdateTimer()
         if self:IsOfficer(UnitName("player")) then
             local topCand, topVotes, isTie = self:GetTopCandidate()
             if topCand and topVotes > 0 then
-                self:SendChat(string.format("[Sequito] Tiempo agotado. Ganador sugerido: %s (%d votos)", topCand, topVotes))
+                self:SendChat(string.format("[Jaina] Tiempo agotado. Ganador sugerido: %s (%d votos)", topCand, topVotes))
             else
-                self:SendChat("[Sequito] Tiempo de votación agotado.")
+                self:SendChat("[Jaina] Tiempo de votación agotado.")
             end
         end
     end
@@ -491,7 +491,7 @@ function LC:EndSession(winner)
         self:SendComm("END:" .. (winner or ""))
         
         if self:GetOption("announceResults") and winner and winner ~= "" then
-            self:SendChat("[Sequito] " .. string.format(L["LC_WINNER"] or "Ganador de %s: %s", currentSession.item, winner))
+            self:SendChat("[Jaina] " .. string.format(L["LC_WINNER"] or "Ganador de %s: %s", currentSession.item, winner))
         end
         
         if S.SendMessage and winner and winner ~= "" then
@@ -543,9 +543,9 @@ function LC:AnnounceStatus()
     local topCand, topVotes, isTie = self:GetTopCandidate()
     if topCand and topVotes > 0 then
         local tieStr = isTie and " (Empate resuelto por dados)" or ""
-        self:SendChat(string.format("[Sequito] Votación de %s: Líder %s con %d votos%s", currentSession.item, topCand, topVotes, tieStr))
+        self:SendChat(string.format("[Jaina] Votación de %s: Líder %s con %d votos%s", currentSession.item, topCand, topVotes, tieStr))
     else
-        self:SendChat(string.format("[Sequito] Votación en curso para %s", currentSession.item))
+        self:SendChat(string.format("[Jaina] Votación en curso para %s", currentSession.item))
     end
 end
 

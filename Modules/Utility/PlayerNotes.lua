@@ -1,5 +1,5 @@
 --[[
-    Sequito - PlayerNotes Module
+    Jaina - PlayerNotes Module
     Sistema de notas de jugadores optimizado para WotLK 3.3.5a
     Version: 8.0.0
 ]]
@@ -8,7 +8,7 @@ local addonName, S = ...
 S.PlayerNotes = S.PlayerNotes or {}
 local PN = S.PlayerNotes
 
-SequitoPlayerNotesDB = SequitoPlayerNotesDB or {}
+JainaPlayerNotesDB = JainaPlayerNotesDB or {}
 
 -- Opciones por defecto
 local DEFAULT_OPTIONS = {
@@ -45,10 +45,10 @@ function PN:GetOption(key)
 end
 
 function PN:EnsureDB()
-    if type(SequitoPlayerNotesDB) ~= "table" then
-        SequitoPlayerNotesDB = {}
+    if type(JainaPlayerNotesDB) ~= "table" then
+        JainaPlayerNotesDB = {}
     end
-    return SequitoPlayerNotesDB
+    return JainaPlayerNotesDB
 end
 
 function PN:Initialize()
@@ -69,7 +69,7 @@ end
 function PN:CreateFrame()
     if self.frame then return self.frame end
 
-    local f = CreateFrame("Frame", "SequitoPlayerNotesFrame", UIParent)
+    local f = CreateFrame("Frame", "JainaPlayerNotesFrame", UIParent)
     self.frame = f
     self.Frame = f
     f:SetSize(360, 260)
@@ -110,7 +110,7 @@ function PN:CreateFrame()
     f.playerName:SetText("Jugador: |cFFFFD100Ninguno|r")
     
     -- EditBox con márgenes y soporte multilínea
-    local eb = CreateFrame("EditBox", "SequitoPlayerNotesEditBox", f)
+    local eb = CreateFrame("EditBox", "JainaPlayerNotesEditBox", f)
     f.editBox = eb
     eb:SetSize(324, 130)
     eb:SetPoint("TOP", 0, -62)
@@ -209,7 +209,7 @@ function PN:SetNote(playerName, note, silent)
             if S.Print then
                 S:Print(msg)
             else
-                print("|cFFFF9900[Sequito]|r " .. msg)
+                print("|cFFFF9900[Jaina]|r " .. msg)
             end
         end
     else
@@ -233,7 +233,7 @@ function PN:DeleteNote(playerName, silent)
             if S.Print then
                 S:Print(msg)
             else
-                print("|cFFFF9900[Sequito]|r " .. msg)
+                print("|cFFFF9900[Jaina]|r " .. msg)
             end
         end
     end
@@ -297,7 +297,7 @@ function PN:HookTooltip()
             local note = PN:GetNote(rawName)
             if note and note ~= "" then
                 tip:AddLine(" ")
-                tip:AddLine("|cFFFFD100[Nota Sequito]|r", 1, 0.82, 0)
+                tip:AddLine("|cFFFFD100[Nota Jaina]|r", 1, 0.82, 0)
                 for line in note:gmatch("[^\r\n]+") do
                     tip:AddLine("  " .. line, 0.9, 0.9, 0.9, true)
                 end
@@ -322,7 +322,7 @@ function PN:OnTargetChanged()
                 if S.Print then
                     S:Print("|cFFFFD100" .. norm .. ":|r " .. formatted)
                 else
-                    print("|cFFFF9900[Sequito]|r |cFFFFD100" .. norm .. ":|r " .. formatted)
+                    print("|cFFFF9900[Jaina]|r |cFFFFD100" .. norm .. ":|r " .. formatted)
                 end
             end
         end
@@ -356,12 +356,12 @@ function PN:ListNotes()
     local total = #names
     if total == 0 then
         local msg = "No hay notas guardadas actualmente."
-        if S.Print then S:Print(msg) else print("|cFFFF9900[Sequito]|r " .. msg) end
+        if S.Print then S:Print(msg) else print("|cFFFF9900[Jaina]|r " .. msg) end
         return
     end
     
     local header = string.format("Notas de jugadores registradas (%d):", total)
-    if S.Print then S:Print(header) else print("|cFFFF9900[Sequito]|r " .. header) end
+    if S.Print then S:Print(header) else print("|cFFFF9900[Jaina]|r " .. header) end
     
     for _, name in ipairs(names) do
         local notePreview = db[name] or ""
@@ -374,7 +374,7 @@ function PN:ListNotes()
 end
 
 function PN:PrintHelp()
-    print("|cFFD4AF37=== Sequito PlayerNotes - Comandos ===|r")
+    print("|cFFD4AF37=== Jaina PlayerNotes - Comandos ===|r")
     print("  |cFFFFD100/pn|r : Abre la ventana de notas del objetivo actual o alterna la ventana.")
     print("  |cFFFFD100/pn <nombre>|r : Abre la ventana de notas para el jugador especificado.")
     print("  |cFFFFD100/pn <nombre> <nota>|r : Guarda directamente una nota para el jugador.")

@@ -1,5 +1,5 @@
 --[[
-    Sequito - The Overlord (HUD)
+    Jaina - The Overlord (HUD)
     Sistema de alertas visuales y barras de recursos
     para todas las clases de WotLK 3.3.5a
     Version: 8.0.0 (WotLK 3.3.5a Build 12340)
@@ -195,7 +195,7 @@ function O:CreateResourceBar()
     local config = RESOURCE_CONFIG[class]
     if not config then return end -- Clase sin recurso especial
     
-    local f = CreateFrame("Frame", "SequitoOverlordResource", UIParent)
+    local f = CreateFrame("Frame", "JainaOverlordResource", UIParent)
     f:SetSize(200, 28)
     f:SetPoint("CENTER", UIParent, "CENTER", 0, -80)
     f:SetMovable(true)
@@ -320,7 +320,7 @@ function O:CreatePetHealthBar()
         return
     end
     
-    local f = CreateFrame("Frame", "SequitoOverlordPet", UIParent)
+    local f = CreateFrame("Frame", "JainaOverlordPet", UIParent)
     f:SetSize(160, 20)
     f:SetPoint("CENTER", UIParent, "CENTER", 0, -110)
     f:SetMovable(true)
@@ -473,7 +473,7 @@ function O:RegisterEvents()
         end)
     end
 
-    local f = CreateFrame("Frame", "SequitoOverlordEventFrame", UIParent)
+    local f = CreateFrame("Frame", "JainaOverlordEventFrame", UIParent)
     if not (S.CLEU and S.CLEU.Register) then
         f:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
     end

@@ -1,18 +1,18 @@
 --[[
-    Sequito - CombatTracker.lua
+    Jaina - CombatTracker.lua
     Seguimiento de Combate en Tiempo Real
     Rastrea DPS, HPS, muertes y estadisticas de combate
 ]]--
 
-local addonName, Sequito = ...
-Sequito.CombatTracker = Sequito.CombatTracker or {}
+local addonName, Jaina = ...
+Jaina.CombatTracker = Jaina.CombatTracker or {}
 
-local CombatTracker = Sequito.CombatTracker
+local CombatTracker = Jaina.CombatTracker
 
 -- Helper para obtener configuración
 function CombatTracker:GetOption(key)
-    if Sequito.ModuleConfig then
-        return Sequito.ModuleConfig:GetValue("CombatTracker", key)
+    if Jaina.ModuleConfig then
+        return Jaina.ModuleConfig:GetValue("CombatTracker", key)
     end
     return true
 end
@@ -238,7 +238,7 @@ local function StartCombat()
     
     lastDamageTime = GetTime()
     
-    Sequito:Print("|cff00ff00Combate iniciado!|r")
+    Jaina:Print("|cff00ff00Combate iniciado!|r")
 end
 
 -- Finalizar combate
@@ -356,7 +356,7 @@ end
 
 -- Imprimir resumen del combate
 function CombatTracker:PrintSummary()
-    -- Conexión correcta con ModuleConfig (eliminación de dependencia nula a Sequito.db)
+    -- Conexión correcta con ModuleConfig (eliminación de dependencia nula a Jaina.db)
     if not self:GetOption("showSummary") then return end
     
     local summary = self:GetSummary()
@@ -410,7 +410,7 @@ end
 -- Limpiar historial
 function CombatTracker:ClearHistory()
     combatHistory = {}
-    Sequito:Print("Historial de combate limpiado.")
+    Jaina:Print("Historial de combate limpiado.")
 end
 
 -- Reset manual
@@ -433,7 +433,7 @@ function CombatTracker:Reset()
     combatData.abilities = {}
     combatData.targets = {}
     
-    Sequito:Print("Estadisticas de combate reseteadas.")
+    Jaina:Print("Estadisticas de combate reseteadas.")
 end
 
 function CombatTracker:Initialize()
@@ -472,14 +472,14 @@ function CombatTracker:Initialize()
         end
     end)
 
-    if Sequito.CLEU and Sequito.CLEU.Register then
+    if Jaina.CLEU and Jaina.CLEU.Register then
         local subEvents = {
             "SWING_DAMAGE", "RANGE_DAMAGE", "SPELL_DAMAGE", "SPELL_PERIODIC_DAMAGE",
             "DAMAGE_SHIELD", "ENVIRONMENTAL_DAMAGE", "SPELL_HEAL", "SPELL_PERIODIC_HEAL",
             "SPELL_INTERRUPT", "SPELL_DISPEL", "UNIT_DIED"
         }
         for _, subEvent in ipairs(subEvents) do
-            Sequito.CLEU:Register(subEvent, function(...)
+            Jaina.CLEU:Register(subEvent, function(...)
                 ParseCombatEvent(...)
             end)
         end
@@ -492,15 +492,15 @@ function CombatTracker:Initialize()
         end)
     end
     
-    Sequito:Print("CombatTracker cargado (Optimizado).")
+    Jaina:Print("CombatTracker cargado (Optimizado).")
 end
 
--- Registrar en Sequito
-Sequito.CombatTracker = CombatTracker
+-- Registrar en Jaina
+Jaina.CombatTracker = CombatTracker
 
 -- Registrar módulo en ModuleConfig
-if Sequito.ModuleConfig then
-    Sequito.ModuleConfig:RegisterModule("CombatTracker", {
+if Jaina.ModuleConfig then
+    Jaina.ModuleConfig:RegisterModule("CombatTracker", {
         name = "Combat Tracker",
         description = "Rastrea DPS, HPS y estadísticas de combate en tiempo real",
         category = "utility",

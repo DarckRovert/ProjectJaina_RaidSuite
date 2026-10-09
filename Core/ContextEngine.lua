@@ -1,5 +1,5 @@
 --[[
-    Sequito - ContextEngine Module
+    Jaina - ContextEngine Module
     Motor de Contexto para Ventanas Automáticas
     Version: 8.0.0
     
@@ -428,5 +428,5 @@ function CE:ForceContextCheck()
     self:DetectContext()
 end
 
--- Registrar en Sequito
+-- Registrar en Jaina
 S.ContextEngine = CE

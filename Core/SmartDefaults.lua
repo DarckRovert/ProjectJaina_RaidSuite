@@ -1,5 +1,5 @@
 --[[
-    Sequito - SmartDefaults Module
+    Jaina - SmartDefaults Module
     Sistema de Posiciones y Defaults Inteligentes
     Version: 8.0.0
     
@@ -12,7 +12,7 @@ S.SmartDefaults = {}
 local SD = S.SmartDefaults
 
 -- SavedVariable para posiciones
-SequitoPositionsDB = SequitoPositionsDB or {}
+JainaPositionsDB = JainaPositionsDB or {}
 
 -- ============================================
 -- INICIALIZACIÓN
@@ -98,7 +98,7 @@ function SD:SavePosition(moduleId, frame)
     
     local point, relativeTo, relativePoint, xOfs, yOfs = frame:GetPoint()
     
-    SequitoPositionsDB[moduleId] = {
+    JainaPositionsDB[moduleId] = {
         point = point,
         relativePoint = relativePoint,
         x = xOfs,
@@ -109,7 +109,7 @@ function SD:SavePosition(moduleId, frame)
 end
 
 function SD:RestorePosition(moduleId)
-    local saved = SequitoPositionsDB[moduleId]
+    local saved = JainaPositionsDB[moduleId]
     if not saved then return false end
     
     local module = S[moduleId]
@@ -129,7 +129,7 @@ function SD:RestorePosition(moduleId)
 end
 
 function SD:ResetPosition(moduleId)
-    SequitoPositionsDB[moduleId] = nil
+    JainaPositionsDB[moduleId] = nil
     
     local module = S[moduleId]
     if module then
@@ -142,7 +142,7 @@ function SD:ResetPosition(moduleId)
 end
 
 function SD:ResetAllPositions()
-    wipe(SequitoPositionsDB)
+    wipe(JainaPositionsDB)
     S:Print("Todas las posiciones han sido restauradas a default")
 end
 
@@ -175,7 +175,7 @@ end
 
 function SD:SetDefaultPosition(moduleId, point, x, y)
     -- Solo aplicar si no hay posición guardada
-    if SequitoPositionsDB[moduleId] then return end
+    if JainaPositionsDB[moduleId] then return end
     
     local module = S[moduleId]
     if module then
@@ -209,12 +209,12 @@ end
 -- API PÚBLICA
 -- ============================================
 function SD:GetSavedPosition(moduleId)
-    return SequitoPositionsDB[moduleId]
+    return JainaPositionsDB[moduleId]
 end
 
 function SD:HasSavedPosition(moduleId)
-    return SequitoPositionsDB[moduleId] ~= nil
+    return JainaPositionsDB[moduleId] ~= nil
 end
 
--- Registrar en Sequito
+-- Registrar en Jaina
 S.SmartDefaults = SD

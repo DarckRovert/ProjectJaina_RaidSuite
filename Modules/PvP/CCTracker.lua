@@ -1,5 +1,5 @@
 --[[
-    Sequito - CC Tracker
+    Jaina - CC Tracker
     Rastreo de Crowd Control (Polymorph, Fear, Banish, Shackle, Freezing Trap, etc.)
     Version: 8.5.0 (WotLK 3.3.5a Build 12340)
     
@@ -215,7 +215,7 @@ end
 function CC:CreateAnchor()
     if self.Anchor then return self.Anchor end
 
-    local f = CreateFrame("Frame", "SequitoCCAnchor", UIParent)
+    local f = CreateFrame("Frame", "JainaCCAnchor", UIParent)
     f:SetSize(220, 24)
     f:SetPoint("CENTER", UIParent, "CENTER", 0, 120)
     f:SetMovable(true)

@@ -1,5 +1,5 @@
 --[[
-    Sequito - TrinketTracker.lua
+    Jaina - TrinketTracker.lua
     Tracker de Trinkets PvP Enemigos de alto rendimiento para WotLK 3.3.5a
     Version: 8.0.0
 ]]
@@ -86,7 +86,7 @@ end
 function TT:CreateFrame()
     if self.Frame then return self.Frame end
 
-    local f = CreateFrame("Frame", "SequitoTrinketTracker", UIParent)
+    local f = CreateFrame("Frame", "JainaTrinketTracker", UIParent)
     self.Frame = f
     self.frame = f
     f:SetSize(230, 210)
@@ -121,7 +121,7 @@ function TT:CreateFrame()
     -- Título
     local title = f:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     title:SetPoint("TOP", f, "TOP", 0, -8)
-    title:SetText("|cFFFF4444Sequito|r - Trinkets")
+    title:SetText("|cFFFF4444Jaina|r - Trinkets")
     f.title = title
 
     -- Botón cerrar
@@ -138,7 +138,7 @@ function TT:CreateFrame()
     clearBtn:SetScript("OnClick", function() TT:ClearAll() end)
 
     -- Contenedor de scroll
-    local scrollFrame = CreateFrame("ScrollFrame", "SequitoTTScroll", f, "UIPanelScrollFrameTemplate")
+    local scrollFrame = CreateFrame("ScrollFrame", "JainaTTScroll", f, "UIPanelScrollFrameTemplate")
     scrollFrame:SetPoint("TOPLEFT", f, "TOPLEFT", 8, -32)
     scrollFrame:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -28, 8)
 
@@ -309,12 +309,12 @@ function TT:AlertTrinketUsed(playerName, class, spellName)
             {r = 1, g = 0.4, b = 0})
     end
 
-    print(string.format("|cFFFF0000[Sequito]|r %s%s|r usó %s! (CD: 2 min)", colorCode, playerName, sName))
+    print(string.format("|cFFFF0000[Jaina]|r %s%s|r usó %s! (CD: 2 min)", colorCode, playerName, sName))
 
     if self:GetOption("announce") then
         local channel = self:GetChannel()
         if channel then
-            SendChatMessage(string.format("[Sequito] %s usó %s!", playerName, sName), channel)
+            SendChatMessage(string.format("[Jaina] %s usó %s!", playerName, sName), channel)
         end
     end
 end
@@ -333,7 +333,7 @@ function TT:AlertTrinketReady(playerName, class)
     local classColor = class and RAID_CLASS_COLORS[class] or {r = 1, g = 1, b = 1}
     local colorCode = string.format("|cff%02x%02x%02x", classColor.r * 255, classColor.g * 255, classColor.b * 255)
 
-    print(string.format("|cFF00FF00[Sequito]|r %s%s|r tiene Trinket LISTO!", colorCode, playerName))
+    print(string.format("|cFF00FF00[Jaina]|r %s%s|r tiene Trinket LISTO!", colorCode, playerName))
 
     if self:GetOption("sound") then
         PlaySound("igQuestLogAbandonQuest")
@@ -413,7 +413,7 @@ function TT:UpdateDisplay()
     for _, data in pairs(self.EnemyTrinkets) do
         if data.onCooldown then onCD = onCD + 1 end
     end
-    self.Frame.title:SetText(string.format("|cFFFF4444Sequito|r - Trinkets (%d en CD)", onCD))
+    self.Frame.title:SetText(string.format("|cFFFF4444Jaina|r - Trinkets (%d en CD)", onCD))
 end
 
 function TT:FormatTime(seconds)
@@ -529,7 +529,7 @@ function TT:ClearAll()
     self.EnemyTrinkets = {}
     self:UpdateDisplay()
     local msg = "Trinket tracker limpiado."
-    if S.Print then S:Print(msg) else print("|cFF00FF00[Sequito]|r " .. msg) end
+    if S.Print then S:Print(msg) else print("|cFF00FF00[Jaina]|r " .. msg) end
 end
 
 function TT:Toggle()
@@ -578,23 +578,23 @@ function TT:AnnounceAll()
     local channel = self:GetChannel()
     if channel then
         if #onCD > 0 then
-            SendChatMessage("[Sequito] Trinkets en CD: " .. table.concat(onCD, ", "), channel)
+            SendChatMessage("[Jaina] Trinkets en CD: " .. table.concat(onCD, ", "), channel)
         end
         if #ready > 0 then
-            SendChatMessage("[Sequito] Trinkets LISTOS: " .. table.concat(ready, ", "), channel)
+            SendChatMessage("[Jaina] Trinkets LISTOS: " .. table.concat(ready, ", "), channel)
         end
     else
         if #onCD > 0 then
-            print("|cFFFF4444[Sequito]|r Trinkets en CD: " .. table.concat(onCD, ", "))
+            print("|cFFFF4444[Jaina]|r Trinkets en CD: " .. table.concat(onCD, ", "))
         end
         if #ready > 0 then
-            print("|cFF00FF00[Sequito]|r Trinkets LISTOS: " .. table.concat(ready, ", "))
+            print("|cFF00FF00[Jaina]|r Trinkets LISTOS: " .. table.concat(ready, ", "))
         end
     end
 end
 
 function TT:PrintHelp()
-    print("|cFFD4AF37=== Sequito TrinketTracker - Comandos ===|r")
+    print("|cFFD4AF37=== Jaina TrinketTracker - Comandos ===|r")
     print("  |cFFFFD100/tt|r : Abre o cierra el monitor de trinkets enemigos.")
     print("  |cFFFFD100/tt clear|r : Limpia todos los registros.")
     print("  |cFFFFD100/tt announce|r : Anuncia el estado de trinkets en el chat de banda/grupo.")

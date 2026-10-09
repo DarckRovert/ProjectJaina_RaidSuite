@@ -67,7 +67,7 @@ end
 -- ============================================
 
 function RAUI:CreateMainWindow()
-    local f = CreateFrame("Frame", "SequitoRaidAssistFrame", UIParent)
+    local f = CreateFrame("Frame", "JainaRaidAssistFrame", UIParent)
     f:SetSize(420, 520)
     f:SetPoint("CENTER")
     
@@ -199,7 +199,7 @@ function RAUI:CreateStatusTab(parent)
     usersLabel:SetPoint("TOPLEFT", 10, -10)
     usersLabel:SetText(S.L["USERS_WITH_SEQUITO"] or "Usuarios con el Addon:")
     
-    local usersList = CreateFrame("ScrollFrame", "SequitoRAUsersScrollFrame", parent, "UIPanelScrollFrameTemplate")
+    local usersList = CreateFrame("ScrollFrame", "JainaRAUsersScrollFrame", parent, "UIPanelScrollFrameTemplate")
     usersList:SetPoint("TOPLEFT", 10, -35)
     usersList:SetSize(370, 140)
     
@@ -212,7 +212,7 @@ function RAUI:CreateStatusTab(parent)
     consumablesLabel:SetPoint("TOPLEFT", 10, -185)
     consumablesLabel:SetText(S.L["CONSUMABLES_STATUS"] or "Estado de Consumibles:")
     
-    local consumablesList = CreateFrame("ScrollFrame", "SequitoRAConsumablesScrollFrame", parent, "UIPanelScrollFrameTemplate")
+    local consumablesList = CreateFrame("ScrollFrame", "JainaRAConsumablesScrollFrame", parent, "UIPanelScrollFrameTemplate")
     consumablesList:SetPoint("TOPLEFT", 10, -210)
     consumablesList:SetSize(370, 170)
     
@@ -308,7 +308,7 @@ function RAUI:CreateCooldownsTab(parent)
     label:SetPoint("TOPLEFT", 10, -10)
     label:SetText(S.L["IMPORTANT_COOLDOWNS"] or "Cooldowns de Banda:")
     
-    local scroll = CreateFrame("ScrollFrame", "SequitoRACooldownsScrollFrame", parent, "UIPanelScrollFrameTemplate")
+    local scroll = CreateFrame("ScrollFrame", "JainaRACooldownsScrollFrame", parent, "UIPanelScrollFrameTemplate")
     scroll:SetPoint("TOPLEFT", 10, -35)
     scroll:SetPoint("BOTTOMRIGHT", -30, 45)
     
@@ -375,7 +375,7 @@ function RAUI:CreateAssignmentsTab(parent)
     label:SetPoint("TOPLEFT", 10, -10)
     label:SetText(S.L["RAID_ASSIGNMENTS"] or "Asignaciones de Banda:")
     
-    local scroll = CreateFrame("ScrollFrame", "SequitoRAAssignmentsScrollFrame", parent, "UIPanelScrollFrameTemplate")
+    local scroll = CreateFrame("ScrollFrame", "JainaRAAssignmentsScrollFrame", parent, "UIPanelScrollFrameTemplate")
     scroll:SetPoint("TOPLEFT", 10, -35)
     scroll:SetPoint("BOTTOMRIGHT", -30, 45)
     
@@ -520,7 +520,7 @@ end
 -- ============================================
 
 function RAUI:CreateLeaderPanel()
-    local f = CreateFrame("Frame", "SequitoLeaderPanel", UIParent)
+    local f = CreateFrame("Frame", "JainaLeaderPanel", UIParent)
     f:SetSize(200, 150)
     f:SetPoint("TOPRIGHT", -50, -200)
     

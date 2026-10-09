@@ -33,13 +33,13 @@ Las estructuras persistidas en la carpeta `WTF/` se dividen en variables globale
 
 | SavedVariable | Propósito | Alcance |
 | :--- | :--- | :--- |
-| `SequitoDB` | Configuración del marco principal, esfera, HUD y alertas. | Cuenta / Perfil |
-| `SequitoPlayerNotesDB` | Notas estratégicas y asignaciones por jugador/oficial. | Cuenta |
-| `SequitoBuildDB` | Plantillas de talentos y configuraciones de spec. | Cuenta |
-| `SequitoQuickWhisperDB` | Mensajes rápidos preconfigurados y plantillas de chat. | Cuenta |
-| `SequitoStatsDB` | Estadísticas de combate y métricas de raid acumuladas. | Cuenta |
-| `SequitoPositionsDB` | Coordenadas y posiciones de anclaje de ventanas y barras. | Cuenta |
-| `SequitoLootDB` | Registro histórico de piezas entregadas y tiradas de botín. | Cuenta |
+| `JainaDB` | Configuración del marco principal, esfera, HUD y alertas. | Cuenta / Perfil |
+| `JainaPlayerNotesDB` | Notas estratégicas y asignaciones por jugador/oficial. | Cuenta |
+| `JainaBuildDB` | Plantillas de talentos y configuraciones de spec. | Cuenta |
+| `JainaQuickWhisperDB` | Mensajes rápidos preconfigurados y plantillas de chat. | Cuenta |
+| `JainaStatsDB` | Estadísticas de combate y métricas de raid acumuladas. | Cuenta |
+| `JainaPositionsDB` | Coordenadas y posiciones de anclaje de ventanas y barras. | Cuenta |
+| `JainaLootDB` | Registro histórico de piezas entregadas y tiradas de botín. | Cuenta |
 
 ---
 

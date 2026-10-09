@@ -175,7 +175,7 @@ function FX:GlowButtonForSpell(spellName, show)
     
     -- Buscar botones satélite (1 a 12)
     for i = 1, 12 do
-        local btn = _G["SequitoBtn" .. i]
+        local btn = _G["JainaBtn" .. i]
         if btn then
             local typeAttr = btn:GetAttribute("type")
             local spell = btn:GetAttribute("spell")
@@ -203,7 +203,7 @@ end
 
 function FX:ClearAllGlows()
     for i = 1, 12 do
-        local btn = _G["SequitoBtn" .. i]
+        local btn = _G["JainaBtn" .. i]
         if btn and btn.glow then
             btn.glow:Hide()
             UIFrameFlashStop(btn.glow)
@@ -253,7 +253,7 @@ function FX:TriggerSoulSiphon()
     -- Visual Flash morado en pantalla
     local f = FX.FlashFrame
     if not f then
-        f = CreateFrame("Frame", "SequitoSiphonFlash", UIParent)
+        f = CreateFrame("Frame", "JainaSiphonFlash", UIParent)
         f:SetAllPoints()
         f:SetFrameStrata("FULLSCREEN_DIALOG")
         f.tex = f:CreateTexture(nil, "BACKGROUND")
@@ -353,7 +353,7 @@ end
 function FX:GetOverlayFrame()
     if self.OverlayFrame then return self.OverlayFrame end
     
-    local f = CreateFrame("Frame", "SequitoProcOverlay", UIParent)
+    local f = CreateFrame("Frame", "JainaProcOverlay", UIParent)
     f:SetAllPoints()
     f:SetFrameStrata("BACKGROUND")
     f:SetAlpha(0)
@@ -379,7 +379,7 @@ SlashCmdList["SEQUITOVISUALS"] = function(msg)
     local cmd = (msg or ""):lower():match("^%s*(%S+)") or ""
     
     if cmd == "test" then
-        print("|cFF9966FFSequito Visuals|r: Ejecutando prueba de efectos visuales...")
+        print("|cFF9966FFJaina Visuals|r: Ejecutando prueba de efectos visuales...")
         FX:TriggerSoulSiphon()
         local f = FX:GetOverlayFrame()
         f.tex:SetVertexColor(1.0, 0.4, 0.9, 0.6)
@@ -407,10 +407,10 @@ SlashCmdList["SEQUITOVISUALS"] = function(msg)
         if S.ModuleConfig and S.ModuleConfig.ShowModuleConfig then
             S.ModuleConfig:ShowModuleConfig("Visuals")
         else
-            print("|cFF9966FFSequito Visuals|r: Módulo activo. Abre la configuración con /seq config.")
+            print("|cFF9966FFJaina Visuals|r: Módulo activo. Abre la configuración con /seq config.")
         end
     else
-        print("|cFF9966FFSequito Visuals|r: Comandos disponibles:")
+        print("|cFF9966FFJaina Visuals|r: Comandos disponibles:")
         print("  |cFFFFD700/visuals|r o |cFFFFD700/fx|r - Abre la configuración visual")
         print("  |cFFFFD700/visuals test|r - Muestra una demostración visual temporal")
     end

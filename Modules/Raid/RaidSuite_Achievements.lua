@@ -15,7 +15,7 @@ SA.AchievementList = {
     [1] = { 
         id = 1, 
         title = S.L["ACH_INITIATE"] or "Iniciado", 
-        desc = S.L["ACH_INITIATE_DESC"] or "Inicia sesión con el addon Sequito activo en tu hermandad.", 
+        desc = S.L["ACH_INITIATE_DESC"] or "Inicia sesión con el addon Jaina activo en tu hermandad.", 
         icon = "Interface\\Icons\\Inv_Misc_Book_09", 
         points = 10 
     },
@@ -50,21 +50,21 @@ SA.AchievementList = {
     [6] = { 
         id = 6, 
         title = "Coleccionista de Botín", 
-        desc = "Recibir una asignación de pieza de botín a través del Consejo Sequito LootCouncil.", 
+        desc = "Recibir una asignación de pieza de botín a través del Consejo Jaina LootCouncil.", 
         icon = "Interface\\Icons\\INV_Box_01", 
         points = 15 
     },
     [7] = { 
         id = 7, 
         title = "Estratega de Cónclave", 
-        desc = "Emitir tu voto en una encuesta activa del sistema democrático Sequito VotingSystem.", 
+        desc = "Emitir tu voto en una encuesta activa del sistema democrático Jaina VotingSystem.", 
         icon = "Interface\\Icons\\INV_Scroll_03", 
         points = 10 
     },
     [8] = { 
         id = 8, 
         title = "Convocador del Coven", 
-        desc = "Gestionar o iniciar una invocación colectiva utilizando el ritual SequitoCoven.", 
+        desc = "Gestionar o iniciar una invocación colectiva utilizando el ritual JainaCoven.", 
         icon = "Interface\\Icons\\Spell_Shadow_Twilight", 
         points = 15 
     },
@@ -75,10 +75,10 @@ SA.AchievementList = {
 -- ===========================================================================
 function SA:Initialize()
     -- DB Check
-    if not SequitoStatsDB then SequitoStatsDB = {} end
-    if not SequitoStatsDB.Achievements then SequitoStatsDB.Achievements = {} end
+    if not JainaStatsDB then JainaStatsDB = {} end
+    if not JainaStatsDB.Achievements then JainaStatsDB.Achievements = {} end
     
-    self.db = SequitoStatsDB.Achievements
+    self.db = JainaStatsDB.Achievements
     self:CreateToastFrame()
     self:RegisterEvents()
     
@@ -201,7 +201,7 @@ end
 -- UI: TOAST NOTIFICATION
 -- ===========================================================================
 function SA:CreateToastFrame()
-    local f = CreateFrame("Frame", "SequitoToastFrame", UIParent)
+    local f = CreateFrame("Frame", "JainaToastFrame", UIParent)
     f:SetSize(300, 64)
     f:SetPoint("BOTTOM", 0, 180)
     f:SetFrameStrata("DIALOG")
@@ -291,7 +291,7 @@ end
 function SA:CreateBrowserFrame()
     if self.BrowserFrame then return self.BrowserFrame end
 
-    local f = CreateFrame("Frame", "SequitoAchievementBrowser", UIParent)
+    local f = CreateFrame("Frame", "JainaAchievementBrowser", UIParent)
     f:SetSize(620, 500)
     f:SetPoint("CENTER", UIParent, "CENTER", 0, 20)
     f:SetMovable(true)
@@ -322,7 +322,7 @@ function SA:CreateBrowserFrame()
 
     local subtitle = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
     subtitle:SetPoint("TOPLEFT", 20, -38)
-    subtitle:SetText("Gamificación interna del cónclave Sequito. ¡Desbloquea proezas en raid y eventos!")
+    subtitle:SetText("Gamificación interna del cónclave Jaina. ¡Desbloquea proezas en raid y eventos!")
     subtitle:SetTextColor(0.7, 0.7, 0.7)
 
     -- Close Button
@@ -356,7 +356,7 @@ function SA:CreateBrowserFrame()
     f.progressBar = progressBar
 
     -- Scroll Area
-    local scrollFrame = CreateFrame("ScrollFrame", "SequitoAchScrollFrame", f, "UIPanelScrollFrameTemplate")
+    local scrollFrame = CreateFrame("ScrollFrame", "JainaAchScrollFrame", f, "UIPanelScrollFrameTemplate")
     scrollFrame:SetPoint("TOPLEFT", 18, -100)
     scrollFrame:SetPoint("BOTTOMRIGHT", -38, 16)
 
@@ -492,7 +492,7 @@ end
 
 -- Registrar en ModuleConfig
 if S.ModuleConfig then
-    S.ModuleConfig:RegisterModule("SequitoAchievements", {
+    S.ModuleConfig:RegisterModule("JainaAchievements", {
         name = "Achievements",
         description = "Logros de Guild y Gamificación",
         category = "general",

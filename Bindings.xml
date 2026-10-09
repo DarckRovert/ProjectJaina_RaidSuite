@@ -1,59 +1,59 @@
 <Bindings>
     <!-- Main Sphere -->
-    <Binding name="CLICK SequitoSphere:LeftButton" header="SEQUITO">
-        if Sequito and Sequito.GUI then Sequito.GUI:OnSphereClick("LeftButton") end
+    <Binding name="CLICK JainaSphere:LeftButton" header="SEQUITO">
+        if Jaina and Jaina.GUI then Jaina.GUI:OnSphereClick("LeftButton") end
     </Binding>
-    <Binding name="CLICK SequitoSphere:RightButton">
-        if Sequito and Sequito.GUI then Sequito.GUI:OnSphereClick("RightButton") end
+    <Binding name="CLICK JainaSphere:RightButton">
+        if Jaina and Jaina.GUI then Jaina.GUI:OnSphereClick("RightButton") end
     </Binding>
 
     <!-- Satellite Buttons -->
-    <Binding name="CLICK SequitoBtn1:LeftButton">
-        if SequitoBtn1 then SequitoBtn1:Click() end
+    <Binding name="CLICK JainaBtn1:LeftButton">
+        if JainaBtn1 then JainaBtn1:Click() end
     </Binding>
-    <Binding name="CLICK SequitoBtn2:LeftButton">
-        if SequitoBtn2 then SequitoBtn2:Click() end
+    <Binding name="CLICK JainaBtn2:LeftButton">
+        if JainaBtn2 then JainaBtn2:Click() end
     </Binding>
-    <Binding name="CLICK SequitoBtn3:LeftButton">
-        if SequitoBtn3 then SequitoBtn3:Click() end
+    <Binding name="CLICK JainaBtn3:LeftButton">
+        if JainaBtn3 then JainaBtn3:Click() end
     </Binding>
-    <Binding name="CLICK SequitoBtn4:LeftButton">
-        if SequitoBtn4 then SequitoBtn4:Click() end
+    <Binding name="CLICK JainaBtn4:LeftButton">
+        if JainaBtn4 then JainaBtn4:Click() end
     </Binding>
 
     <!-- Utility Shortcuts -->
     <Binding name="SEQUITO_MOUNT">
-        if Sequito and Sequito.Mounts then Sequito.Mounts:Summon() end
+        if Jaina and Jaina.Mounts then Jaina.Mounts:Summon() end
     </Binding>
     <Binding name="SEQUITO_TARGET">
-        if Sequito then Sequito:TargetOrAttack() end
+        if Jaina then Jaina:TargetOrAttack() end
     </Binding>
 
     <!-- v7.3.0 - Nuevos Modulos -->
 
     <!-- DefensiveAlerts -->
     <Binding name="SEQUITO_PEEL">
-        if Sequito and Sequito.DefensiveAlerts then Sequito.DefensiveAlerts:RequestPeel() end
+        if Jaina and Jaina.DefensiveAlerts then Jaina.DefensiveAlerts:RequestPeel() end
     </Binding>
     <Binding name="SEQUITO_HEAL">
-        if Sequito and Sequito.DefensiveAlerts then Sequito.DefensiveAlerts:RequestHeal() end
+        if Jaina and Jaina.DefensiveAlerts then Jaina.DefensiveAlerts:RequestHeal() end
     </Binding>
     <Binding name="SEQUITO_DISPEL">
-        if Sequito and Sequito.DefensiveAlerts then Sequito.DefensiveAlerts:RequestDispel() end
+        if Jaina and Jaina.DefensiveAlerts then Jaina.DefensiveAlerts:RequestDispel() end
     </Binding>
     <Binding name="SEQUITO_DEFENSIVE">
-        if Sequito and Sequito.DefensiveAlerts then Sequito.DefensiveAlerts:AnnounceDefensive() end
+        if Jaina and Jaina.DefensiveAlerts then Jaina.DefensiveAlerts:AnnounceDefensive() end
     </Binding>
 
     <!-- QuickWhisper -->
     <Binding name="SEQUITO_WHISPER1">
-        if Sequito and Sequito.QuickWhisper then Sequito.QuickWhisper:SendMsg(1) end
+        if Jaina and Jaina.QuickWhisper then Jaina.QuickWhisper:SendMsg(1) end
     </Binding>
     <Binding name="SEQUITO_WHISPER2">
-        if Sequito and Sequito.QuickWhisper then Sequito.QuickWhisper:SendMsg(2) end
+        if Jaina and Jaina.QuickWhisper then Jaina.QuickWhisper:SendMsg(2) end
     </Binding>
     <Binding name="SEQUITO_WHISPER3">
-        if Sequito and Sequito.QuickWhisper then Sequito.QuickWhisper:SendMsg(3) end
+        if Jaina and Jaina.QuickWhisper then Jaina.QuickWhisper:SendMsg(3) end
     </Binding>
 
     <!-- v8.0.0 Novedades -->
@@ -61,38 +61,38 @@
         SlashCmdList["SEQUITO"]("")
     </Binding>
     <Binding name="SEQUITO_ASSIGNMENTS">
-        if Sequito and Sequito.Assignments then Sequito.Assignments:Toggle() end
+        if Jaina and Jaina.Assignments then Jaina.Assignments:Toggle() end
     </Binding>
     <Binding name="SEQUITO_WIPE">
-        if Sequito and Sequito.WipeAnalyzer then Sequito.WipeAnalyzer:Analyze() end
+        if Jaina and Jaina.WipeAnalyzer then Jaina.WipeAnalyzer:Analyze() end
     </Binding>
     <Binding name="SEQUITO_COOLDOWNS">
-        if Sequito and Sequito.CooldownMonitor then Sequito.CooldownMonitor:Toggle() end
+        if Jaina and Jaina.CooldownMonitor then Jaina.CooldownMonitor:Toggle() end
     </Binding>
     <Binding name="SEQUITO_PULL_TIMER">
-        if Sequito and Sequito.Assignments then Sequito.Assignments:StartPullTimer(10) end
+        if Jaina and Jaina.Assignments then Jaina.Assignments:StartPullTimer(10) end
     </Binding>
 
     <!-- FocusFire -->
     <Binding name="SEQUITO_CALLTARGET">
-        if Sequito and Sequito.FocusFire then Sequito.FocusFire:CallTarget() end
+        if Jaina and Jaina.FocusFire then Jaina.FocusFire:CallTarget() end
     </Binding>
 
     <!-- CCCoordinator -->
     <Binding name="SEQUITO_CALLCC">
-        if Sequito and Sequito.CCCoordinator then Sequito.CCCoordinator:AnnounceCC() end
+        if Jaina and Jaina.CCCoordinator then Jaina.CCCoordinator:AnnounceCC() end
     </Binding>
 
     <!-- PullGuide -->
     <Binding name="SEQUITO_MARKPACK">
-        if Sequito and Sequito.PullGuide then Sequito.PullGuide:MarkPack() end
+        if Jaina and Jaina.PullGuide then Jaina.PullGuide:MarkPack() end
     </Binding>
 
     <!-- VotingSystem -->
     <Binding name="SEQUITO_VOTE_YES">
-        if Sequito and Sequito.VotingSystem then Sequito.VotingSystem:VoteYes() end
+        if Jaina and Jaina.VotingSystem then Jaina.VotingSystem:VoteYes() end
     </Binding>
     <Binding name="SEQUITO_VOTE_NO">
-        if Sequito and Sequito.VotingSystem then Sequito.VotingSystem:VoteNo() end
+        if Jaina and Jaina.VotingSystem then Jaina.VotingSystem:VoteNo() end
     </Binding>
 </Bindings>

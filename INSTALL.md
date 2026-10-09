@@ -73,7 +73,7 @@ AddOns/
 
 En el chat del juego, escribe:
 ```
-/sequito
+/jaina
 ```
 
 Deberías ver el mensaje de bienvenida de Jaina.
@@ -86,7 +86,7 @@ Deberías ver el mensaje de bienvenida de Jaina.
 
 Para generar macros personalizadas para tu clase:
 ```
-/sequito macros
+/jaina macros
 ```
 
 Esto creará macros optimizadas según tu clase y especialización actual.
@@ -94,7 +94,7 @@ Esto creará macros optimizadas según tu clase y especialización actual.
 ### Abrir Panel de Opciones
 
 ```
-/sequito options
+/jaina options
 ```
 
 Aquí puedes configurar:
@@ -106,7 +106,7 @@ Aquí puedes configurar:
 ### Abrir Panel de Raid
 
 ```
-/sequito panel
+/jaina panel
 ```
 
 Muestra información en tiempo real de tu raid.
@@ -160,7 +160,7 @@ Muestra información en tiempo real de tu raid.
 
 ### Los comandos no funcionan
 
-**Problema:** `/sequito` no hace nada.
+**Problema:** `/jaina` no hace nada.
 
 **Solución:**
 1. Verifica que el addon esté activado en el menú de AddOns
@@ -169,7 +169,7 @@ Muestra información en tiempo real de tu raid.
 
 ### Las macros no se generan
 
-**Problema:** `/sequito macros` no crea macros.
+**Problema:** `/jaina macros` no crea macros.
 
 **Solución:**
 1. Asegúrate de tener espacio libre en tu lista de macros
@@ -178,11 +178,11 @@ Muestra información en tiempo real de tu raid.
 
 ### El panel de raid no se muestra
 
-**Problema:** `/sequito panel` no abre nada.
+**Problema:** `/jaina panel` no abre nada.
 
 **Solución:**
 1. Verifica que estés en un grupo o raid
-2. Intenta `/sequito reset` para reiniciar la posición
+2. Intenta `/jaina reset` para reiniciar la posición
 3. Revisa que `RaidPanel.lua` esté cargado
 
 ---
@@ -236,11 +236,11 @@ Para resetear completamente la configuración:
  
  ```
  /sdash            - Abre el Dashboard Central de 4 pestañas
- /sequito macros   - Genera las macros inteligentes (SeqRot, SeqMount, etc.)
+ /jaina macros   - Genera las macros inteligentes (SeqRot, SeqMount, etc.)
  /srot             - Despliega el HUD de rotación reactivo con procs
  /sinspect         - Abre el inspector de academia (GS real y encantamientos)
  /sloot            - Abre el panel del Concilio de Botín
- /sequito options  - Abre la configuración de módulos
+ /jaina options  - Abre la configuración de módulos
  ```
  
  Si estos comandos responden correctamente y ves la Esfera Central flotante, ¡la instalación fue un éxito total! 🎉

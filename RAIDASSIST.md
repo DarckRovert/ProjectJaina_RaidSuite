@@ -32,7 +32,7 @@ RaidAssist es un sistema colaborativo que permite a toda la guild coordinar mejo
 
 **Uso:**
 ```
-/sequito ra
+/jaina ra
 ```
 Ve a la pestaña "Cooldowns" para ver todos los CDs disponibles
 
@@ -56,7 +56,7 @@ S.RaidAssist:AssignTargets({"Skull", "Cross", "Square"})
 
 **Uso:**
 ```
-/sequito phase 2
+/jaina phase 2
 ```
 Todos los jugadores con Jaina verán: "¡FASE 2!"
 
@@ -68,7 +68,7 @@ Todos los jugadores con Jaina verán: "¡FASE 2!"
 
 **Uso:**
 ```
-/sequito checkcons
+/jaina checkcons
 ```
 Muestra quién NO tiene consumibles activos
 
@@ -91,8 +91,8 @@ S.RaidAssist:AssignRole("NombreJugador", "Interrumpir adds izquierda")
 
 **Uso:**
 ```
-/sequito wipes          -- Ver contador
-/sequito resetwipes     -- Reiniciar contador
+/jaina wipes          -- Ver contador
+/jaina resetwipes     -- Reiniciar contador
 ```
 
 ---
@@ -103,8 +103,8 @@ S.RaidAssist:AssignRole("NombreJugador", "Interrumpir adds izquierda")
 
 **Uso:**
 ```
-/sequito pull 10        -- Pull en 10 segundos
-/sequito pull 5         -- Pull en 5 segundos
+/jaina pull 10        -- Pull en 10 segundos
+/jaina pull 5         -- Pull en 5 segundos
 ```
 
 ---
@@ -126,9 +126,9 @@ S.RaidAssist:AnalyzeWipe()
 
 **Uso:**
 ```
-/sequito mode progression
-/sequito mode farm
-/sequito mode              -- Toggle entre modos
+/jaina mode progression
+/jaina mode farm
+/jaina mode              -- Toggle entre modos
 ```
 
 ---
@@ -137,25 +137,25 @@ S.RaidAssist:AnalyzeWipe()
 
 ### Para Todos los Jugadores
 ```
-/sequito ra                 -- Abrir panel de RaidAssist
-/sequito wipes              -- Ver contador de wipes
-/sequito mode               -- Cambiar modo
+/jaina ra                 -- Abrir panel de RaidAssist
+/jaina wipes              -- Ver contador de wipes
+/jaina mode               -- Cambiar modo
 ```
 
 ### Para Raid Leaders
 ```
-/sequito raleader           -- Panel compacto de líder
-/sequito pull [segundos]    -- Iniciar pull timer
-/sequito phase [número]     -- Anunciar fase
-/sequito checkcons          -- Revisar consumibles
-/sequito resetwipes         -- Reiniciar contador
+/jaina raleader           -- Panel compacto de líder
+/jaina pull [segundos]    -- Iniciar pull timer
+/jaina phase [número]     -- Anunciar fase
+/jaina checkcons          -- Revisar consumibles
+/jaina resetwipes         -- Reiniciar contador
 ```
 
 ---
 
 ## 📊 Interfaz de Usuario
 
-### Panel Principal (`/sequito ra`)
+### Panel Principal (`/jaina ra`)
 Tiene 4 pestañas:
 
 1. **Estado**: Muestra quién tiene Jaina y estado de consumibles
@@ -163,7 +163,7 @@ Tiene 4 pestañas:
 3. **Asignaciones**: Tareas asignadas a cada jugador
 4. **Estadísticas**: Wipes, modo actual, etc.
 
-### Panel de Líder (`/sequito raleader`)
+### Panel de Líder (`/jaina raleader`)
 Panel compacto con botones rápidos:
 - Pull Timer (10s)
 - Anunciar Fase 2
@@ -186,13 +186,13 @@ El sistema funciona automáticamente cuando:
 ## 💡 Tips de Uso
 
 ### Para Raid Leaders:
-1. Usa `/sequito raleader` para tener acceso rápido a funciones importantes
-2. Antes de cada pull, usa `/sequito checkcons` para verificar consumibles
-3. Usa `/sequito pull 10` para dar tiempo a todos de prepararse
+1. Usa `/jaina raleader` para tener acceso rápido a funciones importantes
+2. Antes de cada pull, usa `/jaina checkcons` para verificar consumibles
+3. Usa `/jaina pull 10` para dar tiempo a todos de prepararse
 4. Cambia a modo "progression" en bosses nuevos para más ayudas
 
 ### Para Miembros del Raid:
-1. Mantén `/sequito ra` abierto para ver información del raid
+1. Mantén `/jaina ra` abierto para ver información del raid
 2. Presta atención a las asignaciones que te lleguen
 3. Usa tus interrupciones normalmente - el addon coordina automáticamente
 
@@ -247,25 +247,25 @@ El sistema funciona automáticamente cuando:
 
 ### Alertas
 ```
-/sequito alert [mensaje]              -- Muestra alerta de prueba
-/sequito alertpos [top/center/bottom] -- Cambia posición de alertas
+/jaina alert [mensaje]              -- Muestra alerta de prueba
+/jaina alertpos [top/center/bottom] -- Cambia posición de alertas
 ```
 
 ### Historial de Wipes
 ```
-/sequito wipehistory    -- Ver historial completo con estadísticas
-/sequito clearwipes     -- Limpiar historial guardado
+/jaina wipehistory    -- Ver historial completo con estadísticas
+/jaina clearwipes     -- Limpiar historial guardado
 ```
 
 ### Macros Compartidos (MacroSync)
 ```
-/sequito macro share <nombre>   -- Comparte macro con el grupo
-/sequito macro list             -- Lista macros recibidos
-/sequito macro import <nombre>  -- Importa macro compartido
-/sequito macro library          -- Muestra biblioteca de tu clase
-/sequito macro getlib <nombre>  -- Importa de biblioteca
-/sequito macro getall           -- Importa todos de biblioteca
-/sequito macro request          -- Solicita lista del grupo
+/jaina macro share <nombre>   -- Comparte macro con el grupo
+/jaina macro list             -- Lista macros recibidos
+/jaina macro import <nombre>  -- Importa macro compartido
+/jaina macro library          -- Muestra biblioteca de tu clase
+/jaina macro getlib <nombre>  -- Importa de biblioteca
+/jaina macro getall           -- Importa todos de biblioteca
+/jaina macro request          -- Solicita lista del grupo
 ```
 
 ---

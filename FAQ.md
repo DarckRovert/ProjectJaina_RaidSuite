@@ -69,7 +69,7 @@ Funciona **de inmediato**. Al iniciar sesión, Jaina:
 ### ¿Cómo abro el Dashboard principal?
 Puedes abrirlo de dos formas muy sencillas:
 1. Haciendo **clic izquierdo sobre la Esfera Central flotante**.
-2. Escribiendo en el chat: /sdash (o /sequito).
+2. Escribiendo en el chat: /sdash (o /jaina).
 
 ### ¿Cómo muevo la Esfera Central si me tapa parte de la pantalla?
 Mantén presionada la tecla **Shift**, haz **clic izquierdo sobre la esfera y arrástrala** con el ratón a la posición que más te guste. Jaina recordará la ubicación exacta incluso tras cerrar el juego o hacer /reload.
@@ -97,7 +97,7 @@ Jaina soluciona esto mediante un **motor de prioridades con teclas modificadoras
 - **Alt:** Habilidad de fase de ejecución (como *Ejecutar* o *Drenar alma*), área o cooldown mayor.
 
 ### ¿Cómo obtengo la macro SeqRot en mi barra de acción?
-1. Escribe /sequito macros en el chat (o pulsa el botón en el Dashboard).
+1. Escribe /jaina macros en el chat (o pulsa el botón en el Dashboard).
 2. Abre tu panel de macros presionando Escape -> Macros o escribiendo /m.
 3. Selecciona la pestaña **Macros de [Nombre de tu Personaje]**.
 4. Arrastra la macro llamada **SeqRot** a tu botón de combate principal (por ejemplo, la tecla 1).
@@ -147,7 +147,7 @@ Selecciona a cualquier jugador y escribe /sinspect:
 ### ¿Cómo se inicia una sesión de Concilio de Botín?
 - **Automática:** Al matar a un jefe y abrir su ventana de despojo (`LOOT_OPENED`), Jaina escanea el botín y **encola automáticamente todas las piezas épicas o legendarias**.
 - **Cola de Botín:** Al finalizar de votar un objeto, el concilio pasa de inmediato a la siguiente pieza en cola sin necesidad de reabrir el cadáver ni escribir comandos.
-- **Manual:** Los oficiales pueden abrir el panel en cualquier momento con `/sloot` o `/sequito lc`.
+- **Manual:** Los oficiales pueden abrir el panel en cualquier momento con `/sloot` o `/jaina lc`.
 
 ### ¿Cómo responden los miembros de la banda?
 La ventana ofrece 4 botones dedicados:
@@ -192,16 +192,16 @@ Jaina incorpora un algoritmo de **transmisión por goteo con cubeta de fugas (*l
 - Esto garantiza una tasa de transferencia continua y segura, previniendo al 100% las caídas por saturación de red.
 
 ### ¿Cuáles son las órdenes tácticas de banda?
-- /sfocus [Nombre] o /sequito focus: Marca un objetivo prioritario para que toda la banda cambie de foco de ataque al unísono.
-- /salpha o /sequito alpha: Orden de desatar habilidades de daño máximo (*Burst/Cooldowns*).
-- /sready o /sequito ready: Comprobación de listos con verificación de frascos y comida.
+- /sfocus [Nombre] o /jaina focus: Marca un objetivo prioritario para que toda la banda cambie de foco de ataque al unísono.
+- /salpha o /jaina alpha: Orden de desatar habilidades de daño máximo (*Burst/Cooldowns*).
+- /sready o /jaina ready: Comprobación de listos con verificación de frascos y comida.
 
 ---
 
 ## 8. Auditoría de Combate y Análisis de Wipes (/sstats, /swipe)
 
 ### ¿Cómo veo el rendimiento en combate?
-Escribe /sstats o /sequito stats. Muestra el daño por segundo (DPS) y la sanación neta efectiva (HPS), descontando la sobresanación (*overhealing*) gracias al motor de procesamiento de eventos de combate (COMBAT_LOG_EVENT_UNFILTERED).
+Escribe /sstats o /jaina stats. Muestra el daño por segundo (DPS) y la sanación neta efectiva (HPS), descontando la sobresanación (*overhealing*) gracias al motor de procesamiento de eventos de combate (COMBAT_LOG_EVENT_UNFILTERED).
 
 ### ¿Qué información entrega el Analizador de Wipes (/swipe)?
 Cuando la banda es derrotada, Jaina registra una autopsia precisa del enfrentamiento:
@@ -240,16 +240,16 @@ Está optimizado principalmente para **Project Jaina (Project Jaina)**, y es 100
 ### La Esfera o alguna ventana quedó fuera de la pantalla. ¿Cómo la recupero?
 Escribe en el chat:
 `
-/sequito reset
+/jaina reset
 `
 Este comando reubica la Esfera Central y todos los paneles flotantes en el centro exacto de tu monitor.
 
-### El comando /sequito macros indica que no hay espacio suficiente.
+### El comando /jaina macros indica que no hay espacio suficiente.
 El cliente de WoW 3.3.5a posee un límite rígido de 18 macros específicas por personaje.  
 Si tienes tu panel de macros lleno con 18 macros previas:
 1. Escribe /macro o /m.
 2. Revisa la pestaña de tu personaje y elimina las macros viejas que ya no uses.
-3. Vuelve a ejecutar /sequito macros.
+3. Vuelve a ejecutar /jaina macros.
 
 ### ¿Dónde puedo reportar un error o proponer una idea?
 Si encuentras un comportamiento anómalo o deseas sugerir una funcionalidad:

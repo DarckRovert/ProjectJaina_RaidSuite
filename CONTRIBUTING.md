@@ -110,7 +110,7 @@ Incluye la siguiente información:
 ```
 1. Entra al juego con un Warlock nivel 80
 2. Cambia a spec Affliction
-3. Ejecuta /sequito macros
+3. Ejecuta /jaina macros
 4. Observa el error
 ```
 
@@ -146,7 +146,7 @@ Incluye:
 "Actualmente las macros solo están optimizadas para PvE, pero muchos jugadores hacen PvP"
 
 #### 3. Solución Propuesta
-"Añadir un comando `/sequito macros pvp` que genere macros optimizadas para arenas y battlegrounds"
+"Añadir un comando `/jaina macros pvp` que genere macros optimizadas para arenas y battlegrounds"
 
 #### 4. Alternativas Consideradas
 "Podría ser un toggle en opciones, pero un comando separado es más flexible"
@@ -482,7 +482,7 @@ Cuando añades o cambias funcionalidad, actualiza:
 Añade soporte para generar macros optimizadas para PvP.
 
 ## Cambios
-- Añadido comando `/sequito macros pvp`
+- Añadido comando `/jaina macros pvp`
 - Añadidas macros de PvP para todas las clases
 - Actualizada documentación en USAGE.md y COMMANDS.md
 

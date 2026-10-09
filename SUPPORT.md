@@ -13,7 +13,7 @@ Antes de abrir una incidencia, te recomendamos consultar la documentación inclu
 - **Instalación y Requisitos:** [INSTALL.md](INSTALL.md)
 - **Guía de Uso Rápido:** [USAGE.md](USAGE.md)
 - **Preguntas Frecuentes (FAQ):** [FAQ.md](FAQ.md)
-- **Comandos de Chat (/sequito):** [COMMANDS.md](COMMANDS.md)
+- **Comandos de Chat (/jaina):** [COMMANDS.md](COMMANDS.md)
 - **Macros y Utilidades:** [MACROS.md](MACROS.md)
 - **Módulos de Banda (RaidAssist):** [RAIDASSIST.md](RAIDASSIST.md)
 - **Gobernanza del Proyecto:** [GOVERNANCE.md](GOVERNANCE.md)

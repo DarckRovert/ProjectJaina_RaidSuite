@@ -36,7 +36,7 @@
    - Minimizar asignaciones de tablas temporales dentro de eventos de alta frecuencia como `COMBAT_LOG_EVENT_UNFILTERED` o scripts `OnUpdate`.
 
 6. **Comandos de Consola y Retrocompatibilidad:**
-   - Comandos principales: `/raidsuite`, `/wprs`, `/seq`, `/sequito`.
+   - Comandos principales: `/raidsuite`, `/wprs`, `/seq`, `/jaina`.
    - Se mantiene retrocompatibilidad total con los alias existentes para la comunidad.
 
 7. **Gestión Git y Versionado:**

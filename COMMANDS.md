@@ -6,45 +6,45 @@
 ---
 
 ## 🆕 Comandos v10.2.0 (Definitive Edition)
-- `/smacros` (`/sequito macros`) - (Macros) Genera y sincroniza macros inteligentes Necrosis de clase y spec en la pestaña de personaje.
-- `/sequito inspect` (`/sinspect`) - (Academy) Inspecciona talentos, GearScore real y encantamientos.
+- `/smacros` (`/jaina macros`) - (Macros) Genera y sincroniza macros inteligentes Necrosis de clase y spec en la pestaña de personaje.
+- `/jaina inspect` (`/sinspect`) - (Academy) Inspecciona talentos, GearScore real y encantamientos.
 - `/shumor` - (Humor) Controla y prueba las frases cómicas de incursión y actividades de banda.
-- `/sequito gallery` - (Gamification) Abre la galería de loot legendario.
-- `/sequito sync config` - (Hive Mind) Panel de configuración remota (Solo Oficiales).
-- `/sequito sync strat` - (Hive Mind) Enviar estrategia de boss (Solo Oficiales).
+- `/jaina gallery` - (Gamification) Abre la galería de loot legendario.
+- `/jaina sync config` - (Hive Mind) Panel de configuración remota (Solo Oficiales).
+- `/jaina sync strat` - (Hive Mind) Enviar estrategia de boss (Solo Oficiales).
 
 ---
 
 ## 📝 Comandos Principales
 
 Jaina acepta dos prefijos de comando:
-- `/sequito [comando]`
-- `/seq [comando]` (atajo)
+- `/jaina [comando]`
+- `/jaina [comando]` (atajo)
 
 ---
 
 ## 🆘 Ayuda e Información
 
-### `/sequito help`
-**Alias:** `/seq help`, `/sequito ?`
+### `/jaina help`
+**Alias:** `/jaina help`, `/jaina ?`
 
 **Descripción:** Muestra la lista de comandos disponibles.
 
 **Ejemplo:**
 ```
-/sequito help
+/jaina help
 ```
 
 ---
 
-### `/sequito info`
-**Alias:** `/seq info`
+### `/jaina info`
+**Alias:** `/jaina info`
 
 **Descripción:** Muestra información sobre tu personaje (clase, raza, especialización, nivel).
 
 **Ejemplo:**
 ```
-/sequito info
+/jaina info
 ```
 
 **Salida:**
@@ -58,14 +58,14 @@ Recurso: Mana (15420/18500)
 
 ---
 
-### `/sequito spec`
-**Alias:** `/seq spec`
+### `/jaina spec`
+**Alias:** `/jaina spec`
 
 **Descripción:** Muestra información detallada de tu especialización actual.
 
 **Ejemplo:**
 ```
-/sequito spec
+/jaina spec
 ```
 
 **Salida:**
@@ -79,14 +79,14 @@ Rol: DPS
 
 ## 🔧 Generación de Macros
 
-### `/sequito macros`
-**Alias:** `/smacros`, `/seq macros`, `/sequito macro`
+### `/jaina macros`
+**Alias:** `/smacros`, `/jaina macros`, `/jaina macro`
 
 **Descripción:** Genera macros personalizadas estilo **Necrosis** para tu clase y especialización actual.
 
 **Ejemplo:**
 ```
-/sequito macros
+/jaina macros
 ```
 
 **Salida:**
@@ -110,14 +110,14 @@ Macros generadas exitosamente!
 
 ---
 
-### `/sequito specauto`
-**Alias:** `/seq specauto`, `/sequito autospec`
+### `/jaina specauto`
+**Alias:** `/jaina specauto`, `/jaina autospec`
 
 **Descripción:** Activa/desactiva la regeneración automática de macros al cambiar de especialización.
 
 **Ejemplo:**
 ```
-/sequito specauto
+/jaina specauto
 ```
 
 **Salida:**
@@ -129,8 +129,8 @@ Auto-actualización de macros: ACTIVADA
 
 ## 👥 Comandos de Raid
 
-### `/sequito raid`
-**Alias:** `/seq raid`, `/sequito r`
+### `/jaina raid`
+**Alias:** `/jaina raid`, `/jaina r`
 
 **Descripción:** Muestra la composición actual de la raid (clases y especializaciones).
 
@@ -138,34 +138,34 @@ Auto-actualización de macros: ACTIVADA
 
 ---
 
-### `/sequito class`
-**Alias:** `/seq class`, `/sequito classes`
+### `/jaina class`
+**Alias:** `/jaina class`, `/jaina classes`
 
 **Descripción:** Muestra el conteo de clases en la raid.
 
 ---
 
-### `/sequito buffs`
-**Alias:** `/seq buffs`, `/sequito buff`
+### `/jaina buffs`
+**Alias:** `/jaina buffs`, `/jaina buff`
 
 **Descripción:** Escanea la raid en busca de buffs faltantes.
 
 ---
 
-### `/sequito focus [nombre]`
-**Alias:** `/seq focus [nombre]`, `/sequito f [nombre]`
+### `/jaina focus [nombre]`
+**Alias:** `/jaina focus [nombre]`, `/jaina f [nombre]`
 
 **Descripción:** Envía una orden táctica a la raid para enfocar un objetivo específico.
 
 **Ejemplo:**
 ```
-/sequito focus Ragnaros
+/jaina focus Ragnaros
 ```
 
 ---
 
-### `/sequito alpha`
-**Alias:** `/seq alpha`, `/sequito burst`
+### `/jaina alpha`
+**Alias:** `/jaina alpha`, `/jaina burst`
 
 **Descripción:** Envía una orden de "Alpha Strike" (usar todos los cooldowns de DPS).
 
@@ -173,29 +173,29 @@ Auto-actualización de macros: ACTIVADA
 
 ## 📊 Panel de Raid
 
-### `/sequito panel`
-**Alias:** `/seq panel`, `/sequito p`
+### `/jaina panel`
+**Alias:** `/jaina panel`, `/jaina p`
 
 **Descripción:** Abre/cierra el panel visual de raid.
 
 ---
 
-### `/sequito lock`
-**Alias:** `/seq lock`
+### `/jaina lock`
+**Alias:** `/jaina lock`
 
 **Descripción:** Bloquea/desbloquea la posición del panel de raid.
 
 ---
 
-### `/sequito reset`
-**Alias:** `/seq reset`
+### `/jaina reset`
+**Alias:** `/jaina reset`
 
 **Descripción:** Restaura TODA la configuración del addon a los valores por defecto y recarga la interfaz.
 
 ---
 
-### `/sequito resetpos`
-**Alias:** `/seq resetpos`
+### `/jaina resetpos`
+**Alias:** `/jaina resetpos`
 
 **Descripción:** Reinicia solo la posición del panel de raid y la esfera al centro de la pantalla.
 
@@ -203,27 +203,27 @@ Auto-actualización de macros: ACTIVADA
 
 ## 🐎 Sistema de Monturas
 
-### `/sequito mounts`
-**Alias:** `/seq mounts`, `/sequito monturas`
+### `/jaina mounts`
+**Alias:** `/jaina mounts`, `/jaina monturas`
 
 **Descripción:** Lista todas las monturas disponibles y tus monturas favoritas configuradas.
 
 **Ejemplo:**
 ```
-/sequito mounts
+/jaina mounts
 ```
 
 ---
 
-### `/sequito setflying [nombre]` / `/sequito setground [nombre]`
+### `/jaina setflying [nombre]` / `/jaina setground [nombre]`
 Configura tus monturas favoritas para la macro `SeqMount`.
 
 ---
 
 ## ⚙️ Configuración
 
-### `/sequito options`
-**Alias:** `/seq options`, `/sequito config`, `/seq opt`
+### `/jaina options`
+**Alias:** `/jaina options`, `/jaina config`, `/jaina opt`
 
 **Descripción:** Abre el panel de configuración del addon.
 
@@ -233,73 +233,73 @@ Configura tus monturas favoritas para la macro `SeqMount`.
 
 | Comando Completo | Atajo | Descripción |
 |-----------------|-------|-------------|
-| `/sequito help` | `/seq ?` | Ayuda |
-| `/sequito info` | `/seq i` | Info del personaje |
-| `/sequito macros` | `/seq m` | Generar macros |
-| `/sequito raid` | `/seq r` | Composición de raid |
-| `/sequito panel` | `/seq p` | Panel de raid |
-| `/sequito focus` | `/seq f` | Orden de focus |
-| `/sequito options` | `/seq opt` | Configuración |
-| `/sequito combat` | `/seq dps` | Resumen de combate |
-| `/sequito version` | `/seq v` | Versión |
+| `/jaina help` | `/jaina ?` | Ayuda |
+| `/jaina info` | `/jaina i` | Info del personaje |
+| `/jaina macros` | `/jaina m` | Generar macros |
+| `/jaina raid` | `/jaina r` | Composición de raid |
+| `/jaina panel` | `/jaina p` | Panel de raid |
+| `/jaina focus` | `/jaina f` | Orden de focus |
+| `/jaina options` | `/jaina opt` | Configuración |
+| `/jaina combat` | `/jaina dps` | Resumen de combate |
+| `/jaina version` | `/jaina v` | Versión |
 
 ---
 
 ## 📊 CooldownMonitor - Monitor de CDs
 
-### `/sequito cooldowns`
-**Alias:** `/seq cd`
+### `/jaina cooldowns`
+**Alias:** `/jaina cd`
 **Descripción:** Abre/cierra el panel de cooldowns del raid.
 
-### `/sequito cd bres`
+### `/jaina cd bres`
 **Descripción:** Anuncia los Battle Res disponibles en el raid.
 **Ejemplo de salida:**
 ```
 [Jaina] BRES disponibles: Druid1 (Rebirth), Warlock1 (Soulstone)
 ```
 
-### `/sequito cd lust`
+### `/jaina cd lust`
 **Descripción:** Anuncia si Heroism/Bloodlust está disponible.
 
-### `/sequito cd raid`
+### `/jaina cd raid`
 **Descripción:** Anuncia todos los Raid CDs disponibles.
 
 ---
 
 ## 🎯 Assignments - Asignaciones
 
-### `/sequito assign`
-**Alias:** `/seq as`
+### `/jaina assign`
+**Alias:** `/jaina as`
 **Descripción:** Abre el panel de asignaciones.
 
-### `/sequito assign interrupts`
+### `/jaina assign interrupts`
 **Descripción:** Auto-asigna rotación de interrupts basada en clases disponibles.
 **Ejemplo de salida:**
 ```
 [Jaina] Rotación de Interrupts: 1. Shaman1 → 2. Rogue1 → 3. Warrior1
 ```
 
-### `/sequito assign tanks`
+### `/jaina assign tanks`
 **Descripción:** Abre el panel para asignar tanks a objetivos.
 
-### `/sequito assign announce`
+### `/jaina assign announce`
 **Descripción:** Anuncia todas las asignaciones actuales al raid.
 
-### `/sequito assign clear`
+### `/jaina assign clear`
 **Descripción:** Limpia todas las asignaciones.
 
-### `/sequito assign sync`
+### `/jaina assign sync`
 **Descripción:** Sincroniza asignaciones con otros usuarios de Jaina.
 
 ---
 
 ## ✅ ReadyChecker - Chequeo Pre-Pull
 
-### `/sequito readycheck`
-**Alias:** `/seq rc`
+### `/jaina readycheck`
+**Alias:** `/jaina rc`
 **Descripción:** Abre el panel de ready check mejorado y escanea el raid.
 
-### `/sequito readycheck full`
+### `/jaina readycheck full`
 **Descripción:** Escanea y anuncia problemas al raid.
 **Ejemplo de salida:**
 ```
@@ -309,98 +309,98 @@ Configura tus monturas favoritas para la macro `SeqMount`.
   - Mage1: Mana: 65%
 ```
 
-### `/sequito readycheck scan`
+### `/jaina readycheck scan`
 **Descripción:** Solo escanea sin abrir panel.
 
 ---
 
 ## 🎯 RaidAssist
 
-### `/sequito ra` o `/sequito raidassist`
+### `/jaina ra` o `/jaina raidassist`
 **Descripción:** Abre el panel principal de RaidAssist.
 
-### `/sequito raleader`
+### `/jaina raleader`
 **Descripción:** Abre el panel compacto de Raid Leader.
 
-### `/sequito pull [segundos]`
+### `/jaina pull [segundos]`
 **Descripción:** Inicia un pull timer sincronizado.
-**Ejemplo:** `/sequito pull 10`
+**Ejemplo:** `/jaina pull 10`
 
-### `/sequito phase [número]`
+### `/jaina phase [número]`
 **Descripción:** Anuncia una fase de boss a todo el raid.
-**Ejemplo:** `/sequito phase 2`
+**Ejemplo:** `/jaina phase 2`
 
-### `/sequito checkcons`
+### `/jaina checkcons`
 **Descripción:** Revisa consumibles (flask/food) de todos los miembros.
 
-### `/sequito wipes`
+### `/jaina wipes`
 **Descripción:** Muestra el contador de wipes de la sesión.
 
-### `/sequito resetwipes`
+### `/jaina resetwipes`
 **Descripción:** Reinicia el contador de wipes.
 
-### `/sequito mode [farm/progression]`
+### `/jaina mode [farm/progression]`
 **Descripción:** Cambia el modo de operación.
 
-### `/sequito wipehistory`
+### `/jaina wipehistory`
 **Descripción:** Muestra el historial completo de wipes con estadísticas.
 
-### `/sequito clearwipes`
+### `/jaina clearwipes`
 **Descripción:** Borra el historial de wipes guardado.
 
-### `/sequito alert [mensaje]`
+### `/jaina alert [mensaje]`
 **Descripción:** Muestra una alerta de prueba.
 
-### `/sequito alertpos [top/center/bottom]`
+### `/jaina alertpos [top/center/bottom]`
 **Descripción:** Cambia la posición de las alertas en pantalla.
 
 ---
 
 ## 🔄 MacroSync - Macros Compartidos
 
-### `/sequito macro share <nombre>`
+### `/jaina macro share <nombre>`
 **Descripción:** Comparte un macro con tu grupo/raid.
-**Ejemplo:** `/sequito macro share SeqBurst`
+**Ejemplo:** `/jaina macro share SeqBurst`
 
-### `/sequito macro list`
+### `/jaina macro list`
 **Descripción:** Lista los macros compartidos que has recibido.
 
-### `/sequito macro import <nombre>`
+### `/jaina macro import <nombre>`
 **Descripción:** Importa un macro compartido a tus macros.
-**Ejemplo:** `/sequito macro import SeqBurst`
+**Ejemplo:** `/jaina macro import SeqBurst`
 
-### `/sequito macro library`
+### `/jaina macro library`
 **Descripción:** Muestra la biblioteca de macros para tu clase/spec.
 
-### `/sequito macro libraryall`
+### `/jaina macro libraryall`
 **Descripción:** Muestra toda la biblioteca de macros para tu clase.
 
-### `/sequito macro getlib <nombre>`
+### `/jaina macro getlib <nombre>`
 **Descripción:** Importa un macro de la biblioteca.
-**Ejemplo:** `/sequito macro getlib SeqDotAll`
+**Ejemplo:** `/jaina macro getlib SeqDotAll`
 
-### `/sequito macro getall`
+### `/jaina macro getall`
 **Descripción:** Importa todos los macros de la biblioteca para tu spec.
 
-### `/sequito macro request`
+### `/jaina macro request`
 **Descripción:** Solicita la lista de macros disponibles del grupo.
 
-### `/sequito macro get <nombre> <jugador>`
+### `/jaina macro get <nombre> <jugador>`
 **Descripción:** Solicita un macro específico de otro jugador.
-**Ejemplo:** `/sequito macro get SeqBurst Elnazzareno`
+**Ejemplo:** `/jaina macro get SeqBurst Elnazzareno`
 
 ---
 
 ## ⚔️ TrinketTracker - PvP
 
-### `/sequito trinkets`
-**Alias:** `/seq tt`
+### `/jaina trinkets`
+**Alias:** `/jaina tt`
 **Descripción:** Abre/cierra el panel de tracking de trinkets enemigos.
 
-### `/sequito trinkets clear`
+### `/jaina trinkets clear`
 **Descripción:** Limpia todos los datos del tracker.
 
-### `/sequito trinkets announce`
+### `/jaina trinkets announce`
 **Descripción:** Anuncia el estado de todos los trinkets enemigos al grupo.
 **Ejemplo de salida:**
 ```
@@ -412,11 +412,11 @@ Configura tus monturas favoritas para la macro `SeqMount`.
 
 ## 💀 WipeAnalyzer - Análisis de Wipes
 
-### `/sequito analyze`
-**Alias:** `/seq wa`
+### `/jaina analyze`
+**Alias:** `/jaina wa`
 **Descripción:** Muestra el análisis del último wipe detectado.
 
-### `/sequito analyze announce`
+### `/jaina analyze announce`
 **Descripción:** Anuncia el análisis del wipe al raid/party.
 **Ejemplo de salida:**
 ```
@@ -426,10 +426,10 @@ Sin poción/healthstone: Jugador2, Jugador3
 Total muertes: 8 | Interrupts: 5
 ```
 
-### `/sequito wipehistory`
+### `/jaina wipehistory`
 **Descripción:** Muestra el historial de wipes de la sesión.
 
-### `/sequito clearwipes`
+### `/jaina clearwipes`
 **Descripción:** Limpia el historial de wipes.
 
 ---
@@ -438,107 +438,107 @@ Total muertes: 8 | Interrupts: 5
 
 | Comando | Atajo | Descripción |
 |---------|-------|-------------|
-| `/sequito trinkets` | `/seq tt` | Panel de trinkets PvP |
-| `/sequito trinkets clear` | - | Limpiar tracker |
-| `/sequito trinkets announce` | - | Anunciar trinkets |
-| `/sequito analyze` | `/seq wa` | Análisis de wipe |
-| `/sequito analyze announce` | - | Anunciar análisis |
-| `/sequito wipehistory` | - | Historial de wipes |
-| `/sequito clearwipes` | - | Limpiar historial |
+| `/jaina trinkets` | `/jaina tt` | Panel de trinkets PvP |
+| `/jaina trinkets clear` | - | Limpiar tracker |
+| `/jaina trinkets announce` | - | Anunciar trinkets |
+| `/jaina analyze` | `/jaina wa` | Análisis de wipe |
+| `/jaina analyze announce` | - | Anunciar análisis |
+| `/jaina wipehistory` | - | Historial de wipes |
+| `/jaina clearwipes` | - | Limpiar historial |
 
 ---
 
 ## ⚔️ Comandos PvP
 
-### `/sequito focus`
-**Alias:** `/seq ff`
+### `/jaina focus`
+**Alias:** `/jaina ff`
 **Descripción:** Abre el panel de FocusFire para llamadas de target.
 
-### `/sequito focus call`
+### `/jaina focus call`
 **Descripción:** Llama al target actual como objetivo de focus fire.
 
-### `/sequito cc`
-**Alias:** `/seq cc`
+### `/jaina cc`
+**Alias:** `/jaina cc`
 **Descripción:** Abre el panel de CCCoordinator.
 
-### `/sequito cc assign <jugador> <target>`
+### `/jaina cc assign <jugador> <target>`
 **Descripción:** Asigna un CC a un jugador para un target específico.
 
-### `/sequito healers`
-**Alias:** `/seq ht`
+### `/jaina healers`
+**Alias:** `/jaina ht`
 **Descripción:** Abre el panel de HealerTracker.
 
-### `/sequito defensive`
-**Alias:** `/seq def`
+### `/jaina defensive`
+**Alias:** `/jaina def`
 **Descripción:** Abre el panel de DefensiveAlerts.
 
-### `/sequito defensive peel`
+### `/jaina defensive peel`
 **Descripción:** Anuncia que necesitas peel.
 
-### `/sequito defensive heal`
+### `/jaina defensive heal`
 **Descripción:** Anuncia que necesitas heal.
 
 ---
 
 ## 🏰 Comandos Mazmorras
 
-### `/sequito pullguide`
-**Alias:** `/seq pg`
+### `/jaina pullguide`
+**Alias:** `/jaina pg`
 **Descripción:** Abre el panel de PullGuide.
 
-### `/sequito pullguide mark`
+### `/jaina pullguide mark`
 **Descripción:** Auto-marca el pack actual.
 
-### `/sequito dungeon`
-**Alias:** `/seq dt`
+### `/jaina dungeon`
+**Alias:** `/jaina dt`
 **Descripción:** Abre el panel de DungeonTimer.
 
-### `/sequito loot`
-**Alias:** `/seq lc`
+### `/jaina loot`
+**Alias:** `/jaina lc`
 **Descripción:** Abre el panel de LootCouncil.
 
-### `/sequito loot start`
+### `/jaina loot start`
 **Descripción:** Inicia una sesión de loot council.
 
 ---
 
 ## 👥 Comandos Generales
 
-### `/sequito notes add <jugador> <texto>`
-**Alias:** `/seq pn add`
+### `/jaina notes add <jugador> <texto>`
+**Alias:** `/jaina pn add`
 **Descripción:** Guarda una nota sobre un jugador.
 
-### `/sequito build save <nombre>`
+### `/jaina build save <nombre>`
 **Descripción:** Guarda tu build actual con un nombre.
 
-### `/sequito build load <nombre>`
+### `/jaina build load <nombre>`
 **Descripción:** Carga un build guardado.
 
-### `/sequito build share <nombre>`
+### `/jaina build share <nombre>`
 **Descripción:** Comparte un build con el grupo.
 
-### `/sequito calendar`
-**Alias:** `/seq cal`
+### `/jaina calendar`
+**Alias:** `/jaina cal`
 **Descripción:** Abre el panel de EventCalendar.
 
-### `/sequito stats`
-**Alias:** `/seq ps`
+### `/jaina stats`
+**Alias:** `/jaina ps`
 **Descripción:** Muestra tus estadísticas de rendimiento.
 
-### `/sequito poll "<pregunta>" opcion1 opcion2 ...`
-**Alias:** `/seq vote`
+### `/jaina poll "<pregunta>" opcion1 opcion2 ...`
+**Alias:** `/jaina vote`
 **Descripción:** Crea una votación rápida.
 **Ejemplo:**
 ```
-/sequito poll "¿Seguimos o paramos?" Seguir Parar
+/jaina poll "¿Seguimos o paramos?" Seguir Parar
 ```
 
-### `/sequito version`
-**Alias:** `/seq ver`
+### `/jaina version`
+**Alias:** `/jaina ver`
 **Descripción:** Verifica versiones de Jaina en el grupo.
 
-### `/sequito whisper <template>`
-**Alias:** `/seq qw`
+### `/jaina whisper <template>`
+**Alias:** `/jaina qw`
 **Descripción:** Envía un mensaje rápido predefinido.
 **Templates disponibles:** inv, afk, summon, ready, brb
 
@@ -551,65 +551,65 @@ Total muertes: 8 | Interrupts: 5
 
 | Comando | Descripción |
 |---------|-------------|
-| `/sequito` | Abre el **Dashboard Unificado** (Config, Raid, Tools). |
-| `/sequito report` | Abre **Jaina Connect** (Exportar datos y perfiles). |
-| `/sequito options` | (Legacy) Abre la pestaña de configuración directamente. |
-| `/sequito panel` | (Legacy) Abre el panel de raid directamente. |
+| `/jaina` | Abre el **Dashboard Unificado** (Config, Raid, Tools). |
+| `/jaina report` | Abre **Jaina Connect** (Exportar datos y perfiles). |
+| `/jaina options` | (Legacy) Abre la pestaña de configuración directamente. |
+| `/jaina panel` | (Legacy) Abre el panel de raid directamente. |
 
 ## 🛠️ Herramientas de Raid (Hive Mind)
 
 | Comando | Descripción | Rango Requerido |
 |---------|-------------|-----------------|
-| `/sequito sync` | Fuerza una sincronización completa con la raid. | Oficial/RL |
-| `/sequito sync config` | Abre la ventana de configuración remota. | Oficial/RL |
-| `/sequito sync strat` | Abre el editor de estrategias de boss. | Oficial/RL |
-| `/sequito veto [jugador]` | Bloquea a un jugador del sistema de sincronización. | Oficial/RL |
-| `/sequito pull [seg]` | Inicia una cuenta atrás de pull (ej: 10s). | Cualquiera |
-| `/sequito ready` | Inicia una comprobación de listos. | Oficial/RL |
+| `/jaina sync` | Fuerza una sincronización completa con la raid. | Oficial/RL |
+| `/jaina sync config` | Abre la ventana de configuración remota. | Oficial/RL |
+| `/jaina sync strat` | Abre el editor de estrategias de boss. | Oficial/RL |
+| `/jaina veto [jugador]` | Bloquea a un jugador del sistema de sincronización. | Oficial/RL |
+| `/jaina pull [seg]` | Inicia una cuenta atrás de pull (ej: 10s). | Cualquiera |
+| `/jaina ready` | Inicia una comprobación de listos. | Oficial/RL |
 
 ## 🎓 Academy Mode
 
 | Comando | Descripción |
 |---------|-------------|
-| `/sequito inspect` | Abre el **Inspector de Academia** (Talentos/Gear real de target). |
-| `/sequito gallery` | Abre la **Galería de Loot** legendario. |
+| `/jaina inspect` | Abre el **Inspector de Academia** (Talentos/Gear real de target). |
+| `/jaina gallery` | Abre la **Galería de Loot** legendario. |
 
 ## ⚔️ Combate, Alertas y PvP
 
 | Comando | Descripción |
 |---------|-------------|
-| `/sequito spy` | Alterna la interfaz de **JainaSpy** (detección de sigilo y enemigos). |
-| `/sequito focusfire` (o `/seq ff`) | Abre el panel de Focus Fire sincronizado. |
-| `/sequito ff call` | Llama y marca con calavera al objetivo actual. |
-| `/sequito overlord` (o `/seq hud`) | Abre el configurador del HUD **The Overlord**. |
-| `/sequito alert [mensaje]` | Muestra una alerta táctica de prueba en pantalla. |
-| `/sequito alertpos [TOP/CENTER/BOTTOM]` | Modifica la posición en pantalla de las alertas de banda. |
-| `/sequito checkbuffs` (o `/seq checkcons`) | Genera y muestra el reporte de consumibles y buffs de raid. |
-| `/sequito combatclear` | Limpia el historial de daño y sanación del CombatTracker. |
-| `/sequito mode [FARM/PROGRESSION]` | Alterna el modo operativo de la raid (Farmeo vs Progresión). |
-| `/sequito phase [número/nombre]` | Anuncia un cambio de fase del jefe de banda. |
+| `/jaina spy` | Alterna la interfaz de **JainaSpy** (detección de sigilo y enemigos). |
+| `/jaina focusfire` (o `/jaina ff`) | Abre el panel de Focus Fire sincronizado. |
+| `/jaina ff call` | Llama y marca con calavera al objetivo actual. |
+| `/jaina overlord` (o `/jaina hud`) | Abre el configurador del HUD **The Overlord**. |
+| `/jaina alert [mensaje]` | Muestra una alerta táctica de prueba en pantalla. |
+| `/jaina alertpos [TOP/CENTER/BOTTOM]` | Modifica la posición en pantalla de las alertas de banda. |
+| `/jaina checkbuffs` (o `/jaina checkcons`) | Genera y muestra el reporte de consumibles y buffs de raid. |
+| `/jaina combatclear` | Limpia el historial de daño y sanación del CombatTracker. |
+| `/jaina mode [FARM/PROGRESSION]` | Alterna el modo operativo de la raid (Farmeo vs Progresión). |
+| `/jaina phase [número/nombre]` | Anuncia un cambio de fase del jefe de banda. |
 
 ## 🐎 Gestión de Monturas Favoritas
 
 | Comando | Descripción |
 |---------|-------------|
-| `/sequito mounts` (o `/seq monturas`) | Lista las monturas registradas del personaje. |
-| `/sequito setflying [nombre]` | Define la montura voladora preferida para macros. |
-| `/sequito setground [nombre]` | Define la montura terrestre preferida para macros. |
-| `/sequito setaquatic [nombre]` | Define la montura acuática preferida para macros. |
+| `/jaina mounts` (o `/jaina monturas`) | Lista las monturas registradas del personaje. |
+| `/jaina setflying [nombre]` | Define la montura voladora preferida para macros. |
+| `/jaina setground [nombre]` | Define la montura terrestre preferida para macros. |
+| `/jaina setaquatic [nombre]` | Define la montura acuática preferida para macros. |
 
 ## ⚙️ Utilidades y Mantenimiento
 
 | Comando | Descripción |
 |---------|-------------|
-| `/sequito version` (o `/seq vs`) | Muestra y compara versiones del addon en la banda. |
-| `/sequito sync` | Solicita o transmite el estado de sincronización. |
-| `/sequito whisper [1/2/3]` | Envía plantillas de susurro rápido o abre el panel. |
-| `/sequito notes` | Administrador de notas persistentes sobre jugadores. |
-| `/sequito build` | Gestor de árboles de talentos y configuraciones de glifos. |
-| `/sequito reset` (o `/seq resetpos`) | Restablece la posición centrada de la esfera principal. |
-| `/sequito lock` | Bloquea o desbloquea la posición de la esfera en pantalla. |
-| `/smacros` (o `/seq macros`) | Genera y sincroniza las macros Necrosis inteligentes de clase/spec. |
+| `/jaina version` (o `/jaina vs`) | Muestra y compara versiones del addon en la banda. |
+| `/jaina sync` | Solicita o transmite el estado de sincronización. |
+| `/jaina whisper [1/2/3]` | Envía plantillas de susurro rápido o abre el panel. |
+| `/jaina notes` | Administrador de notas persistentes sobre jugadores. |
+| `/jaina build` | Gestor de árboles de talentos y configuraciones de glifos. |
+| `/jaina reset` (o `/jaina resetpos`) | Restablece la posición centrada de la esfera principal. |
+| `/jaina lock` | Bloquea o desbloquea la posición de la esfera en pantalla. |
+| `/smacros` (o `/jaina macros`) | Genera y sincroniza las macros Necrosis inteligentes de clase/spec. |
 | `/shumor` | Muestra la ayuda y estado del módulo de Frases Cómicas de Incursión. |
 | `/shumor toggle` | Activa o desactiva las frases cómicas en actividades. |
 | `/shumor channel [SAY/PARTY/RAID/YELL]` | Establece el canal de chat para la emisión de frases. |

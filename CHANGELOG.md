@@ -109,7 +109,7 @@ Iconos en tablas `RegisterModule` tenían `\\\\` (4 barras) en lugar de `\\` (2 
 - Proyecto renombrado de **SEQUITO** a **Wanos_RaidSuite** (branding oficial).
 - 17 archivos Lua internos renombrados de `Jaina*.lua` a `RaidSuite_*.lua`.
 - Tabla global `_G.Jaina` retenida intencionalmente para compatibilidad con 40+ módulos y `SavedVariables` existentes.
-- Nuevos slash commands: `/raidsuite`, `/wprs` (además de los originales `/sequito`, `/seq`).
+- Nuevos slash commands: `/raidsuite`, `/wprs` (además de los originales `/jaina`, `/seq`).
 
 ### 🌉 EcosystemBridge (Core/EcosystemBridge.lua)
 - **Puente BattlePass:** Detecta kills de jefes y mazmorras completadas, reporta via `BP_QUEST_PROGRESS` al servidor Eluna de `Jaina_BattlePass` (Season 2, IDs 201-203).

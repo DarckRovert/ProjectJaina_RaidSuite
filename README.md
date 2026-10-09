@@ -72,17 +72,17 @@ Sincronización continua a través del canal de hermandad (`GUILD`), además de 
 
 | Comando | Alias | Descripción |
 |---------|-------|-------------|
-| `/raidsuite` | `/wprs`, `/sequito`, `/seq` | Abre el menú interactivo o el Dashboard central |
-| `/sdash` | `/sequito dashboard` | Abre/cierra el Dashboard de 4 pestañas |
-| `/smacros` | `/sequito macros` | Genera y sincroniza macros inteligentes |
+| `/raidsuite` | `/wprs`, `/jaina`, `/seq` | Abre el menú interactivo o el Dashboard central |
+| `/sdash` | `/jaina dashboard` | Abre/cierra el Dashboard de 4 pestañas |
+| `/smacros` | `/jaina macros` | Genera y sincroniza macros inteligentes |
 | `/srot` | `/srotation` | Activa/desactiva el HUD flotante de rotación reactiva |
 | `/sinspect` | `/seqinspect` | Inspecciona al objetivo (Talentos, GS real y encantamientos) |
-| `/sloot` | `/sequito lc` | Abre el panel de gestión de Loot Council |
-| `/sstats` | `/sequito stats` | Muestra estadísticas de DPS/HPS en combate |
-| `/swipe` | `/sequito wipe` | Despliega el análisis post-wipe del último combate |
-| `/sbuffs` | `/sequito buffs` | Escanea y reporta buffs faltantes en la banda |
-| `/sfocus [Nombre]` | `/sequito focus` | Envía orden de target prioritario a toda la banda |
-| `/sready` | `/sequito ready` | Inicia comprobación de listos táctica |
+| `/sloot` | `/jaina lc` | Abre el panel de gestión de Loot Council |
+| `/sstats` | `/jaina stats` | Muestra estadísticas de DPS/HPS en combate |
+| `/swipe` | `/jaina wipe` | Despliega el análisis post-wipe del último combate |
+| `/sbuffs` | `/jaina buffs` | Escanea y reporta buffs faltantes en la banda |
+| `/sfocus [Nombre]` | `/jaina focus` | Envía orden de target prioritario a toda la banda |
+| `/sready` | `/jaina ready` | Inicia comprobación de listos táctica |
 
 ---
 

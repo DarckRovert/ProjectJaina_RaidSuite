@@ -182,13 +182,13 @@ Aplica el CC principal de tu clase manteniendo el control del combate:
 
 | Comando | Descripción |
 |---------|-------------|
-| `/sequito macro share <nombre>` | Comparte una macro con tu grupo, banda o por susurro |
-| `/sequito macro list` | Lista las macros recibidas de otros jugadores |
-| `/sequito macro import <nombre>` | Importa una macro recibida al libro de macros |
-| `/sequito macro library` | Muestra la biblioteca de macros integrada para tu clase |
-| `/sequito macro getlib <nombre>` | Importa una macro específica de la biblioteca |
-| `/sequito macro getall` | Importa todas las macros recomendadas para tu clase |
-| `/sequito macro request` | Solicita la lista de macros disponibles a los compañeros |
+| `/jaina macro share <nombre>` | Comparte una macro con tu grupo, banda o por susurro |
+| `/jaina macro list` | Lista las macros recibidas de otros jugadores |
+| `/jaina macro import <nombre>` | Importa una macro recibida al libro de macros |
+| `/jaina macro library` | Muestra la biblioteca de macros integrada para tu clase |
+| `/jaina macro getlib <nombre>` | Importa una macro específica de la biblioteca |
+| `/jaina macro getall` | Importa todas las macros recomendadas para tu clase |
+| `/jaina macro request` | Solicita la lista de macros disponibles a los compañeros |
 
 ---
 

@@ -39,11 +39,11 @@ Cuando entras al juego con Jaina activado, dispones de varios elementos interact
    - **Clic Derecho:** Despliega el Menú Radial con accesos rápidos a utilidades, profesiones y monturas.
    - **Shift + Clic y Arrastrar:** Permite mover la esfera libremente por cualquier parte de tu pantalla.
 2. **Botón del Minimapa:** Acceso directo con un solo clic a la configuración y paneles.
-3. **Comando Universal:** Escribe `/sequito` o `/s` para ver el menú de ayuda interactivo.
+3. **Comando Universal:** Escribe `/jaina` o `/s` para ver el menú de ayuda interactivo.
 
 ---
 
-## 🖥️ Capítulo 1: El Dashboard Central (`/sdash` o `/sequito`)
+## 🖥️ Capítulo 1: El Dashboard Central (`/sdash` o `/jaina`)
 
 El Dashboard reúne toda la información vital en una interfaz elegante y moderna dividida en 4 pestañas:
 
@@ -66,7 +66,7 @@ El Dashboard reúne toda la información vital en una interfaz elegante y modern
 A diferencia de las macros convencionales que usan secuencias rígidas (`/castsequence`) y se congelan si un hechizo falla o está fuera de rango, Jaina implementa un **motor inteligente de prioridades con modificadores**:
 
 ### ¿Cómo usar la macro `SeqRot`?
-1. Escribe `/sequito macros` o abre tu libro de macros (`/m`).
+1. Escribe `/jaina macros` o abre tu libro de macros (`/m`).
 2. En la pestaña de **Macros específicas del personaje**, busca la macro llamada **`SeqRot`**.
 3. Arrástrala a tu tecla de ataque principal (por ejemplo, el número `1`).
 4. **En combate:**
@@ -103,11 +103,11 @@ Uno de los mayores poderes de Jaina es que **los miembros de una hermandad no ne
 - **Canal de Hermandad Activo:** El sistema de red sincroniza información a través del canal `GUILD` de manera continua y eficiente.
 - **Tráfico Protegido (Cero Caídas):** Jaina utiliza un sistema de transmisión por goteo que fragmenta los paquetes grandes con pausas seguras de 80 ms. Esto garantiza que nunca seas desconectado del servidor por saturación de chat (*anti-flood protection*).
 - **Órdenes de Banda y Estrategias:**
-  - Los oficiales pueden enviar notas tácticas de jefes que aparecen en pantalla grande para todos los miembros con el comando `/sequito sync start`.
+  - Los oficiales pueden enviar notas tácticas de jefes que aparecen en pantalla grande para todos los miembros con el comando `/jaina sync start`.
   - Comandos de ataque coordinado:
-    - `/sequito focus [Nombre]` - Marca un objetivo prioritario para que todos cambien de foco.
-    - `/sequito alpha` - Orden de ataque masivo simultáneo.
-    - `/sequito ready` - Chequeo de listos enriquecido con verificación de comida y frascos.
+    - `/jaina focus [Nombre]` - Marca un objetivo prioritario para que todos cambien de foco.
+    - `/jaina alpha` - Orden de ataque masivo simultáneo.
+    - `/jaina ready` - Chequeo de listos enriquecido con verificación de comida y frascos.
 
 ---
 
@@ -161,8 +161,8 @@ La distribución justa, rápida y transparente del botín en bandas de hermandad
 
 ## 📊 Capítulo 6: Auditoría de Combate y Wipes
 
-- **Estadísticas Reales (`/sequito stats` o `/sstats`):** Registro de combate que extrae con precisión el daño infligido por ataques blancos, hechizos y daño periódico, así como la sanación efectiva (descontando la sobresanación o overhealing).
-- **Analizador de Wipes (`/sequito wipe` o `/swipe`):** Cuando la banda cae en un combate, Jaina realiza una autopsia inmediata:
+- **Estadísticas Reales (`/jaina stats` o `/sstats`):** Registro de combate que extrae con precisión el daño infligido por ataques blancos, hechizos y daño periódico, así como la sanación efectiva (descontando la sobresanación o overhealing).
+- **Analizador de Wipes (`/jaina wipe` o `/swipe`):** Cuando la banda cae en un combate, Jaina realiza una autopsia inmediata:
   - ¿Quién murió primero y qué hechizo o golpe le quitó la vida?
   - ¿Murió sin usar su Poción de Vida o Piedra de Salud?
   - ¿Hubo cortes de casteo fallidos contra el jefe?
@@ -196,18 +196,18 @@ Para darle vida, diversión y buen humor a las sesiones de hermandad, Jaina inco
 
 | Comando | Alias | Qué hace |
 |---------|-------|----------|
-| `/sequito` | `/s` | Abre el menú interactivo o el Dashboard central |
-| `/sdash` | `/sequito dashboard` | Abre/cierra el Dashboard principal de 4 pestañas |
-| `/sequito macros` | `/smacros` | Genera y optimiza todas las macros de tu clase |
+| `/jaina` | `/s` | Abre el menú interactivo o el Dashboard central |
+| `/sdash` | `/jaina dashboard` | Abre/cierra el Dashboard principal de 4 pestañas |
+| `/jaina macros` | `/smacros` | Genera y optimiza todas las macros de tu clase |
 | `/srot` | `/srotation` | Muestra u oculta el HUD flotante de rotación reactiva |
 | `/sinspect` | `/seqinspect` | Inspecciona al objetivo (Talentos, GS real y encantamientos) |
-| `/sloot` | `/sequito lc` | Abre el panel del Concilio de Botín |
+| `/sloot` | `/jaina lc` | Abre el panel del Concilio de Botín |
 | `/shumor` | `/shumor toggle` | Controla y prueba las frases cómicas de incursión |
-| `/sstats` | `/sequito stats` | Abre las estadísticas de rendimiento en combate |
-| `/swipe` | `/sequito wipe` | Abre el análisis detallado del último wipe |
-| `/sbuffs` | `/sequito buffs` | Escanea y reporta buffs faltantes en la banda |
-| `/sfocus [Nombre]` | `/sequito focus` | Envía orden de target prioritario a toda la raid |
-| `/sready` | `/sequito ready` | Inicia comprobación de listos táctica |
+| `/sstats` | `/jaina stats` | Abre las estadísticas de rendimiento en combate |
+| `/swipe` | `/jaina wipe` | Abre el análisis detallado del último wipe |
+| `/sbuffs` | `/jaina buffs` | Escanea y reporta buffs faltantes en la banda |
+| `/sfocus [Nombre]` | `/jaina focus` | Envía orden de target prioritario a toda la raid |
+| `/sready` | `/jaina ready` | Inicia comprobación de listos táctica |
 
 ---
 

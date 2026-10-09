@@ -131,9 +131,9 @@ Monitor de Cooldowns del Raid en tiempo real. Trackea CDs importantes de todos l
 - Alerta cuando un BRes vuelve a estar disponible
 
 ### Comandos
-- `/sequito cooldowns` - Abre/cierra el panel de CDs
-- `/sequito cd bres` - Anuncia Battle Res disponibles
-- `/sequito cd lust` - Anuncia Heroism/Bloodlust disponible
+- `/jaina cooldowns` - Abre/cierra el panel de CDs
+- `/jaina cd bres` - Anuncia Battle Res disponibles
+- `/jaina cd lust` - Anuncia Heroism/Bloodlust disponible
 
 ### API del Módulo
 - `S.CooldownMonitor:Toggle()` - Abre/cierra panel
@@ -166,9 +166,9 @@ Sistema de Asignaciones Automáticas para Raids.
 - Todos los usuarios de Jaina reciben las asignaciones
 
 ### Comandos
-- `/sequito assign` - Abre panel de asignaciones
-- `/sequito assign interrupts` - Auto-asigna rotación de interrupts
-- `/sequito assign announce` - Anuncia todas las asignaciones
+- `/jaina assign` - Abre panel de asignaciones
+- `/jaina assign interrupts` - Auto-asigna rotación de interrupts
+- `/jaina assign announce` - Anuncia todas las asignaciones
 
 ### API del Módulo
 - `S.Assignments:Toggle()` - Abre/cierra panel
@@ -208,8 +208,8 @@ Chequeo Pre-Pull Mejorado. Verifica que todos estén listos antes del pull.
 - Detalle de qué falta a cada jugador
 
 ### Comandos
-- `/sequito readycheck` - Abre panel y escanea
-- `/sequito readycheck full` - Escaneo completo con anuncio
+- `/jaina readycheck` - Abre panel y escanea
+- `/jaina readycheck full` - Escaneo completo con anuncio
 
 ### API del Módulo
 - `S.ReadyChecker:Toggle()` - Abre/cierra panel
@@ -254,13 +254,13 @@ Sistema de sincronización y biblioteca de macros entre usuarios de Jaina.
 - Macros probados y optimizados para 3.3.5a.
 
 ### Comandos
-- `/sequito macro share <nombre>` - Comparte macro con el grupo
-- `/sequito macro list` - Lista macros recibidos
-- `/sequito macro import <nombre>` - Importa macro compartido
-- `/sequito macro library` - Muestra biblioteca de tu clase/spec
-- `/sequito macro getlib <nombre>` - Importa de biblioteca
-- `/sequito macro getall` - Importa todos de biblioteca
-- `/sequito macro request` - Solicita lista del grupo
+- `/jaina macro share <nombre>` - Comparte macro con el grupo
+- `/jaina macro list` - Lista macros recibidos
+- `/jaina macro import <nombre>` - Importa macro compartido
+- `/jaina macro library` - Muestra biblioteca de tu clase/spec
+- `/jaina macro getlib <nombre>` - Importa de biblioteca
+- `/jaina macro getall` - Importa todos de biblioteca
+- `/jaina macro request` - Solicita lista del grupo
 
 ### API del Módulo
 - `S.MacroSync:ShareMacro(name)` - Comparte un macro
@@ -295,10 +295,10 @@ Asistente completo para raids con alertas personalizables e historial de wipes.
 - Submenú en el menú contextual.
 
 ### Comandos
-- `/sequito wipehistory` - Ver historial de wipes
-- `/sequito clearwipes` - Limpiar historial
-- `/sequito alert [mensaje]` - Mostrar alerta de prueba
-- `/sequito alertpos [top/center/bottom]` - Cambiar posición
+- `/jaina wipehistory` - Ver historial de wipes
+- `/jaina clearwipes` - Limpiar historial
+- `/jaina alert [mensaje]` - Mostrar alerta de prueba
+- `/jaina alertpos [top/center/bottom]` - Cambiar posición
 
 ### API del Módulo
 - `S.RaidAssist:ShowAlert(msg, type, duration)` - Muestra alerta
@@ -334,9 +334,9 @@ Tracker de Trinkets PvP enemigos para Arena y Battlegrounds.
 - Comando para anunciar estado de todos los trinkets.
 
 ### Comandos
-- `/sequito trinkets` - Abre/cierra el panel de trinkets
-- `/sequito trinkets clear` - Limpia el tracker
-- `/sequito trinkets announce` - Anuncia estado de trinkets al grupo
+- `/jaina trinkets` - Abre/cierra el panel de trinkets
+- `/jaina trinkets clear` - Limpia el tracker
+- `/jaina trinkets announce` - Anuncia estado de trinkets al grupo
 
 ### API del Módulo
 - `S.TrinketTracker:Toggle()` - Abre/cierra panel
@@ -376,9 +376,9 @@ Analizador de Wipes para raids que ayuda a identificar las causas de los wipes.
 - Estadísticas por encuentro.
 
 ### Comandos
-- `/sequito analyze` - Muestra análisis del último wipe
-- `/sequito wipehistory` - Muestra historial de wipes
-- `/sequito clearwipes` - Limpia historial
+- `/jaina analyze` - Muestra análisis del último wipe
+- `/jaina wipehistory` - Muestra historial de wipes
+- `/jaina clearwipes` - Limpia historial
 
 ### API del Módulo
 - `S.WipeAnalyzer:Toggle()` - Abre/cierra panel

@@ -1,15 +1,15 @@
-# 🇵🇪 Project Jaina - RaidSuite (v11.2.1 Definitive Edition)
+# ❄️ Project Jaina - RaidSuite (v11.2.1 Definitive Edition)
 
 **Versión:** 11.2.1 (Definitive Edition)  
-**Autor:** DarckRovert (Ingame: Elnazzareno) & Project Jaina Team  
-**Servidor Destino:** [Project Jaina](https://worldofwanos.com/) - Project Jaina  
+**Autor:** DarckRovert (Ingame: Elnazzareno) & Antigravity (Mythos 5)  
+**Servidor Destino:** [Project Jaina](https://projectjaina.com/)  
 **Cliente Compatible:** World of Warcraft 3.3.5a (Build 12340)
 
 ---
 
-[![WoW Client](https://img.shields.io/badge/WoW%20Client-3.3.5a%20(Build%2012340)-blue.svg)](https://worldofwanos.com/)
-[![Servidor](https://img.shields.io/badge/Servidor-WoW%20Perú-gold.svg)](https://worldofwanos.com/)
-[![Version](https://img.shields.io/badge/version-11.2.1-blue.svg)](https://github.com/DarckRovert/Wanos_RaidSuite/releases)
+[![WoW Client](https://img.shields.io/badge/WoW%20Client-3.3.5a%20(Build%2012340)-blue.svg)](https://projectjaina.com/)
+[![Servidor](https://img.shields.io/badge/Servidor-Project%20Jaina-gold.svg)](https://projectjaina.com/)
+[![Version](https://img.shields.io/badge/version-11.2.1-blue.svg)](https://github.com/DarckRovert/ProjectJaina_RaidSuite/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ---

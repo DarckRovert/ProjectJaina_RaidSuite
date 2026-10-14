@@ -289,8 +289,11 @@ SlashCmdList["JAINA_RAIDSUITE"] = function(msg)
         else
             S:PrintHelp()
         end
-    elseif cmd == "help" then
+    elseif cmd == "help" or cmd == "ayuda" then
         S:PrintHelp()
+    -- Subcomandos del Sistema de Simulacros Arcanos de Lady Jaina (Retransmisión al Servidor)
+    elseif cmd == "invocar" or cmd == "summon" or cmd == "rol" or cmd == "role" or cmd == "despedir" or cmd == "dismiss" or cmd == "estado" or cmd == "status" then
+        SendChatMessage(".jaina " .. msg, "SAY")
     elseif cmd == "macros" then
         if S.MacroGen then
             S.MacroGen.forceSync = true
@@ -817,6 +820,11 @@ function S:PrintHelp()
     print("|cFFFFFFFF/jaina lock|r - Bloquea/desbloquea posicion")
     print("|cFFFFFFFF/jaina reset|r - Reinicia posicion")
     print("|cFFFFFFFF/jaina mounts|r - Lista monturas disponibles")
+    print("|cFF00E5FF=== Simulacros de Lady Jaina (Mazmorras/Bandas) ===|r")
+    print("|cFFFFFFFF/jaina invocar [escarcha|arcano]|r - Materializa la Proyeccion Arcana")
+    print("|cFFFFFFFF/jaina rol [escarcha|arcano]|r - Cambia el rol tactico")
+    print("|cFFFFFFFF/jaina despedir|r - Disipa la proyeccion arcana")
+    print("|cFFFFFFFF/jaina estado|r - Consulta afinidad y estado activo")
     print("|cFF00FFFF=== RaidAssist ===")
     print("|cFFFFFFFF/jaina ra|r - Abre panel de RaidAssist")
     print("|cFFFFFFFF/jaina raleader|r - Panel de Raid Leader")

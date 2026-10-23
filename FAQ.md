@@ -259,4 +259,4 @@ Si encuentras un comportamiento anómalo o deseas sugerir una funcionalidad:
 
 ---
 
-*¡Por Project Jaina - Project Jaina!*
+*¡Por Project Jaina!*

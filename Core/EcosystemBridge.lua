@@ -35,13 +35,25 @@ local dungeonDone    = false
 
 --- Devuelve el modo de juego activo: NORMAL | HARDCORE | IRONMAN
 function Bridge:GetPlayerGameMode()
-    local db = ProjectJaina_GameModes_CharDB or ProjectJaina_GameModes_CharDB
+    local db = ProjectJaina_GameModes_CharDB or (ProjectJaina_GameModes and ProjectJaina_GameModes.CharDB)
     if db and db.hasSelectedMode and db.selectedMode then
         local mode = db.selectedMode
         if mode == "HARDCORE" or mode == "IRONMAN" or mode == "NORMAL" then
             return mode
         end
     end
+
+    -- Fallback defensivo: Inspección de auras activas del jugador
+    if UnitAura then
+        for i = 1, 40 do
+            local name = UnitAura("player", i)
+            if not name then break end
+            local lower = name:lower()
+            if lower:find("hardcore") then return "HARDCORE" end
+            if lower:find("ironman") then return "IRONMAN" end
+        end
+    end
+
     return "NORMAL"
 end
 
@@ -81,12 +93,11 @@ function Bridge:ReportQuestProgress(questId, delta, reason)
     local playerName = UnitName("player")
     if not playerName or playerName == "" or playerName == UNKNOWNOBJECT then return end
 
+    -- Despacho autoritativo unificado al prefijo JAINA_BP (Evita duplicidad de eventos)
     if RegisterAddonMessagePrefix then
         RegisterAddonMessagePrefix("JAINA_BP")
-        RegisterAddonMessagePrefix("WP_BP")
     end
     SendAddonMessage("JAINA_BP", payload, "WHISPER", playerName)
-    SendAddonMessage("WP_BP", payload, "WHISPER", playerName)
 
     if S.Config and S.Config.Debug then
         S:Print(string.format("|cFF88FF88[EcoBridge]|r Quest %d +%d (%s)", questId, delta, reason or ""))

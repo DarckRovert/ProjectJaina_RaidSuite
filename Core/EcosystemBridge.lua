@@ -81,7 +81,11 @@ function Bridge:ReportQuestProgress(questId, delta, reason)
     local playerName = UnitName("player")
     if not playerName or playerName == "" or playerName == UNKNOWNOBJECT then return end
 
-    if RegisterAddonMessagePrefix then RegisterAddonMessagePrefix("WP_BP") end
+    if RegisterAddonMessagePrefix then
+        RegisterAddonMessagePrefix("JAINA_BP")
+        RegisterAddonMessagePrefix("WP_BP")
+    end
+    SendAddonMessage("JAINA_BP", payload, "WHISPER", playerName)
     SendAddonMessage("WP_BP", payload, "WHISPER", playerName)
 
     if S.Config and S.Config.Debug then

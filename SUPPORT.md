@@ -2,7 +2,7 @@
 
 **Versión:** 10.2.0 (Definitive Edition)  
 **Autor:** DarckRovert (Ingame: Elnazzareno) & Antigravity (Mythos 5)  
-**Servidor:** Project Jaina (projectjaina.com) [3.3.5a Build 12340]
+**Servidor:** Project Jaina (darckrovert.github.io/ProjectJaina_Web) [3.3.5a Build 12340]
 
 ---
 

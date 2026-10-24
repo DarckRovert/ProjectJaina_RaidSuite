@@ -272,4 +272,4 @@ El sistema funciona automáticamente cuando:
 
 **Versión:** 10.2.0 (Definitive Edition)  
 **Autor:** DarckRovert (Ingame: Elnazzareno) & Antigravity (Mythos 5)  
-**Servidor:** Project Jaina (projectjaina.com)
+**Servidor:** Project Jaina (darckrovert.github.io/ProjectJaina_Web)

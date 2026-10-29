@@ -3,7 +3,6 @@
 ## Title: |cFFD4AF37Project Jaina|r - RaidSuite
 ## Notes: Suite integral y avanzada de combate, optimización de bandas y utilidades tácticas para el Project Jaina.
 ## Author: DarckRovert (Ingame: Elnazzareno) & Antigravity (Mythos 5)
-## Version: 11.2.1
 ## SavedVariables: JainaDB, JainaPlayerNotesDB, JainaBuildDB, JainaQuickWhisperDB, JainaStatsDB, JainaPositionsDB, JainaLootDB
 
 # 1. Localizacion

@@ -199,7 +199,7 @@ def test_locale_parity():
 
 def main():
     print("==================================================")
-    print("      SEQUITO ADDON AUTOMATED TEST SUITE          ")
+    print("      PROJECTJAINA_RAIDSUITE TEST SUITE          ")
     print("==================================================")
     
     success = True

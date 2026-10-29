@@ -4,7 +4,7 @@ Todos los cambios notables de este proyecto están documentados en este archivo 
 
 ---
 
-## [1.0.1] — 2026-10-10
+## [11.2.1] — 2026-10-10
 ### Estabilización de Ecosistema y Gobernanza Oficial (Project Jaina)
 - **Normalización de UI y Gráficos:** Alineación cuadrada 1:1 en logotipo de RaidSuite Dashboard (36x36), validación estricta de permisos de líder antes de emitir alertas y guardia de protección ante eventos CLEU sin spellId.
 - **Homologación Documental:** Incorporación y actualización formal de `GOVERNANCE.md`, `LICENSE`, `NOTICE.md` y `SECURITY.md`.

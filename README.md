@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/DarckRovert/ProjectJaina_Web/main/images/project_jaina_official_logo.jpg" alt="Project JAIna Official Crest" width="180">
+</p>
+
 # ❄️ Project Jaina - RaidSuite (v11.2.1 Definitive Edition)
 
 **Versión:** 11.2.1 (Definitive Edition)  

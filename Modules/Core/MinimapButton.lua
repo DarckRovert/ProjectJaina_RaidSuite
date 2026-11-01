@@ -51,9 +51,45 @@ function MB:CreateButton()
     btn.border:SetSize(52, 52)
     btn.border:SetPoint("TOPLEFT", 0, 0)
     
+    -- Variables de control de arrastre físico (Anti-Falso Clic)
+    local wasDragged = false
+    local dragStartX, dragStartY = 0, 0
+    local DRAG_THRESHOLD_SQ = 16 -- 4 píxeles de tolerancia física para diferenciar clic de arrastre
+
+    local function OnDragUpdate(self)
+        local curX, curY = GetCursorPosition()
+        if not wasDragged then
+            local dx = curX - dragStartX
+            local dy = curY - dragStartY
+            if (dx * dx + dy * dy) < DRAG_THRESHOLD_SQ then
+                return
+            end
+            wasDragged = true
+        end
+
+        local scale = UIParent:GetEffectiveScale()
+        local cx, cy = Minimap:GetCenter()
+        local px, py = curX / scale, curY / scale
+        local dx, dy = px - cx, py - cy
+        local angle = math.atan2(dy, dx)
+
+        local radius = 80
+        local nx = math.cos(angle) * radius
+        local ny = math.sin(angle) * radius
+
+        self:ClearAllPoints()
+        self:SetPoint("CENTER", Minimap, "CENTER", nx, ny)
+        self.angle = angle
+    end
+
     -- Interacciones
     btn:RegisterForClicks("LeftButtonUp", "RightButtonUp")
     btn:SetScript("OnClick", function(self, button)
+        if wasDragged then
+            wasDragged = false
+            return
+        end
+
         if button == "LeftButton" then
             if S.Dashboard and S.Dashboard.Toggle then
                 S.Dashboard:Toggle()
@@ -68,7 +104,7 @@ function MB:CreateButton()
             end
         end
     end)
-    
+
     btn:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_LEFT")
         GameTooltip:SetText("|cFFFFD437Jaina|r v" .. (S.Version or "11.2"))
@@ -77,33 +113,18 @@ function MB:CreateButton()
         GameTooltip:Show()
     end)
     btn:SetScript("OnLeave", function() GameTooltip:Hide() end)
-    
+
     -- Lógica de arrastre orbital alrededor del Minimapa
     btn:SetMovable(true)
     btn:RegisterForDrag("LeftButton")
-    
+
     btn:SetScript("OnDragStart", function(self)
+        wasDragged = false
+        dragStartX, dragStartY = GetCursorPosition()
         self:LockHighlight()
-        self:SetScript("OnUpdate", function()
-            local x, y = GetCursorPosition()
-            local scale = Minimap:GetEffectiveScale()
-            local cx, cy = Minimap:GetCenter()
-            
-            x, y = x/scale, y/scale
-            local dx, dy = x - cx, y - cy
-            local dist = math.sqrt(dx*dx + dy*dy)
-            if dist == 0 then dist = 1 end
-            
-            local radius = 80
-            local nx = (dx / dist) * radius
-            local ny = (dy / dist) * radius
-            
-            self:ClearAllPoints()
-            self:SetPoint("CENTER", Minimap, "CENTER", nx, ny)
-            self.angle = math.atan2(ny, nx)
-        end)
+        self:SetScript("OnUpdate", OnDragUpdate)
     end)
-    
+
     btn:SetScript("OnDragStop", function(self)
         self:UnlockHighlight()
         self:SetScript("OnUpdate", nil)

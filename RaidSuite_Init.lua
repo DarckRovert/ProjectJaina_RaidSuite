@@ -273,15 +273,14 @@ end
 -- ===========================================================================
 -- SLASH COMMANDS
 -- ===========================================================================
-SLASH_JAINA_RAIDSUITE1 = "/jaina"
+SLASH_JAINA_RAIDSUITE1 = "/suite"
 SLASH_JAINA_RAIDSUITE2 = "/raidsuite"
 SLASH_JAINA_RAIDSUITE3 = "/pjrs"
-SLASH_JAINA_RAIDSUITE4 = "/jaina"
-SLASH_JAINA_RAIDSUITE5 = "/seq"
+SLASH_JAINA_RAIDSUITE4 = "/seq"
 
 SlashCmdList["JAINA_RAIDSUITE"] = function(msg)
     local cmd, arg = strsplit(" ", msg, 2)
-    cmd = cmd:lower()
+    cmd = cmd and cmd:lower() or ""
     
     if cmd == "" then
         if S.Options then
@@ -291,9 +290,6 @@ SlashCmdList["JAINA_RAIDSUITE"] = function(msg)
         end
     elseif cmd == "help" or cmd == "ayuda" then
         S:PrintHelp()
-    -- Subcomandos del Sistema de Simulacros Arcanos de Lady Jaina (Retransmisión al Servidor)
-    elseif cmd == "invocar" or cmd == "summon" or cmd == "rol" or cmd == "role" or cmd == "despedir" or cmd == "dismiss" or cmd == "estado" or cmd == "status" then
-        SendChatMessage(".jaina " .. msg, "SAY")
     elseif cmd == "macros" then
         if S.MacroGen then
             S.MacroGen.forceSync = true

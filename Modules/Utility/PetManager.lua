@@ -154,6 +154,34 @@ end
 -- REGLAS DE ESCENARIOS Y MASCOTAS (TAUNT, HUNTER HAPPINESS, DEATH PACT)
 -- ===========================================================================
 
+local KNOWN_PET_TAUNT_NAMES = {
+    ["bramido"]     = true,
+    ["growl"]       = true,
+    ["tormento"]    = true,
+    ["torment"]     = true,
+    ["atormentar"]  = true, -- Fallback heurístico de compatibilidad
+    ["sufrimiento"] = true,
+    ["suffering"]   = true,
+    ["angustia"]    = true,
+    ["anguish"]     = true,
+}
+
+local function IsPetTauntAction(name, texture)
+    if name and KNOWN_PET_TAUNT_NAMES[string.lower(name)] then
+        return true
+    end
+    if texture and type(texture) == "string" then
+        local tex = string.lower(texture)
+        if tex:find("ability_physical_taunt")
+            or tex:find("spell_shadow_gathershadows")
+            or tex:find("spell_shadow_suffering")
+            or tex:find("spell_shadow_soulleech_3") then
+            return true
+        end
+    end
+    return false
+end
+
 function PM:CheckPetTauntInGroup()
     if not UnitExists("pet") then return end
     
@@ -163,7 +191,7 @@ function PM:CheckPetTauntInGroup()
         return
     end
 
-    -- Throttle para no spammear alertas
+    -- Throttle para no spammear alertas (30 segundos)
     if self.lastTauntWarn and (GetTime() - self.lastTauntWarn < 30) then
         return
     end
@@ -171,9 +199,7 @@ function PM:CheckPetTauntInGroup()
     for i = 1, 10 do
         local name, subtext, texture, isToken, isActive, autoCastAllowed, autoCastEnabled = GetPetActionInfo(i)
         if name and autoCastAllowed and autoCastEnabled then
-            local lower = string.lower(name)
-            -- Bramido (Hunter) o Atormentar (Warlock Voidwalker)
-            if lower == "bramido" or lower == "growl" or lower == "atormentar" or lower == "torment" then
+            if IsPetTauntAction(name, texture) then
                 self.lastTauntWarn = GetTime()
                 if S.Alerts and S.Alerts.Show then
                     S.Alerts:Show("¡DESACTIVA EL TAUNT DE TU MASCOTA! (" .. name .. ")", "WARNING")

@@ -33,14 +33,21 @@ local dungeonDone    = false
 -- SECCION 1: PUENTE -> ProjectJaina_GameModes
 -- ============================================================
 
---- Devuelve el modo de juego activo: NORMAL | HARDCORE | IRONMAN
+local function NormalizeMode(mode)
+    if not mode then return nil end
+    local up = tostring(mode):upper()
+    if up == "X1" or up == "SLOW_X1" then return "SLOW_X1" end
+    if up == "DIERISE" or up == "DIE_AND_RISE" then return "DIE_AND_RISE" end
+    if up == "HARDCORE" or up == "IRONMAN" or up == "NORMAL" then return up end
+    return nil
+end
+
+--- Devuelve el modo de juego activo: NORMAL | HARDCORE | IRONMAN | DIE_AND_RISE | SLOW_X1
 function Bridge:GetPlayerGameMode()
     local db = ProjectJaina_GameModes_CharDB or (ProjectJaina_GameModes and ProjectJaina_GameModes.CharDB)
     if db and db.hasSelectedMode and db.selectedMode then
-        local mode = db.selectedMode
-        if mode == "HARDCORE" or mode == "IRONMAN" or mode == "NORMAL" then
-            return mode
-        end
+        local normalized = NormalizeMode(db.selectedMode)
+        if normalized then return normalized end
     end
 
     -- Fallback defensivo: Inspección de auras activas del jugador
@@ -51,16 +58,18 @@ function Bridge:GetPlayerGameMode()
             local lower = name:lower()
             if lower:find("hardcore") then return "HARDCORE" end
             if lower:find("ironman") then return "IRONMAN" end
+            if lower:find("die and rise") or lower:find("dierise") then return "DIE_AND_RISE" end
+            if lower:find("reto andino") or lower:find("slow_x1") or lower:find("reto x1") then return "SLOW_X1" end
         end
     end
 
     return "NORMAL"
 end
 
---- Devuelve true si el jugador esta en Hardcore o Ironman.
+--- Devuelve true si el jugador esta en un modo de muerte permanente (Hardcore, Ironman o Die & Rise).
 function Bridge:IsHighRiskMode()
     local mode = self:GetPlayerGameMode()
-    return mode == "HARDCORE" or mode == "IRONMAN"
+    return mode == "HARDCORE" or mode == "IRONMAN" or mode == "DIE_AND_RISE"
 end
 
 --- Etiqueta con color para UI.
@@ -68,6 +77,8 @@ function Bridge:GetGameModeBadge()
     local mode = self:GetPlayerGameMode()
     if mode == "HARDCORE" then return "|cFFFF3333[HARDCORE]|r"
     elseif mode == "IRONMAN" then return "|cFFFF9900[IRONMAN]|r"
+    elseif mode == "DIE_AND_RISE" then return "|cFFBF5FFF[DIE & RISE]|r"
+    elseif mode == "SLOW_X1" then return "|cFFFFD100[RETO X1]|r"
     end
     return "|cFF888888[Normal]|r"
 end
@@ -201,8 +212,7 @@ end
 --- Aplica ajustes de comportamiento segun el modo de juego activo.
 --- Llamado desde RaidSuite_Init.lua en PLAYER_ENTERING_WORLD.
 function Bridge:ApplyGameModeAdaptations()
-    local mode = self:GetPlayerGameMode()
-    if mode == "HARDCORE" or mode == "IRONMAN" then
+    if self:IsHighRiskMode() then
         if S.DefensiveAlerts then
             S.DefensiveAlerts.aggressionLevel = 2
         end

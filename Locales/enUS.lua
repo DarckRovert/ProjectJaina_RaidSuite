@@ -180,3 +180,15 @@ S.L["HUMOR_TITLE"] = "Raid Humor & Fun Speech"
 S.L["HUMOR_DESC"] = "Automatic humorous and immersive quotes for guild activities."
 S.L["HUMOR_ENABLED"] = "Enable Humor Mode"
 
+-- Performance Auditor (Hito #341)
+S.L["NO_INTERRUPTS"] = "No interrupts recorded."
+S.L["NO_DEATHS"] = "No deaths recorded."
+S.L["MVP_INTERRUPT"] = "Top Interrupts"
+S.L["DEATHS"] = "Recorded Deaths"
+
+-- UI & Modules Fallbacks (Hito #341)
+S.L["ACHIEVEMENT_UNLOCKED"] = "Achievement Unlocked"
+S.L["LOOT_GALLERY"] = "Loot Gallery"
+S.L["LOOT_LEGENDARY"] = "Legendary Loot"
+
+

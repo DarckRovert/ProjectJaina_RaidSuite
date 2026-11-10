@@ -4,6 +4,14 @@ Todos los cambios notables de este proyecto están documentados en este archivo 
 
 ---
 
+## [11.2.2] — 2026-11-10
+### Blindaje de Modos de Alto Riesgo, Silenciamiento en Duelos y Localización de Auditoría (Hito #341 / Bug #7)
+- **Puente de Ecosistema Ampliado (`Core/EcosystemBridge.lua`):** Añadidos `NormalizeMode` e `IsHighRiskMode()`, reconociendo `DIE_AND_RISE` y `SLOW_X1` además de `HARDCORE` e `IRONMAN`.
+- **Guarda Anti-Spam en Duelos & Mundo Abierto (`Modules/Raid/RaidSuite_Performance.lua`):** Registro de `DUEL_FINISHED`, supresión de reportes en mundo abierto fuera de estancias y silenciamiento automático cuando no hay interrupciones ni muertes registradas.
+- **Comandos & Localización (`RaidSuite_Init.lua`, `Locales/enUS.lua`, `Locales/esMX.lua`):** Unificados comandos de ayuda `/suite` (incluyendo `/suite macro get <nombre> <jugador>`) y claves de localización del auditor de rendimiento (`NO_INTERRUPTS`, etc.).
+
+---
+
 ## [11.2.1] — 2026-10-10
 ### Estabilización de Ecosistema y Gobernanza Oficial (Project Jaina)
 - **Normalización de UI y Gráficos:** Alineación cuadrada 1:1 en logotipo de RaidSuite Dashboard (36x36), validación estricta de permisos de líder antes de emitir alertas y guardia de protección ante eventos CLEU sin spellId.

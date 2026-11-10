@@ -27,11 +27,21 @@ function SP:RegisterEvents()
     local f = CreateFrame("Frame")
     f:RegisterEvent("PLAYER_REGEN_DISABLED") -- Combat Start
     f:RegisterEvent("PLAYER_REGEN_ENABLED")  -- Combat End
+    f:RegisterEvent("DUEL_FINISHED")         -- Duel End Guard
     
     f:SetScript("OnEvent", function(self, event, ...)
-        if event == "PLAYER_REGEN_DISABLED" then
+        if event == "DUEL_FINISHED" then
+            SP.IsDuel = true
+        elseif event == "PLAYER_REGEN_DISABLED" then
             SP:ResetData()
+            SP.IsDuel = false
         elseif event == "PLAYER_REGEN_ENABLED" then
+            if SP.IsDuel then
+                SP.IsDuel = false
+                SP.InCombat = false
+                SP:ResetData()
+                return
+            end
             if SP.InCombat then
                 SP:Report()
                 SP.InCombat = false
@@ -89,9 +99,21 @@ end
 -- REPORTING
 -- ===========================================================================
 function SP:Report()
-    -- Solo reportar si hay datos significativos y es el líder/oficial quien lo tiene activo
-    -- (Para evitar spam si todos lo tienen). Por ahora, print local.
-    
+    -- Solo reportar si estamos en una estancia (mazmorra o banda) para evitar spam en duelos y mundo abierto
+    local inInstance, instanceType = IsInInstance()
+    if not inInstance or (instanceType ~= "party" and instanceType ~= "raid") then
+        self:ResetData()
+        return
+    end
+
+    -- Si no hubo interrupciones ni muertes registradas en la estancia, no spamear
+    local hasInterrupts = next(self.Data.Interrupts) ~= nil
+    local hasDeaths = #self.Data.Deaths > 0
+    if not hasInterrupts and not hasDeaths then
+        self:ResetData()
+        return
+    end
+
     print("|cFFFF00FF=== Jaina: Auditoría de Combate ===|r")
     
     -- Top Interrupts

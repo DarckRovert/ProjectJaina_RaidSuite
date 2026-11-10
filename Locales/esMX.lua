@@ -569,4 +569,16 @@ S.L = S.L or {}
     S.L["HUMOR_TITLE"] = "Frases y Humor de Incursión"
     S.L["HUMOR_DESC"] = "Expresiones cómicas e inmersivas automáticas para actividades de hermandad."
     S.L["HUMOR_ENABLED"] = "Habilitar Modo Humor"
+
+    -- Performance Auditor (Hito #341)
+    S.L["NO_INTERRUPTS"] = "Sin interrupciones registradas."
+    S.L["NO_DEATHS"] = "Sin bajas en el combate."
+    S.L["MVP_INTERRUPT"] = "Mayor cantidad de cortes"
+    S.L["DEATHS"] = "Bajas registradas"
+
+    -- UI & Modules Fallbacks (Hito #341)
+    S.L["CLOSE"] = "Cerrar"
+    S.L["ACHIEVEMENT_UNLOCKED"] = "Logro Desbloqueado"
+    S.L["LOOT_GALLERY"] = "Galería de Tesoros"
+    S.L["LOOT_LEGENDARY"] = "Botín Legendario"
 -- end

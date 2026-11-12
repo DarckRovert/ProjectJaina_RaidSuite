@@ -84,7 +84,9 @@ function RA:Initialize()
     -- Announce presence
     self:AnnouncePresence()
     
-    print(S.L["RA_INITIALIZED"] or "|cFF00FFFFJaina RaidAssist|r: Inicializado")
+    if not S.isBooting then
+        print(S.L["RA_INITIALIZED"] or "|cFF00FFFFJaina RaidAssist|r: Inicializado")
+    end
 end
 
 function RA:LoadSpellData()

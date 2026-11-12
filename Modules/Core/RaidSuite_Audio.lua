@@ -51,7 +51,9 @@ function Audio:Initialize()
         end
     end)
     
-    print("|cFF9900FFJaina Audio|r: Void Whispers listening.")
+    if not S.isBooting then
+        print("|cFF9900FFJaina Audio|r: Void Whispers listening.")
+    end
 end
 
 -- ============================================================================

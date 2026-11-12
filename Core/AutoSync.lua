@@ -125,7 +125,16 @@ function AS:OnGroupChanged()
     end
 end
 
+local lastJoinGroupTime = 0
+local JOIN_GROUP_DEBOUNCE = 2.0 -- Segundos mínimos entre ejecuciones de OnJoinGroup
+
 function AS:OnJoinGroup()
+    local now = GetTime()
+    if (now - lastJoinGroupTime) < JOIN_GROUP_DEBOUNCE then
+        return
+    end
+    lastJoinGroupTime = now
+
     S:Print("|cff00ff00AutoSync|r: Grupo detectado - Iniciando sincronización...")
     
     -- Limpiar datos antiguos
@@ -154,9 +163,6 @@ end
 
 function AS:OnLogin()
     self:CheckGroupStatus()
-    if isInGroup then
-        self:OnJoinGroup()
-    end
 end
 
 -- ============================================

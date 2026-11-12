@@ -22,7 +22,9 @@ function P:Initialize()
         P:OnUpdate(elapsed)
     end)
     
-    print("|cFF00FFFFJaina|r: Plates module initiated.")
+    if not S.isBooting then
+        print("|cFF00FFFFJaina|r: Plates module initiated.")
+    end
 end
 
 function P:GetOption(key)

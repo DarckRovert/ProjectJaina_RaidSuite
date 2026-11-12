@@ -591,7 +591,7 @@ function Options:Initialize()
     
     -- Register with Dashboard
     if S.Dashboard and S.Dashboard.RegisterTab then
-        print("|cFF00FFFFJaina|r: [Options] Registrando tab en Dashboard...")
+        if not S.isBooting then print("|cFF00FFFFJaina|r: [Options] Registrando tab en Dashboard...") end
         
         -- Dashboard Integration Fixes:
         self.frame:SetMovable(false)
@@ -606,7 +606,7 @@ function Options:Initialize()
         if self.frame.header then self.frame.header:Hide() end
         
         S.Dashboard:RegisterTab("Configuración", "Interface\\Icons\\INV_Misc_Gear_01", self.frame)
-        print("|cFF00FF00Jaina|r: [Options] Tab registrado exitosamente!")
+        if not S.isBooting then print("|cFF00FF00Jaina|r: [Options] Tab registrado exitosamente!") end
     else
         print("|cFFFF0000Jaina ERROR:|r Dashboard no disponible para Options")
         self.frame:SetPoint("CENTER")

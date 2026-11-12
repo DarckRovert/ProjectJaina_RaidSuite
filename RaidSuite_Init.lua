@@ -146,11 +146,13 @@ function S:OnInitialize()
         end
     end
     
-    -- Mensaje de carga
-    print(string.format("|cFFFF00FFJaina|r v%s |cFF888888%s|r cargando...", self.Version, self.Build))
+    -- Mensaje de carga (silenciado para arranque limpio)
+    -- print(string.format("|cFFFF00FFJaina|r v%s |cFF888888%s|r cargando...", self.Version, self.Build))
 end
 
 function S:OnEnable()
+    S.isBooting = true
+
     -- 0. Inicializar ModuleConfig PRIMERO (Configuración crítica)
     if S.ModuleConfig and S.ModuleConfig.Initialize then S.ModuleConfig:Initialize() end
 
@@ -171,7 +173,7 @@ function S:OnEnable()
     
     -- 2. Inicializar GUI (Esfera) - Ahora seguro porque ModuleConfig está listo
     if S.GUI and S.GUI.Initialize then
-        print("|cFF00FFFFJaina|r: Creando Interfaz...")
+        if not S.isBooting then print("|cFF00FFFFJaina|r: Creando Interfaz...") end
         S.GUI:Initialize()
     else
         print("|cFFFF0000Jaina Error|r: Modulo GUI no encontrado.")
@@ -253,7 +255,8 @@ function S:OnEnable()
         end
     end
     
-    print("|cFFFF00FFJaina|r: Sistema listo. (/suite help)")
+    S.isBooting = false
+    print("|cFFFF00FFProject Jaina RaidSuite|r: Sistema y submódulos listos. (/suite help)")
     if S.db.profile.ShowSpeech then
         PlaySoundFile("Sound\\Creature\\HeadlessHorseman\\Horseman_Laugh_01.wav")
     end
@@ -902,6 +905,9 @@ end
 -- UTILIDADES
 -- ===========================================================================
 function S:Msg(text, msgType)
+    if S.isBooting and not msgType then
+        return -- Arranque silencioso: suprime el spam de inicialización de los 25+ submódulos
+    end
     if S.Alerts and S.Alerts.Show then
         if msgType == "ERROR" then
             S.Alerts:Show(text, "ERROR")

@@ -782,7 +782,7 @@ function WA:UpdateDisplay()
             fdFrame.detail:SetPoint("TOPLEFT", fdFrame.info, "BOTTOMLEFT", 0, -4)
         end
         fdFrame.detail:SetText(string.format(L["DEATH_REPORT_FMT"], 
-            analysis.firstDeath.time, analysis.firstDeath.killedBy, analysis.firstDeath.lastSpell))
+            analysis.firstDeath.time or 0, analysis.firstDeath.killedBy or "Desconocido", analysis.firstDeath.lastSpell or "Desconocido"))
             
         AnchorToLast(fdFrame, 10, 10)
     end
@@ -830,7 +830,7 @@ function WA:UpdateDisplay()
         local colorCode = string.format("|cff%02x%02x%02x", classColor.r*255, classColor.g*255, classColor.b*255)
         
         local deathLine = string.format("%d. [%.1fs] %s%s|r - %s", 
-            i, death.time, colorCode, death.name, death.killedBy)
+            i, death.time or 0, colorCode, death.name or "Desconocido", death.killedBy or "Desconocido")
             
         local line = self:CreateTextLine(deathLine)
         AnchorToLast(line, 5, 5)

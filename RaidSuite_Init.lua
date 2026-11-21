@@ -276,10 +276,12 @@ end
 -- ===========================================================================
 -- SLASH COMMANDS
 -- ===========================================================================
-SLASH_JAINA_RAIDSUITE1 = "/suite"
-SLASH_JAINA_RAIDSUITE2 = "/raidsuite"
-SLASH_JAINA_RAIDSUITE3 = "/pjrs"
-SLASH_JAINA_RAIDSUITE4 = "/seq"
+SLASH_JAINA_RAIDSUITE1 = "/jaina"
+SLASH_JAINA_RAIDSUITE2 = "/suite"
+SLASH_JAINA_RAIDSUITE3 = "/raidsuite"
+SLASH_JAINA_RAIDSUITE4 = "/pjrs"
+SLASH_JAINA_RAIDSUITE5 = "/sequito"
+SLASH_JAINA_RAIDSUITE6 = "/seq"
 
 SlashCmdList["JAINA_RAIDSUITE"] = function(msg)
     local cmd, arg = strsplit(" ", msg, 2)

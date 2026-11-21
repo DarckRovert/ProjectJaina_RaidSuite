@@ -332,12 +332,14 @@ function DA:OnCombatLog(...)
 end
 
 function DA:CheckAutoAlert()
-    local hp = UnitHealth("player") / UnitHealthMax("player")
+    local maxHP = UnitHealthMax("player") or 0
+    if maxHP <= 0 then return end
+    local hp = (UnitHealth("player") or 0) / maxHP
     
     -- Auto-alerta si HP muy bajo
     if hp <= 0.20 and not self.lowHPAlerted then
         self.lowHPAlerted = true
-        -- No enviar automÃ¡ticamente, solo preparar
+        -- No enviar automáticamente, solo preparar
     elseif hp > 0.40 then
         self.lowHPAlerted = false
     end
@@ -391,7 +393,9 @@ function DA:SendAlert(alertType)
     self.lastAlertTimes[alertType] = now
     
     local playerName = UnitName("player")
-    local hp = math.floor((UnitHealth("player") / UnitHealthMax("player")) * 100)
+    local curHP = UnitHealth("player") or 0
+    local maxHP = UnitHealthMax("player") or 0
+    local hp = (maxHP > 0) and math.floor((curHP / maxHP) * 100) or 0
     local channel = self:GetChannel()
     
     if channel and self:GetOption("announceToChat") then

@@ -45,7 +45,7 @@ S.L["MODE_DESC"] = "Adjust assistance level based on raid type"
 S.L["MODE_FARM_TEXT"] = "Farm (fewer alerts)"
 S.L["MODE_PROGRESSION_TEXT"] = "Progression (more help)"
 S.L["FEATURE_SETTINGS"] = "Features:"
-S.L["RAIDASSIST_INFO"] = "Raid Assist works best when multiple raid members have Jaina installed. Use |cff00ff00/sequito ra|r to open the main panel."
+S.L["RAIDASSIST_INFO"] = "Raid Assist works best when multiple raid members have Jaina installed. Use |cff00ff00/jaina ra|r (or /suite ra) to open the main panel."
 S.L["INTERRUPT_DESC"] = "Track and suggest interrupt rotations"
 S.L["COOLDOWN_DESC"] = "Sync important raid cooldowns"
 S.L["MARKERS_DESC"] = "Distribute targets among DPS automatically"
@@ -190,5 +190,14 @@ S.L["DEATHS"] = "Recorded Deaths"
 S.L["ACHIEVEMENT_UNLOCKED"] = "Achievement Unlocked"
 S.L["LOOT_GALLERY"] = "Loot Gallery"
 S.L["LOOT_LEGENDARY"] = "Legendary Loot"
+
+-- WipeAnalyzer
+S.L["WIPE_ANALYZER_TITLE"] = "WIPE ANALYSIS"
+S.L["WIPE_SUMMARY_FMT"] = "Encounter: %s\nDuration: |cffffffff%.1f sec|r | Deaths: |cffff0000%d|r"
+S.L["SECTION_FIRST_DEATH"] = "FIRST DEATH:"
+S.L["SECTION_NO_CONSUMABLES"] = "NO POTION / HEALTHSTONE"
+S.L["SECTION_INTERRUPTS"] = "INTERRUPTS"
+S.L["SECTION_TIMELINE"] = "TIMELINE"
+S.L["DEATH_REPORT_FMT"] = "Died at %.1fs by %s (%s)"
 
 

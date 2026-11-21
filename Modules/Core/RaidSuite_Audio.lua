@@ -65,8 +65,10 @@ function Audio:CheckExecute(unit)
     if not self.InCombat then return end
     if UnitIsDead("target") then return end
     
-    local hp = UnitHealth("target")
-    local max = UnitHealthMax("target")
+    local hp = UnitHealth("target") or 0
+    local max = UnitHealthMax("target") or 0
+    if max <= 0 then return end
+    
     local pct = (hp / max) * 100
     
     -- Execute Range < 25% (Standard) or < 35% (Some classes)

@@ -228,6 +228,11 @@ function HT:RegisterEvents()
             for i = 1, 5 do
                 HT:CheckUnitForHealer("arena" .. i)
             end
+        elseif event == "PLAYER_REGEN_ENABLED" then
+            local _, instanceType = IsInInstance()
+            if instanceType == "arena" then
+                HT:Clear()
+            end
         end
     end)
 
@@ -266,6 +271,8 @@ end
 function HT:TrackHealer(guid, name, class)
     if not self:GetOption("autoDetect") then return end
     if not guid then return end
+    name = (name and name ~= "") and name or "Enemigo"
+    class = class or "PRIEST"
     
     if not self.TrackedHealers[guid] then
         self.TrackedHealers[guid] = {
@@ -286,6 +293,9 @@ function HT:TrackHealer(guid, name, class)
         self:UpdateDisplay()
     else
         self.TrackedHealers[guid].lastSeen = GetTime()
+        if name ~= "Enemigo" and self.TrackedHealers[guid].name == "Enemigo" then
+            self.TrackedHealers[guid].name = name
+        end
     end
 end
 
@@ -306,8 +316,8 @@ function HT:OnUnitPower(unit)
     
     local guid = UnitGUID(unit)
     if self.TrackedHealers[guid] then
-        local mana = UnitPower(unit, 0)
-        local maxMana = UnitPowerMax(unit, 0)
+        local mana = UnitPower(unit, 0) or 0
+        local maxMana = UnitPowerMax(unit, 0) or 0
         
         if maxMana and maxMana > 0 then
             local healer = self.TrackedHealers[guid]
@@ -335,8 +345,8 @@ function HT:OnUpdate(elapsed)
         if UnitExists(unit) and UnitIsEnemy("player", unit) then
             local guid = UnitGUID(unit)
             if self.TrackedHealers[guid] then
-                local mana = UnitPower(unit, 0)
-                local maxMana = UnitPowerMax(unit, 0)
+                local mana = UnitPower(unit, 0) or 0
+                local maxMana = UnitPowerMax(unit, 0) or 0
                 
                 if maxMana and maxMana > 0 then
                     local healer = self.TrackedHealers[guid]
@@ -350,6 +360,14 @@ function HT:OnUpdate(elapsed)
                     self:CheckManaAlert(healer, oldPercent)
                 end
             end
+        end
+    end
+    
+    -- Purgar sanadores inactivos (> 90s) para prevenir memory leaks en BGs / Mundo
+    local now = GetTime()
+    for guid, healer in pairs(self.TrackedHealers) do
+        if (now - (healer.lastSeen or 0)) > 90 then
+            self.TrackedHealers[guid] = nil
         end
     end
     

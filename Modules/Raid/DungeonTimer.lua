@@ -26,22 +26,22 @@ end
 
 -- Catálogo Maestro de Heroicas de WotLK (Soporte Bilingüe y Claves de Búsqueda)
 local HEROIC_DUNGEONS = {
-    { id = 574, name = "Fortaleza de Utgarde",      nameEn = "Utgarde Keep",              abbrev = "UK",   keys = {"utgarde keep", "fortaleza de utgarde"} },
-    { id = 575, name = "Pináculo de Utgarde",       nameEn = "Utgarde Pinnacle",          abbrev = "UP",   keys = {"utgarde pinnacle", "pinaculo de utgarde"} },
-    { id = 576, name = "El Nexo",                  nameEn = "The Nexus",                 abbrev = "Nex",  keys = {"the nexus", "el nexo", "nexo"} },
-    { id = 578, name = "El Oculus",                nameEn = "The Oculus",                abbrev = "Ocu",  keys = {"the oculus", "el oculus", "oculus"} },
-    { id = 595, name = "La Matanza de Stratholme", nameEn = "The Culling of Stratholme", abbrev = "CoS",  keys = {"the culling of stratholme", "matanza de stratholme", "stratholme"} },
-    { id = 599, name = "Cámaras de Piedra",        nameEn = "Halls of Stone",            abbrev = "HoS",  keys = {"halls of stone", "camaras de piedra"} },
-    { id = 600, name = "Fortaleza de Drak'Tharon", nameEn = "Drak'Tharon Keep",          abbrev = "DTK",  keys = {"drak'tharon keep", "draktharon keep", "fortaleza de drak'tharon", "drak'tharon"} },
-    { id = 601, name = "Azjol-Nerub",              nameEn = "Azjol-Nerub",               abbrev = "AN",   keys = {"azjol-nerub", "azjol nerub"} },
-    { id = 602, name = "Cámaras de Relámpagos",    nameEn = "Halls of Lightning",        abbrev = "HoL",  keys = {"halls of lightning", "camaras de relampagos"} },
-    { id = 604, name = "Gundrak",                  nameEn = "Gundrak",                   abbrev = "Gun",  keys = {"gundrak"} },
-    { id = 608, name = "El Bastión Violeta",       nameEn = "The Violet Hold",           abbrev = "VH",   keys = {"the violet hold", "violet hold", "bastion violeta", "el bastion violeta"} },
-    { id = 619, name = "Ahn'kahet: El Antiguo Reino", nameEn = "Ahn'kahet: The Old Kingdom", abbrev = "OK", keys = {"ahn'kahet", "the old kingdom", "antiguo reino"} },
-    { id = 632, name = "La Forja de Almas",        nameEn = "The Forge of Souls",        abbrev = "FoS",  keys = {"the forge of souls", "forge of souls", "forja de almas", "la forja de almas"} },
-    { id = 650, name = "Prueba del Campeón",       nameEn = "Trial of the Champion",     abbrev = "ToC5", keys = {"trial of the champion", "prueba del campeon"} },
-    { id = 658, name = "Foso de Saron",            nameEn = "Pit of Saron",              abbrev = "PoS",  keys = {"pit of saron", "foso de saron"} },
-    { id = 668, name = "Cámaras de Reflexión",     nameEn = "Halls of Reflection",       abbrev = "HoR",  keys = {"halls of reflection", "camaras de reflexion"} },
+    { id = 574, name = "Fortaleza de Utgarde",      nameEn = "Utgarde Keep",              abbrev = "UK",   keys = {"utgarde keep", "fortaleza de utgarde"}, finalBosses = {"ingvar"} },
+    { id = 575, name = "Pináculo de Utgarde",       nameEn = "Utgarde Pinnacle",          abbrev = "UP",   keys = {"utgarde pinnacle", "pinaculo de utgarde"}, finalBosses = {"ymiron"} },
+    { id = 576, name = "El Nexo",                  nameEn = "The Nexus",                 abbrev = "Nex",  keys = {"the nexus", "el nexo", "nexo"}, finalBosses = {"keristrasza"} },
+    { id = 578, name = "El Oculus",                nameEn = "The Oculus",                abbrev = "Ocu",  keys = {"the oculus", "el oculus", "oculus"}, finalBosses = {"eregos"} },
+    { id = 595, name = "La Matanza de Stratholme", nameEn = "The Culling of Stratholme", abbrev = "CoS",  keys = {"the culling of stratholme", "matanza de stratholme", "stratholme"}, finalBosses = {"mal'ganis", "malganis"} },
+    { id = 599, name = "Cámaras de Piedra",        nameEn = "Halls of Stone",            abbrev = "HoS",  keys = {"halls of stone", "camaras de piedra"}, finalBosses = {"sjonnir"} },
+    { id = 600, name = "Fortaleza de Drak'Tharon", nameEn = "Drak'Tharon Keep",          abbrev = "DTK",  keys = {"drak'tharon keep", "draktharon keep", "fortaleza de drak'tharon", "drak'tharon"}, finalBosses = {"tharon'ja", "tharonja"} },
+    { id = 601, name = "Azjol-Nerub",              nameEn = "Azjol-Nerub",               abbrev = "AN",   keys = {"azjol-nerub", "azjol nerub"}, finalBosses = {"anub'arak", "anubarak"} },
+    { id = 602, name = "Cámaras de Relámpagos",    nameEn = "Halls of Lightning",        abbrev = "HoL",  keys = {"halls of lightning", "camaras de relampagos"}, finalBosses = {"loken"} },
+    { id = 604, name = "Gundrak",                  nameEn = "Gundrak",                   abbrev = "Gun",  keys = {"gundrak"}, finalBosses = {"gal'darah", "galdarah"} },
+    { id = 608, name = "El Bastión Violeta",       nameEn = "The Violet Hold",           abbrev = "VH",   keys = {"the violet hold", "violet hold", "bastion violeta", "el bastion violeta"}, finalBosses = {"cyanigosa", "cianigosa"} },
+    { id = 619, name = "Ahn'kahet: El Antiguo Reino", nameEn = "Ahn'kahet: The Old Kingdom", abbrev = "OK", keys = {"ahn'kahet", "the old kingdom", "antiguo reino"}, finalBosses = {"volazj"} },
+    { id = 632, name = "La Forja de Almas",        nameEn = "The Forge of Souls",        abbrev = "FoS",  keys = {"the forge of souls", "forge of souls", "forja de almas", "la forja de almas"}, finalBosses = {"devorador de almas", "devourer of souls"} },
+    { id = 650, name = "Prueba del Campeón",       nameEn = "Trial of the Champion",     abbrev = "ToC5", keys = {"trial of the champion", "prueba del campeon"}, finalBosses = {"caballero negro", "black knight"} },
+    { id = 658, name = "Foso de Saron",            nameEn = "Pit of Saron",              abbrev = "PoS",  keys = {"pit of saron", "foso de saron"}, finalBosses = {"tyrannus"} },
+    { id = 668, name = "Cámaras de Reflexión",     nameEn = "Halls of Reflection",       abbrev = "HoR",  keys = {"halls of reflection", "camaras de reflexion"}, finalBosses = {"rey exanime", "lich king", "arthas", "rompecielos", "martillo de orgrim", "skybreaker", "orgrim's hammer"} },
 }
 
 function DT:GetOption(key)
@@ -251,7 +251,9 @@ end
 
 function DT:CalculateResetTime()
     local serverTime = (GetServerTime and GetServerTime()) or time()
+    serverTime = tonumber(serverTime) or time()
     local resetSec = GetQuestResetTime and GetQuestResetTime()
+    resetSec = tonumber(resetSec)
     if resetSec and resetSec > 0 then
         self.DailyReset = serverTime + resetSec
         return
@@ -329,7 +331,8 @@ function DT:UpdateResetTimer()
     if not self.Frame or not self.Frame:IsShown() then return end
     
     local serverTime = (GetServerTime and GetServerTime()) or time()
-    local timeLeft = self.DailyReset - serverTime
+    serverTime = tonumber(serverTime) or time()
+    local timeLeft = (tonumber(self.DailyReset) or 0) - serverTime
     
     if timeLeft <= 0 then
         self:CheckDailyReset()
@@ -342,7 +345,7 @@ function DT:UpdateResetTimer()
     
     self.Frame.resetTimer:SetText(string.format(
         "|cFFFFFF00Reset en:|r |cFFFFFFFF%02d:%02d:%02d|r",
-        hours, mins, secs
+        math.max(0, hours), math.max(0, mins), math.max(0, secs)
     ))
 end
 
@@ -353,9 +356,36 @@ end
 
 function DT:OnBossKill(bossName)
     if not self:GetOption("trackLockouts") then return end
+    if not bossName or bossName == "" then return end
     local name, instanceType, difficultyID = GetInstanceInfo()
     if instanceType == "party" and difficultyID == 2 then
-        self:MarkDungeonComplete(name, false)
+        local cleanBoss = CleanString(bossName)
+        local cleanInst = CleanString(name)
+        for _, dungeon in ipairs(HEROIC_DUNGEONS) do
+            local matchedInst = false
+            if CleanString(dungeon.name) == cleanInst or CleanString(dungeon.nameEn) == cleanInst then
+                matchedInst = true
+            else
+                for _, key in ipairs(dungeon.keys) do
+                    if cleanInst:find(key, 1, true) then
+                        matchedInst = true
+                        break
+                    end
+                end
+            end
+            
+            if matchedInst then
+                if dungeon.finalBosses then
+                    for _, fb in ipairs(dungeon.finalBosses) do
+                        if cleanBoss:find(fb, 1, true) then
+                            self:MarkDungeonComplete(name, false)
+                            return
+                        end
+                    end
+                end
+                break
+            end
+        end
     end
 end
 
@@ -393,12 +423,11 @@ function DT:MarkDungeonComplete(rawName, silent)
             }
             self.lastRunCompleted = true
             
-            -- Notificar al EcosystemBridge para alimentar el BattlePass
-            if S.EcosystemBridge and S.EcosystemBridge.NotifyDungeonComplete then
-                S.EcosystemBridge:NotifyDungeonComplete()
-            end
-            
             if isNew and not silent then
+                -- Notificar al EcosystemBridge para alimentar el BattlePass sólo si es nueva y activa
+                if S.EcosystemBridge and S.EcosystemBridge.NotifyDungeonComplete then
+                    S.EcosystemBridge:NotifyDungeonComplete()
+                end
                 self:SaveData()
                 self:UpdateDisplay()
                 if S.Print then

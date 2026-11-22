@@ -14,6 +14,10 @@ local addonName, S = ...
 S.Humor = S.Humor or {}
 local H = S.Humor
 
+string.trim = string.trim or strtrim or function(s)
+    return (tostring(s or ""):gsub("^%s+", ""):gsub("%s+$", ""))
+end
+
 -- Configuración por defecto
 H.Defaults = {
     enabled = true,

@@ -4,6 +4,13 @@ Todos los cambios notables de este proyecto están documentados en este archivo 
 
 ---
 
+## [11.2.3] — 2026-11-22
+### Polyfill `string.trim` en `RaidSuite_Humor.lua` para Lua 5.1 Estándar (Hito #386)
+- **Compatibilidad WoW 3.3.5a (`Modules/Utility/RaidSuite_Humor.lua`):**
+  - Añadido polyfill `string.trim` (`strtrim` / `match`) impidiendo excepciones `attempt to call method 'trim' (a nil value)` al invocar `/humor`.
+
+---
+
 ## [11.2.2] — 2026-11-10
 ### Blindaje de Modos de Alto Riesgo, Silenciamiento en Duelos y Localización de Auditoría (Hito #341 / Bug #7)
 - **Puente de Ecosistema Ampliado (`Core/EcosystemBridge.lua`):** Añadidos `NormalizeMode` e `IsHighRiskMode()`, reconociendo `DIE_AND_RISE` y `SLOW_X1` además de `HARDCORE` e `IRONMAN`.

@@ -375,6 +375,11 @@ function AS:OnCombatEnd()
     self.pendingCombatRequest = false
     if isInGroup then
         C_Timer.After(1, function()
+            if UnitAffectingCombat and UnitAffectingCombat("player") then
+                if needRequest then AS.pendingCombatRequest = true end
+                if needBroadcast then AS.pendingCombatBroadcast = true end
+                return
+            end
             if needRequest then
                 AS:RequestAllData(true)
             end

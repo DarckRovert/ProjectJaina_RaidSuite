@@ -4,6 +4,13 @@ Todos los cambios notables de este proyecto están documentados en este archivo 
 
 ---
 
+## [11.2.4] — 2026-11-22
+### QoS Anti-Lag de Sync Durante Combate (Hito #387)
+- **Diferimiento `AutoSync` (`Core/AutoSync.lua`):** Añadido diferimiento `pendingCombatBroadcast` / `pendingCombatRequest` mientras `UnitAffectingCombat("player")` esté activo con despacho al finalizar el combate (`OnCombatEnd`), manteniendo intactas las alertas tácticas de cooldowns (`CD:`) y `ForceSync()`.
+- **Diferimiento `VersionSync` (`Modules/Core/VersionSync.lua`):** Registrado `PLAYER_REGEN_ENABLED` para posponer `RequestVersions(false)` y `SendVersion` automáticos fuera de combate.
+
+---
+
 ## [11.2.3] — 2026-11-22
 ### Polyfill `string.trim` en `RaidSuite_Humor.lua` para Lua 5.1 Estándar (Hito #386)
 - **Compatibilidad WoW 3.3.5a (`Modules/Utility/RaidSuite_Humor.lua`):**

@@ -223,13 +223,18 @@ end
 -- ============================================
 -- BROADCAST DE DATOS
 -- ============================================
-function AS:BroadcastPlayerData()
+function AS:BroadcastPlayerData(force)
     local channel = self:GetGroupChannel()
     if not channel then return end
+
+    if not force and UnitAffectingCombat and UnitAffectingCombat("player") then
+        self.pendingCombatBroadcast = true
+        return
+    end
     
     -- Throttle para evitar spam
     local now = GetTime()
-    if now - lastBroadcast < THROTTLE_INTERVAL then
+    if not force and (now - lastBroadcast < THROTTLE_INTERVAL) then
         return
     end
     lastBroadcast = now
@@ -242,9 +247,14 @@ function AS:BroadcastPlayerData()
     SendAddonMessage(SYNC_PREFIX, payload, channel)
 end
 
-function AS:RequestAllData()
+function AS:RequestAllData(force)
     local channel = self:GetGroupChannel()
     if not channel then return end
+
+    if not force and UnitAffectingCombat and UnitAffectingCombat("player") then
+        self.pendingCombatRequest = true
+        return
+    end
     
     if RegisterAddonMessagePrefix then RegisterAddonMessagePrefix(SYNC_PREFIX) end
     SendAddonMessage(SYNC_PREFIX, "REQUEST", channel)
@@ -358,10 +368,17 @@ function AS:OnSpellCast(unit, _, spellId)
 end
 
 function AS:OnCombatEnd()
-    -- Al salir de combate, actualizar estado de CDs
+    -- Al salir de combate, despachar sincronizaciones diferidas y actualizar estado de CDs
+    local needBroadcast = self.pendingCombatBroadcast
+    local needRequest = self.pendingCombatRequest
+    self.pendingCombatBroadcast = false
+    self.pendingCombatRequest = false
     if isInGroup then
         C_Timer.After(1, function()
-            AS:BroadcastPlayerData()
+            if needRequest then
+                AS:RequestAllData(true)
+            end
+            AS:BroadcastPlayerData(needBroadcast)
         end)
     end
 end
@@ -456,8 +473,8 @@ end
 
 function AS:ForceSync()
     if isInGroup then
-        self:BroadcastPlayerData()
-        self:RequestAllData()
+        self:BroadcastPlayerData(true)
+        self:RequestAllData(true)
     end
 end
 

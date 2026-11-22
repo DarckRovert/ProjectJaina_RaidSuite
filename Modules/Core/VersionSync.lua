@@ -235,9 +235,20 @@ function VSy:RegisterEvents()
     events:RegisterEvent("RAID_ROSTER_UPDATE")
     events:RegisterEvent("PARTY_MEMBERS_CHANGED")
     events:RegisterEvent("GUILD_ROSTER_UPDATE")
+    events:RegisterEvent("PLAYER_REGEN_ENABLED")
     events:SetScript("OnEvent", function(_, event, ...)
         if event == "CHAT_MSG_ADDON" then
             VSy:OnAddonMessage(...)
+        elseif event == "PLAYER_REGEN_ENABLED" then
+            if VSy.pendingVersionRequest then
+                VSy.pendingVersionRequest = false
+                VSy:RequestVersions(false)
+            end
+            if VSy.pendingVersionReplyChannel then
+                local ch = VSy.pendingVersionReplyChannel
+                VSy.pendingVersionReplyChannel = nil
+                VSy:SendVersion(ch)
+            end
         elseif event == "RAID_ROSTER_UPDATE" or event == "PARTY_MEMBERS_CHANGED" or event == "GUILD_ROSTER_UPDATE" then
             VSy:RequestVersions(false)
         end
@@ -262,6 +273,11 @@ function VSy:RequestVersions(force)
     if not force and not self:GetOption("autoCheck") then
         return
     end
+
+    if not force and UnitAffectingCombat and UnitAffectingCombat("player") then
+        self.pendingVersionRequest = true
+        return
+    end
     
     local now = GetTime()
     if not force and self.lastRequest and (now - self.lastRequest < 20) then
@@ -275,9 +291,14 @@ function VSy:RequestVersions(force)
     end
 end
 
-function VSy:SendVersion(channel)
+function VSy:SendVersion(channel, force)
     local targetChannel = channel or self:GetSyncChannel()
     if not targetChannel then return end
+
+    if not force and UnitAffectingCombat and UnitAffectingCombat("player") then
+        self.pendingVersionReplyChannel = targetChannel
+        return
+    end
 
     -- Blindaje anti-tormentas de red: máximo 1 respuesta cada 30 segundos por canal
     local now = GetTime()
